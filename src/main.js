@@ -35,12 +35,23 @@ window.addEventListener('DOMContentLoaded', () => {
   const meterTotalVal = document.getElementById('meter-total-val');
   const meterSkillsList = document.getElementById('meter-skills-list');
 
+  // Real-Time Ship Attributes Elements
+  const statsToggleBtn = document.getElementById('stats-toggle-btn');
+  const statsBtnLabel = document.getElementById('stats-btn-label');
+  const shipStatsPanel = document.getElementById('ship-stats-panel');
+  const shipStatsTitle = document.getElementById('ship-stats-title');
+  const statsCloseBtn = document.getElementById('stats-close-btn');
+  const shipStatsList = document.getElementById('ship-stats-list');
+
   // Interactive Buttons
   const startBtn = document.getElementById('start-btn');
   const retryBtn = document.getElementById('retry-btn');
   const langBtnVi = document.getElementById('lang-btn-vi');
   const langBtnEn = document.getElementById('lang-btn-en');
   const hudLangBtn = document.getElementById('hud-lang-btn');
+  const hudThemeBtn = document.getElementById('hud-theme-btn');
+  const hudHomeBtn = document.getElementById('hud-home-btn');
+  const startThemeBtn = document.getElementById('start-theme-btn');
   const startHangarBtn = document.getElementById('start-hangar-btn');
   const overHangarBtn = document.getElementById('over-hangar-btn');
   const hangarCloseBtn = document.getElementById('hangar-close-btn');
@@ -137,6 +148,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     meterTitle.textContent = i18n.t('damageMeterTitle');
     meterTotalLabel.textContent = i18n.t('totalDamageLabel');
+    if (statsBtnLabel) statsBtnLabel.textContent = i18n.t('shipStatsBtn');
+    if (shipStatsTitle) shipStatsTitle.textContent = i18n.t('shipStatsTitle');
 
     gameoverTitle.textContent = i18n.t('gameOverTitle');
     gameoverSub.textContent = i18n.t('gameOverSubtitle');
@@ -183,6 +196,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       card.innerHTML = `
         <span class="ship-card-selected-tag">${i18n.t('shipSelectedBadge')}</span>
+        ${ship.isRare ? `<span class="ship-card-rare-tag">${i18n.t('shipRareBadge')}</span>` : ''}
         <div class="ship-canvas-wrap">
           <canvas width="54" height="54"></canvas>
         </div>
@@ -231,12 +245,54 @@ window.addEventListener('DOMContentLoaded', () => {
   meterToggleBtn.addEventListener('click', () => {
     sound.playCardSelect();
     damageMeterPanel.classList.toggle('hidden');
+    if (!damageMeterPanel.classList.contains('hidden') && shipStatsPanel) {
+      shipStatsPanel.classList.add('hidden');
+    }
   });
 
   meterCloseBtn.addEventListener('click', () => {
     sound.playCardSelect();
     damageMeterPanel.classList.add('hidden');
   });
+
+  // Real-Time Ship Attributes Toggle Handlers
+  if (statsToggleBtn) {
+    statsToggleBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      shipStatsPanel.classList.toggle('hidden');
+      if (!shipStatsPanel.classList.contains('hidden')) {
+        damageMeterPanel.classList.add('hidden');
+      }
+    });
+  }
+
+  if (statsCloseBtn) {
+    statsCloseBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      shipStatsPanel.classList.add('hidden');
+    });
+  }
+
+  // HUD Return to Main Menu Button
+  if (hudHomeBtn) {
+    hudHomeBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      if (confirm(i18n.t('confirmQuit'))) {
+        game.state = 'start';
+        // Convert current score to gold vault
+        if (game.score > 0) {
+          const rawGold = Math.floor(game.score / 10);
+          meta.addGold(rawGold);
+        }
+        startScreen.classList.add('active');
+        levelUpModal.classList.remove('active');
+        gameOverModal.classList.remove('active');
+        chestModal.classList.remove('active');
+        damageMeterPanel.classList.add('hidden');
+        if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
+      }
+    });
+  }
 
   // Render Hangar Permanent Tech Upgrades
   function renderHangar() {
@@ -308,20 +364,47 @@ window.addEventListener('DOMContentLoaded', () => {
     hangarModal.classList.remove('active');
   });
 
+  // Theme Toggle Engine (Dark / Light)
+  let currentTheme = localStorage.getItem('dopamine_theme') || 'dark';
+  function applyTheme(theme) {
+    currentTheme = theme;
+    localStorage.setItem('dopamine_theme', theme);
+    if (theme === 'light') {
+      document.body.classList.add('theme-light');
+      if (startThemeBtn) startThemeBtn.textContent = i18n.t('themeLight');
+      if (hudThemeBtn) hudThemeBtn.textContent = '☀️';
+    } else {
+      document.body.classList.remove('theme-light');
+      if (startThemeBtn) startThemeBtn.textContent = i18n.t('themeDark');
+      if (hudThemeBtn) hudThemeBtn.textContent = '🌙';
+    }
+  }
+
+  function toggleTheme() {
+    sound.playCardSelect();
+    applyTheme(currentTheme === 'dark' ? 'light' : 'dark');
+  }
+
+  if (startThemeBtn) startThemeBtn.addEventListener('click', toggleTheme);
+  if (hudThemeBtn) hudThemeBtn.addEventListener('click', toggleTheme);
+
   // Language selectors
   langBtnVi.addEventListener('click', () => {
     sound.playCardSelect();
     applyLanguage('vi');
+    applyTheme(currentTheme);
   });
 
   langBtnEn.addEventListener('click', () => {
     sound.playCardSelect();
     applyLanguage('en');
+    applyTheme(currentTheme);
   });
 
   hudLangBtn.addEventListener('click', () => {
     sound.playCardSelect();
     applyLanguage(i18n.current === 'vi' ? 'en' : 'vi');
+    applyTheme(currentTheme);
   });
 
   // Screen Resizing
@@ -497,8 +580,9 @@ window.addEventListener('DOMContentLoaded', () => {
     game.restart();
   });
 
-  // Initial language application
+  // Initial language & theme application
   applyLanguage(i18n.current);
+  applyTheme(currentTheme);
 
   // Main Animation Loop
   let lastTime = performance.now();
@@ -595,6 +679,51 @@ window.addEventListener('DOMContentLoaded', () => {
           `;
         }).join('');
       }
+    }
+
+    // Real-Time Ship Attributes Panel Update
+    if (shipStatsPanel && !shipStatsPanel.classList.contains('hidden')) {
+      const sp = game.player;
+      const totalSpeed = Math.round(sp.baseSpeed * sp.stats.speedMult * (game.isFrenzy ? 1.45 : 1.0));
+      const dmgBonus = Math.round((sp.stats.damageMult - 1.0 + (sp.berserkerDmgBonus || 0)) * 100);
+      const atkSpdBonus = Math.round((sp.stats.fireRateMult - 1.0 + (sp.berserkerAtkSpdBonus || 0)) * 100);
+      const critChancePct = Math.round(sp.stats.critChance * 100);
+      const critDmgMult = (sp.stats.critMult).toFixed(1);
+      const magnetRange = Math.round(sp.magnetRadius);
+      const visionZoom = Math.round(100 / (game.cameraZoom || 1.0));
+
+      shipStatsList.innerHTML = `
+        <div class="ship-stat-box">
+          <span class="stat-box-label">MÁU / GIÁP (HP)</span>
+          <span class="stat-box-val" style="color: #22c55e;">${Math.round(sp.hp)} / ${sp.maxHp}</span>
+          <span class="stat-box-sub">${sp.revivesLeft > 0 ? `💖 ${sp.revivesLeft} Tái sinh` : 'Chưa có bảo hiểm'}</span>
+        </div>
+        <div class="ship-stat-box">
+          <span class="stat-box-label">HỎA LỰC (DAMAGE)</span>
+          <span class="stat-box-val" style="color: #ef4444;">x${sp.stats.damageMult.toFixed(2)}</span>
+          <span class="stat-box-sub">${dmgBonus >= 0 ? `+${dmgBonus}% Buff` : `${dmgBonus}%`}</span>
+        </div>
+        <div class="ship-stat-box">
+          <span class="stat-box-label">TỐC ĐỘ DI CHUYỂN</span>
+          <span class="stat-box-val" style="color: #38bdf8;">${totalSpeed} px/s</span>
+          <span class="stat-box-sub">${game.isFrenzy ? '⚡ FRENZY BOOST' : 'Động cơ ổn định'}</span>
+        </div>
+        <div class="ship-stat-box">
+          <span class="stat-box-label">TỐC ĐỘ BẮN / XẢ ĐẠN</span>
+          <span class="stat-box-val" style="color: #facc15;">x${sp.stats.fireRateMult.toFixed(2)}</span>
+          <span class="stat-box-sub">${atkSpdBonus >= 0 ? `+${atkSpdBonus}% Tốc đánh` : ''}</span>
+        </div>
+        <div class="ship-stat-box">
+          <span class="stat-box-label">TỈ LỆ CHÍ MẠNG</span>
+          <span class="stat-box-val" style="color: #f43f5e;">${critChancePct}%</span>
+          <span class="stat-box-sub">Sát thương x${critDmgMult}</span>
+        </div>
+        <div class="ship-stat-box">
+          <span class="stat-box-label">TẦM HÚT NGỌC & TẦM NHÌN</span>
+          <span class="stat-box-val" style="color: #a855f7;">${magnetRange} px</span>
+          <span class="stat-box-sub">🔭 Tầm nhìn: ${visionZoom}%</span>
+        </div>
+      `;
     }
 
     requestAnimationFrame(gameLoop);

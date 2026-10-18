@@ -34,8 +34,10 @@
               <div id="hp-bar"></div>
             </div>
           </div>
-          <!-- Mid-game quick language switcher -->
+          <!-- Mid-game quick language, theme, and exit to menu switchers -->
           <div class="hud-lang-toggle">
+            <button id="hud-home-btn" class="hud-lang-badge" title="Thoát ra Menu chính / Quit to Menu">🏠</button>
+            <button id="hud-theme-btn" class="hud-lang-badge" title="Đổi giao diện Sáng / Tối">🌙</button>
             <button id="hud-lang-btn" class="hud-lang-badge" title="Đổi ngôn ngữ / Change Language">🇻🇳 VI</button>
           </div>
         </div>
@@ -57,10 +59,34 @@
       </div>
     </div>
 
-    <!-- REAL-TIME DAMAGE METER (COLLAPSED BUTTON) -->
-    <div id="meter-toggle-btn" class="meter-toggle-btn" title="Xem sát thương chi tiết / Damage Breakdown">
-      <span class="meter-btn-icon">📊</span>
-      <span class="meter-btn-label">DPS</span>
+    <!-- REAL-TIME BUTTONS ROW (DPS + SHIP STATS) -->
+    <div class="side-meters-group">
+      <!-- REAL-TIME DAMAGE METER (COLLAPSED BUTTON) -->
+      <div id="meter-toggle-btn" class="meter-toggle-btn" title="Xem sát thương chi tiết / Damage Breakdown">
+        <span class="meter-btn-icon">📊</span>
+        <span class="meter-btn-label">DPS</span>
+      </div>
+
+      <!-- REAL-TIME SHIP ATTRIBUTES (COLLAPSED BUTTON) -->
+      <div id="stats-toggle-btn" class="meter-toggle-btn stats-btn" title="Xem chỉ số phi thuyền Real-time">
+        <span class="meter-btn-icon">🚀</span>
+        <span id="stats-btn-label" class="meter-btn-label">CHỈ SỐ</span>
+      </div>
+    </div>
+
+    <!-- REAL-TIME SHIP STATS (EXPANDED PANEL) -->
+    <div id="ship-stats-panel" class="damage-meter-panel hidden">
+      <div class="meter-header">
+        <div class="meter-header-left">
+          <span class="meter-header-icon">🚀</span>
+          <span id="ship-stats-title" class="meter-header-title">CHỈ SỐ PHI THUYỀN REAL-TIME</span>
+        </div>
+        <button id="stats-close-btn" class="meter-close-btn" title="Thu gọn / Collapse">✕</button>
+      </div>
+
+      <div id="ship-stats-list" class="ship-stats-grid">
+        <!-- Rendered dynamically with real-time stats -->
+      </div>
     </div>
 
     <!-- REAL-TIME DAMAGE METER (EXPANDED PANEL) -->
@@ -103,13 +129,14 @@
     <!-- START SCREEN MODAL -->
     <div id="start-screen" class="modal-overlay active">
       <div class="lang-selector-bar">
+        <button id="start-theme-btn" class="lang-pill" title="Chuyển chế độ Sáng / Tối">🌙 TỐI</button>
         <button id="lang-btn-vi" class="lang-pill active">🇻🇳 Tiếng Việt</button>
         <button id="lang-btn-en" class="lang-pill">🇬🇧 English</button>
       </div>
 
       <div class="logo-container">
-        <h1 id="start-title" class="game-logo">CHIẾN BINH<br>DOPAMINE</h1>
-        <div id="start-sub" class="sub-tagline">⚡ BÙNG NỔ CỰC KHOÁI ⚡</div>
+        <h1 id="start-title" class="game-logo">CHIẾN HẠM<br>VÔ CỰC</h1>
+        <div id="start-sub" class="sub-tagline">⚡ BÙNG NỔ DOPAMINE ⚡</div>
       </div>
 
       <!-- STARSHIP SELECTION SECTION -->

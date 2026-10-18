@@ -29,6 +29,10 @@ export class ArtEngine {
       shipMain = '#facc15';
       shipAccent = '#fde047';
       shipGlow = '#d97706';
+    } else if (shipId === 'nebula') {
+      shipMain = '#a855f7';
+      shipAccent = '#c084fc';
+      shipGlow = '#7e22ce';
     }
 
     const mainColor = isFrenzy ? '#f43f5e' : shipMain;
@@ -151,6 +155,32 @@ export class ArtEngine {
       ctx.lineTo(8, -12);
       ctx.moveTo(18, 22);
       ctx.lineTo(8, 12);
+      ctx.stroke();
+
+    } else if (shipId === 'nebula') {
+      // 🌌 NEBULA VANGUARD: Dual-Fuselage Void Interceptor with Singularity Stabilizer
+      ctx.beginPath();
+      ctx.moveTo(28, 0);          // Hyper-needle
+      ctx.lineTo(16, -8);
+      ctx.lineTo(22, -18);        // Left forward fin
+      ctx.lineTo(2, -24);         // Outer void blade
+      ctx.lineTo(-8, -18);
+      ctx.lineTo(-6, -8);
+      ctx.lineTo(-15, 0);         // Void core
+      ctx.lineTo(-6, 8);
+      ctx.lineTo(-8, 18);
+      ctx.lineTo(2, 24);          // Right outer blade
+      ctx.lineTo(22, 18);         // Right forward fin
+      ctx.lineTo(16, 8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Void Warp Rings
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 9, 0, Math.PI * 2);
       ctx.stroke();
 
     } else if (shipId === 'carrier') {
@@ -560,7 +590,7 @@ export class ArtEngine {
   }
 
   // Draw High-Tech Futuristic Cyber Floor Grid with Parallax Stars
-  drawArena(ctx, camera, width, height, animTime) {
+  drawArena(ctx, camera, width, height, animTime, isLight = false) {
     const gridSize = 90;
     const startX = Math.floor(camera.x / gridSize) * gridSize;
     const startY = Math.floor(camera.y / gridSize) * gridSize;
@@ -568,7 +598,7 @@ export class ArtEngine {
     const endY = startY + height + gridSize * 2;
 
     // Ambient Cyber Grid Lines
-    ctx.strokeStyle = 'rgba(14, 165, 233, 0.055)';
+    ctx.strokeStyle = isLight ? 'rgba(14, 165, 233, 0.15)' : 'rgba(14, 165, 233, 0.055)';
     ctx.lineWidth = 1.2;
 
     for (let x = startX; x <= endX; x += gridSize) {
@@ -590,7 +620,9 @@ export class ArtEngine {
       for (let y = startY; y <= endY; y += gridSize * 2) {
         const pulse = Math.sin((x * 0.01 + y * 0.01) + animTime * 2);
         if (pulse > 0.4) {
-          ctx.fillStyle = `rgba(0, 242, 254, ${(pulse - 0.4) * 0.35})`;
+          ctx.fillStyle = isLight 
+            ? `rgba(2, 132, 199, ${(pulse - 0.4) * 0.45})` 
+            : `rgba(0, 242, 254, ${(pulse - 0.4) * 0.35})`;
           ctx.fillRect(x - 2, y - 2, 4, 4);
         }
       }

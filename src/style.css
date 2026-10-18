@@ -9,13 +9,38 @@
   touch-action: none;
 }
 
+:root {
+  --bg-main: #030712;
+  --bg-radial: radial-gradient(circle at center, #0a1128 0%, #030712 100%);
+  --modal-bg: rgba(3, 7, 18, 0.88);
+  --card-bg: rgba(15, 23, 42, 0.88);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --text-main: #f8fafc;
+  --text-sub: #94a3b8;
+  --panel-border: rgba(255, 255, 255, 0.15);
+  --scanline-opacity: 0.25;
+}
+
+body.theme-light {
+  --bg-main: #f1f5f9;
+  --bg-radial: radial-gradient(circle at center, #e0f2fe 0%, #f1f5f9 100%);
+  --modal-bg: rgba(248, 250, 252, 0.92);
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --card-border: rgba(14, 165, 233, 0.25);
+  --text-main: #0f172a;
+  --text-sub: #475569;
+  --panel-border: rgba(14, 165, 233, 0.35);
+  --scanline-opacity: 0.05;
+}
+
 html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #030712;
+  background-color: var(--bg-main);
   font-family: 'Outfit', sans-serif;
-  color: #f8fafc;
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #app-container {
@@ -25,8 +50,9 @@ html, body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: radial-gradient(circle at center, #0a1128 0%, #030712 100%);
+  background: var(--bg-radial);
   overflow: hidden;
+  transition: background 0.3s ease;
 }
 
 /* Subtle Sci-fi Scanlines */
@@ -35,7 +61,7 @@ html, body {
   display: block;
   position: absolute;
   top: 0; left: 0; bottom: 0; right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, var(--scanline-opacity)) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
   z-index: 5;
   background-size: 100% 3px, 6px 100%;
   pointer-events: none;
@@ -242,17 +268,18 @@ html, body {
 .modal-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(3, 7, 18, 0.82);
+  background: var(--modal-bg);
   backdrop-filter: blur(14px);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 50;
-  padding: 20px;
+  padding: 16px;
+  overflow-y: auto;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.25s ease-out;
+  transition: opacity 0.25s ease-out, background 0.3s ease;
 }
 
 .modal-overlay.active {
@@ -542,27 +569,35 @@ html, body {
 }
 
 .logo-container {
-  margin-bottom: 24px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .game-logo {
-  font-size: 38px;
+  font-size: clamp(28px, 6vw, 42px);
   font-weight: 900;
   letter-spacing: 2px;
-  line-height: 1.1;
+  line-height: 1.25;
+  padding: 4px 16px 8px 16px;
   background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #f43f5e 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 30px rgba(0, 242, 254, 0.4);
+  text-shadow: 0 0 30px rgba(0, 242, 254, 0.35);
+  display: inline-block;
 }
 
 .sub-tagline {
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 3px;
   font-weight: 800;
   color: #f43f5e;
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .control-tips {
@@ -894,25 +929,44 @@ html, body {
   animation: pulse-danger 0.4s infinite alternate;
 }
 
-/* REAL-TIME DAMAGE METER (COLLAPSED BUTTON) */
-.meter-toggle-btn {
+/* REAL-TIME BUTTONS ROW (DPS + SHIP STATS) */
+.side-meters-group {
   position: absolute;
   top: 96px;
   left: 16px;
-  background: rgba(15, 23, 42, 0.85);
+  display: flex;
+  gap: 8px;
+  z-index: 20;
+}
+
+.meter-toggle-btn {
+  background: var(--card-bg, rgba(15, 23, 42, 0.85));
   border: 1.5px solid rgba(56, 189, 248, 0.45);
   backdrop-filter: blur(8px);
-  padding: 6px 14px;
+  padding: 6px 13px;
   border-radius: 20px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
-  z-index: 20;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 10px rgba(56, 189, 248, 0.25);
   transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+.stats-btn {
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), 0 0 10px rgba(168, 85, 247, 0.25);
+}
+
+.stats-btn .meter-btn-label {
+  color: #c084fc;
+}
+
+.stats-btn:hover, .stats-btn:active {
+  border-color: #a855f7;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.5);
 }
 
 .meter-toggle-btn:hover, .meter-toggle-btn:active {
@@ -922,14 +976,52 @@ html, body {
 }
 
 .meter-btn-icon {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .meter-btn-label {
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 900;
   color: #38bdf8;
   letter-spacing: 0.5px;
+}
+
+/* REAL-TIME SHIP STATS GRID */
+.ship-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ship-stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-box-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-box-val {
+  font-size: 15px;
+  font-weight: 900;
+  color: #ffffff;
+}
+
+.stat-box-sub {
+  font-size: 9px;
+  color: #38bdf8;
+  font-weight: 600;
 }
 
 /* REAL-TIME DAMAGE METER (EXPANDED PANEL) */
@@ -1135,8 +1227,8 @@ html, body {
 
 .ship-card {
   position: relative;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
   border-radius: 14px;
   padding: 10px;
   cursor: pointer;
@@ -1146,6 +1238,28 @@ html, body {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: hidden;
   user-select: none;
+}
+
+@media (max-height: 780px) {
+  .ship-select-container {
+    margin: 6px 0 10px 0;
+  }
+  .logo-container {
+    margin-bottom: 8px;
+  }
+  .game-logo {
+    font-size: 28px;
+  }
+  .ship-selector-box {
+    gap: 8px;
+  }
+  .ship-card {
+    padding: 8px;
+  }
+  .ship-card canvas {
+    width: 48px !important;
+    height: 48px !important;
+  }
 }
 
 .ship-card:hover {
@@ -1176,6 +1290,20 @@ html, body {
 
 .ship-card.active .ship-card-selected-tag {
   display: block;
+}
+
+.ship-card-rare-tag {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-size: 9px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #a855f7, #ec4899);
+  color: #ffffff;
+  padding: 1px 6px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+  letter-spacing: 0.5px;
 }
 
 .ship-canvas-wrap {

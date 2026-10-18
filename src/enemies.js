@@ -11,35 +11,35 @@ export class Enemy {
 
     if (type === 'crawler') {
       this.radius = 12;
-      this.speed = (75 + Math.random() * 25) * waveMultiplier;
-      this.maxHp = 25 * waveMultiplier;
+      this.speed = (85 + Math.random() * 30) * waveMultiplier;
+      this.maxHp = 38 * waveMultiplier; // Máu tăng từ 25 -> 38
       this.color = '#ef4444'; // Red
       this.gemValue = 1;
-      this.damage = 10;
+      this.damage = 14; // Dame tăng từ 10 -> 14
       this.score = 10;
     } else if (type === 'speeder') {
       this.radius = 9;
-      this.speed = (130 + Math.random() * 30) * waveMultiplier;
-      this.maxHp = 14 * waveMultiplier;
+      this.speed = (145 + Math.random() * 35) * waveMultiplier;
+      this.maxHp = 22 * waveMultiplier; // Máu tăng từ 14 -> 22
       this.color = '#d946ef'; // Magenta
       this.gemValue = 2;
-      this.damage = 7;
+      this.damage = 10; // Dame tăng từ 7 -> 10
       this.score = 15;
     } else if (type === 'brute') {
       this.radius = 22;
-      this.speed = 50 * waveMultiplier;
-      this.maxHp = 180 * waveMultiplier;
+      this.speed = 60 * waveMultiplier;
+      this.maxHp = 260 * waveMultiplier; // Máu tăng từ 180 -> 260
       this.color = '#06b6d4'; // Cyan
       this.gemValue = 10;
-      this.damage = 22;
+      this.damage = 30; // Dame tăng từ 22 -> 30
       this.score = 50;
     } else if (type === 'boss') {
       this.radius = 36;
-      this.speed = 55;
-      this.maxHp = 1200 * waveMultiplier;
+      this.speed = 65;
+      this.maxHp = 1800 * waveMultiplier; // Máu Boss tăng từ 1200 -> 1800
       this.color = '#eab308'; // Gold
       this.gemValue = 50;
-      this.damage = 35;
+      this.damage = 45; // Dame Boss tăng từ 35 -> 45
       this.score = 500;
       this.isBoss = true;
     }
@@ -120,9 +120,9 @@ export class WaveSpawner {
     this.gameTime = 0;
     this.spawnTimer = 0;
     this.hordeTimer = 0;
-    this.nextHordeTime = 45; // First horde at 45 seconds
+    this.nextHordeTime = 35; // Bầy quái ập vào ngay từ giây 35
     this.bossTimer = 0;
-    this.nextBossTime = 90;  // First boss at 90 seconds
+    this.nextBossTime = 60;  // Boss xuất hiện sớm ngay ở giây 60
   }
 
   update(dt, player) {
@@ -131,8 +131,8 @@ export class WaveSpawner {
     this.hordeTimer += dt;
     this.bossTimer += dt;
 
-    const waveMult = 1.0 + (this.gameTime / 60) * 0.35;
-    const spawnInterval = Math.max(0.18, 0.95 - (this.gameTime / 60) * 0.12);
+    const waveMult = 1.0 + (this.gameTime / 60) * 0.45; // Tăng tiến độ khó nhanh hơn
+    const spawnInterval = Math.max(0.12, 0.75 - (this.gameTime / 60) * 0.14); // Xả quái dày đặc hơn
 
     // Regular Spawning
     if (this.spawnTimer >= spawnInterval) {
@@ -143,14 +143,14 @@ export class WaveSpawner {
     // Horde Event Spawning
     if (this.hordeTimer >= this.nextHordeTime) {
       this.hordeTimer = 0;
-      this.nextHordeTime = 60; // Every 60s thereafter
+      this.nextHordeTime = 50; // Mỗi 50s bầy quái lại tràn vào
       this.triggerHorde(player, waveMult);
     }
 
     // Boss Spawning
     if (this.bossTimer >= this.nextBossTime) {
       this.bossTimer = 0;
-      this.nextBossTime = 120; // Every 2 minutes
+      this.nextBossTime = 90; // Mỗi 90s có 1 Boss
       this.spawnBoss(player, waveMult);
     }
   }

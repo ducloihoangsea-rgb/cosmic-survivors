@@ -20,7 +20,7 @@ export class Game {
     this.selectedShipId = localStorage.getItem('dopamine_ship') || 'juggernaut';
 
     // Game State
-    this.state = 'playing'; // 'playing', 'levelup', 'chest', 'gameover'
+    this.state = 'start'; // 'start', 'playing', 'levelup', 'chest', 'gameover'
     this.gameTime = 0;
     this.kills = 0;
     this.score = 0;
@@ -56,6 +56,7 @@ export class Game {
 
     // Camera & Screen Shake
     this.camera = { x: 0, y: 0 };
+    this.cameraZoom = 1.0;
     this.screenShake = 0;
     this.freezeFrames = 0;
 
@@ -197,7 +198,9 @@ export class Game {
     this.totalDamageDealt += damage;
 
     enemy.takeDamage(damage);
-    this.floatingTexts.push(new FloatingText(enemy.x, enemy.y, damage.toString(), '#ffffff', isCrit ? 22 : 16, isCrit));
+    if (this.floatingTexts.length < 50 || isCrit) {
+      this.floatingTexts.push(new FloatingText(enemy.x, enemy.y, damage.toString(), '#ffffff', isCrit ? 22 : 16, isCrit));
+    }
 
     if (isCrit) {
       sound.playCrit();
@@ -206,8 +209,10 @@ export class Game {
       sound.playHit();
     }
 
-    for (let i = 0; i < (isCrit ? 6 : 3); i++) {
-      this.particles.push(new Particle(enemy.x, enemy.y, enemy.color, 4, 3.5));
+    for (let i = 0; i < (isCrit ? 5 : 2); i++) {
+      if (this.particles.length < 180) {
+        this.particles.push(new Particle(enemy.x, enemy.y, enemy.color, 4, 3.5));
+      }
     }
 
     if (enemy.isDead) {
@@ -485,10 +490,17 @@ export class Game {
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     ctx.save();
+    // Canvas Center Zoom
+    const zoom = this.cameraZoom || 1.0;
+    ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
+    ctx.scale(zoom, zoom);
+    ctx.translate(-this.canvas.width / 2, -this.canvas.height / 2);
+
     ctx.translate(-this.camera.x, -this.camera.y);
 
     // Draw Infinite Arena
-    art.drawArena(ctx, this.camera, this.canvas.width, this.canvas.height, this.gameTime);
+    const isLight = document.body.classList.contains('theme-light');
+    art.drawArena(ctx, this.camera, this.canvas.width / zoom, this.canvas.height / zoom, this.gameTime, isLight);
 
     // Draw Lucky Chests
     for (const c of this.chests) {
@@ -549,6 +561,7 @@ export class Game {
     this.dopamineMeter = 0;
     this.ultimateCharge = 0;
     this.isFrenzy = false;
+    this.cameraZoom = 1.0;
     this.damageStats = {
       blaster: 0,
       orbs: 0,

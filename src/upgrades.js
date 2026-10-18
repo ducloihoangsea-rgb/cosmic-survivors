@@ -300,6 +300,21 @@ export class UpgradeSystem {
     });
 
     pool.push({
+      id: 'eaglesight',
+      categoryKey: 'support',
+      category: i18n.t('categorySupport'),
+      title: i18n.t('eaglesightTitle'),
+      desc: i18n.t('eaglesightDesc'),
+      rarityKey: rRare.key,
+      rarity: rRare.label,
+      icon: '👁️',
+      apply: () => {
+        this.game.cameraZoom = Math.max(0.65, (this.game.cameraZoom || 1.0) * 0.82);
+        player.stats.visionBonus = (player.stats.visionBonus || 0) + 0.35;
+      }
+    });
+
+    pool.push({
       id: 'criticalsurge',
       categoryKey: 'support',
       category: i18n.t('categorySupport'),

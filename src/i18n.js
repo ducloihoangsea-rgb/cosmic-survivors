@@ -6,6 +6,8 @@ export const translations = {
     subTagline: '⚡ DOPAMINE OVERLOAD ⚡',
     startBtn: 'START HUNTING',
     hangarBtn: '⚙️ SHIP HANGAR',
+    themeDark: '🌙 DARK',
+    themeLight: '☀️ LIGHT',
     tipMobile: '📱 Mobile: Drag thumb to move',
     tipPc: '💻 PC: WASD to move • Space: EMP Shockwave',
 
@@ -68,10 +70,23 @@ export const translations = {
     shipCarrierTrait: '👑 Fleet Synergy',
     shipCarrierTraitDesc: 'Starts with Wingmen Drones AND Heat-Seeking Missiles! Drones fire +35% faster with massive vacuum radius.',
 
+    // Nebula (Rare Twin-Stat Ship)
+    shipNebulaName: 'NEBULA VANGUARD',
+    shipNebulaRole: '🌌 ELITE HYBRID / HIGH ATK & SPEED',
+    shipNebulaDesc: 'Experimental void interceptor with dual over-tuned thrusters and twin combat systems.',
+    shipNebulaTrait: '⚡ Void Overdrive',
+    shipNebulaTraitDesc: 'RARE 2-STAT SUPREME: Boasts both Extreme Speed (275) & Heavy Attack (+20% dmg, +15% atk speed)! Starts with Chain Lightning AND Plasma Blaster.',
+
     statHp: 'HULL',
     statDmg: 'DAMAGE',
     statSpd: 'SPEED',
     statDiff: 'RANGE',
+    shipRareBadge: '⭐ RARE',
+
+    hudHomeBtn: '🏠 MENU',
+    confirmQuit: 'Quit to Main Menu? Current run progress will be converted to gold.',
+    shipStatsBtn: 'STATS',
+    shipStatsTitle: 'SHIP REAL-TIME ATTRIBUTES',
 
     // Weapons
     blasterTitle: 'Plasma Blaster',
@@ -112,6 +127,8 @@ export const translations = {
     gravitywellDesc: '+50% Gem Vacuum range. Sucks XP from farther away.',
     warpengineTitle: 'Thruster Overdrive',
     warpengineDesc: '+20% Movement Speed. Outrun aggressive mobs effortlessly.',
+    eaglesightTitle: 'Eagle Vision Radar',
+    eaglesightDesc: '+35% Expanded Vision Zoom & Radar detection range.',
     criticalsurgeTitle: 'Precision Optics',
     criticalsurgeDesc: '+15% Critical Chance, +40% Critical Damage multipliers.',
     nanorepairTitle: 'Emergency Stimpack',
@@ -192,6 +209,8 @@ export const translations = {
     subTagline: '⚡ BÙNG NỔ DOPAMINE ⚡',
     startBtn: 'BẮT ĐẦU SĂN',
     hangarBtn: '⚙️ XƯỞNG PHI THUYỀN',
+    themeDark: '🌙 TỐI',
+    themeLight: '☀️ SÁNG',
     tipMobile: '📱 Di động: Kéo ngón cái để lướt • Nút EMP',
     tipPc: '💻 PC: Phím WASD • Phím Cách (Space): Sóng Chấn Động EMP',
 
@@ -254,10 +273,23 @@ export const translations = {
     shipCarrierTrait: '👑 Hạm Đội Thần Tốc',
     shipCarrierTraitDesc: 'Khởi đầu sở hữu NGAY CẢ HAI: Drone Đồng Minh và Tên Lửa Tầm Nhiệt! Drone xả đạn nhanh hơn +35%, phễu hút ngọc cực rộng.',
 
+    // Nebula (Tàu Hiếm 2 Chỉ Số Vượt Trội)
+    shipNebulaName: 'TIÊN PHONG NEBULA',
+    shipNebulaRole: '🌌 CHIẾN HẠM HYBRID HIẾM / CÔNG & TỐC CỰC HẠN',
+    shipNebulaDesc: 'Chiến hạm nguyên mẫu Hư Không sở hữu động cơ phản lực kép và 2 hệ thống hỏa lực tối tân.',
+    shipNebulaTrait: '⚡ Siêu Tải Hư Không',
+    shipNebulaTraitDesc: 'TÀU HIẾM 2 CHỈ SỐ VƯỢT TRỘI: Đồng thời sở hữu Tốc Độ Đỉnh Cao (275) VÀ Hỏa Lực Khủng (+20% công, +15% tốc đánh)! Khởi đầu sở hữu Sét Chuỗi VÀ Súng Plasma.',
+
     statHp: 'GIÁP',
     statDmg: 'CÔNG',
     statSpd: 'TỐC ĐỘ',
     statDiff: 'TẦM BẮN',
+    shipRareBadge: '⭐ HIẾM',
+
+    hudHomeBtn: '🏠 MENU',
+    confirmQuit: 'Bạn có chắc chắn muốn thoát về Menu chính? Điểm số hiện tại sẽ được quy đổi thành Vàng.',
+    shipStatsBtn: 'CHỈ SỐ',
+    shipStatsTitle: 'CHỈ SỐ PHI THUYỀN REAL-TIME',
 
     // Weapons
     blasterTitle: 'Súng Phóng Plasma',
@@ -298,6 +330,8 @@ export const translations = {
     gravitywellDesc: '+50% Bán kính hút ngọc kinh nghiệm từ xa cực đã.',
     warpengineTitle: 'Động Cơ Tên Lửa',
     warpengineDesc: '+20% Tốc độ di chuyển. Lướt gió luồn lách thoát vòng vây.',
+    eaglesightTitle: 'Radar Mắt Đại Bàng',
+    eaglesightDesc: '+35% Tầm nhìn bao quát đấu trường & Tăng phạm vi phát hiện quái.',
     criticalsurgeTitle: 'Kính Ngắm Chuẩn Xác',
     criticalsurgeDesc: '+15% Tỷ lệ chí mạng, +40% Sát thương đòn đánh chí mạng.',
     nanorepairTitle: 'Tiêm Hồi Máu Khẩn Cấp',

@@ -168,8 +168,16 @@ export class WeaponManager {
 
   fireBlaster(player, enemies) {
     if (enemies.length === 0) return;
-    const sorted = [...enemies].sort((a, b) => Math.hypot(a.x - player.x, a.y - player.y) - Math.hypot(b.x - player.x, b.y - player.y));
-    const target = sorted[0];
+    let target = enemies[0];
+    let minDistSq = (target.x - player.x) ** 2 + (target.y - player.y) ** 2;
+    for (let i = 1; i < enemies.length; i++) {
+      const e = enemies[i];
+      const distSq = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
+      if (distSq < minDistSq) {
+        minDistSq = distSq;
+        target = e;
+      }
+    }
     const angle = Math.atan2(target.y - player.y, target.x - player.x);
     const bLvl = this.weapons.blaster.level;
     const baseDamage = 18 + bLvl * 10;
