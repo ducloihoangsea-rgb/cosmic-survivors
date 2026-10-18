@@ -1335,13 +1335,7 @@ body.in-modal #horde-alert {
   line-height: 1.35;
 }
 
-/* Threat Auto-Fade on Mobile & Desktop: khi quái áp sát thì tự mờ để chống điểm mù */
-.threat-fade {
-  opacity: 0.15 !important;
-  filter: blur(1px);
-  pointer-events: none !important;
-  transition: opacity 0.22s ease-out, filter 0.22s ease-out;
-}
+
 
 .hangar-gold-pill {
   background: rgba(30, 41, 59, 0.8);

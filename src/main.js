@@ -1399,33 +1399,7 @@ window.addEventListener('DOMContentLoaded', () => {
       `;
     }
 
-    // Mobile Threat Auto-Fade: Tự làm mờ (opacity 0.15) khi quái vật áp sát < 230px để chống điểm mù
-    const isAnyPanelOpen = (!damageMeterPanel.classList.contains('hidden')) || (shipStatsPanel && !shipStatsPanel.classList.contains('hidden'));
-    if (isAnyPanelOpen && game.state === 'playing' && game.player) {
-      let isThreatNear = false;
-      const px = game.player.x;
-      const py = game.player.y;
-      const thresholdSq = 230 * 230;
-      const enemies = game.enemies || [];
-      for (let i = 0; i < enemies.length; i++) {
-        const e = enemies[i];
-        if (e.isDead) continue;
-        const dx = e.x - px;
-        const dy = e.y - py;
-        if (dx * dx + dy * dy < thresholdSq) {
-          isThreatNear = true;
-          break;
-        }
-      }
 
-      if (isThreatNear) {
-        damageMeterPanel.classList.add('threat-fade');
-        if (shipStatsPanel) shipStatsPanel.classList.add('threat-fade');
-      } else {
-        damageMeterPanel.classList.remove('threat-fade');
-        if (shipStatsPanel) shipStatsPanel.classList.remove('threat-fade');
-      }
-    }
 
     requestAnimationFrame(gameLoop);
   }
