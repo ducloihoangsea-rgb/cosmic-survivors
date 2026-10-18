@@ -147,10 +147,15 @@ export class Game {
   triggerUltimate() {
     if (this.ultimateCharge >= 100) {
       this.ultimateCharge = 0;
+      
+      // Tất cả chiến hạm đều kích nổ sóng xung kích EMP điện từ toàn màn hình
+      this.weaponManager.triggerEmpShockwave(this.player);
+
       if (this.player.isNovaShield) {
         this.player.triggerNovaBlast(true);
+        this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 50, '⚡ EMP & NOVA SUPERBLAST! ⚡', '#00f2fe', 24, true));
       } else if (this.player.isCarrier) {
-        sound.playEmpShockwave();
+        // Tàu Hàng Không: Nổ sóng EMP tê liệt đồng thời thả 4 Mini Drone cường hóa
         for (let i = 0; i < 4; i++) {
           const angle = (i / 4) * Math.PI * 2;
           const d = new MiniDrone(
@@ -161,10 +166,9 @@ export class Game {
           );
           this.miniDrones.push(d);
         }
-        this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 50, '🛸 OVERCHARGE SWARM! 🛸', '#a855f7', 22, true));
+        this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 50, '⚡ EMP & OVERCHARGE SWARM! ⚡', '#00f2fe', 24, true));
       } else {
-        this.weaponManager.triggerEmpShockwave(this.player);
-        this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 45, '⚡ EMP SHOCKWAVE ⚡', '#00f2fe', 22, true));
+        this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 45, '⚡ EMP SHOCKWAVE ⚡', '#00f2fe', 24, true));
       }
     }
   }

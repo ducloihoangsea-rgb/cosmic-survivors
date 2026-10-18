@@ -163,7 +163,17 @@ export class WeaponManager {
 
   triggerEmpShockwave(player) {
     sound.playEmpShockwave();
-    this.shockwaves.push(new EmpShockwave(player.x, player.y, 140 * player.stats.damageMult));
+    this.shockwaves.push(new EmpShockwave(player.x, player.y, 240 * player.stats.damageMult));
+
+    // Nổ tỏa 40 tia lửa điện và hạt năng lượng cao xoay quanh tàu
+    for (let i = 0; i < 40; i++) {
+      const angle = (i / 40) * Math.PI * 2 + (Math.random() - 0.5) * 0.2;
+      const spd = 180 + Math.random() * 320;
+      const p = new Particle(player.x, player.y, i % 2 === 0 ? '#00f2fe' : '#ffffff', 5, 4, 0.7);
+      p.vx = Math.cos(angle) * spd;
+      p.vy = Math.sin(angle) * spd;
+      this.game.particles.push(p);
+    }
   }
 
   fireBlaster(player, enemies) {
@@ -607,11 +617,13 @@ class EmpShockwave {
     this.x = x;
     this.y = y;
     this.damage = damage;
-    this.radius = 10;
-    this.maxRadius = 380;
-    this.speed = 850;
+    this.radius = 15;
+    this.maxRadius = 520; // Vùng quét sóng rộng khắp màn hình
+    this.speed = 920;
     this.isDead = false;
     this.hitEnemies = new Set();
+    // 10 góc cố định để giật các nhánh sét răng cưa theo vòng sóng
+    this.arcAngles = [0, 0.6, 1.25, 1.9, 2.5, 3.15, 3.75, 4.4, 5.0, 5.65].map(a => a + (Math.random() - 0.5) * 0.25);
   }
 
   update(dt, enemies, game) {
@@ -624,31 +636,80 @@ class EmpShockwave {
     for (const e of enemies) {
       if (this.hitEnemies.has(e)) continue;
       const d = Math.hypot(e.x - this.x, e.y - this.y);
-      if (Math.abs(d - this.radius) < 35) {
+      if (Math.abs(d - this.radius) < 50) {
         this.hitEnemies.add(e);
+        // TÊ LIỆT ĐÓNG BĂNG QUÁI 2.2 GIÂY
+        e.freezeTimer = 2.2;
         game.damageEnemy(e, this.damage, true, 'emp');
+
+        // Đánh văng lùi quái ra xa
         const pushAngle = Math.atan2(e.y - this.y, e.x - this.x);
-        e.x += Math.cos(pushAngle) * 45;
-        e.y += Math.sin(pushAngle) * 45;
+        e.x += Math.cos(pushAngle) * 85;
+        e.y += Math.sin(pushAngle) * 85;
+
+        // Bắn tung các tia điện tích màu xanh neon trên quái
+        for (let p = 0; p < 5; p++) {
+          const sp = new Particle(e.x, e.y, Math.random() > 0.4 ? '#00f2fe' : '#ffffff', 4, 3, 0.45);
+          sp.vx = (Math.random() - 0.5) * 160;
+          sp.vy = (Math.random() - 0.5) * 160;
+          game.particles.push(sp);
+        }
       }
     }
   }
 
   draw(ctx) {
-    const alpha = Math.max(0, 1.0 - this.radius / this.maxRadius);
+    const progress = this.radius / this.maxRadius;
+    const alpha = Math.max(0, 1.0 - progress);
     ctx.save();
-    ctx.strokeStyle = `rgba(0, 242, 254, ${alpha})`;
-    ctx.lineWidth = 6;
 
+    // 1. Quầng hào quang phát sáng điện từ tỏa rộng
+    ctx.shadowColor = '#00f2fe';
+    ctx.shadowBlur = 24;
+
+    // 2. Vành sóng năng lượng tỏa dạng Gradient bán trong suốt
+    const grad = ctx.createRadialGradient(
+      this.x, this.y, Math.max(0, this.radius - 45),
+      this.x, this.y, this.radius
+    );
+    grad.addColorStop(0, 'rgba(0, 242, 254, 0)');
+    grad.addColorStop(0.75, `rgba(0, 242, 254, ${alpha * 0.35})`);
+    grad.addColorStop(1, `rgba(255, 255, 255, ${alpha * 0.85})`);
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 3. Vòng viền điện quang Neon ngoài dày và nét
+    ctx.strokeStyle = `rgba(0, 242, 254, ${alpha * 0.95})`;
+    ctx.lineWidth = 8;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-    ctx.lineWidth = 2;
+    // 4. Lõi trắng cực sáng
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius * 0.96, 0, Math.PI * 2);
+    ctx.arc(this.x, this.y, this.radius * 0.98, 0, Math.PI * 2);
     ctx.stroke();
+
+    // 5. Các tia sét giật zig-zag răng cưa phát ra từ vòng sóng EMP
+    ctx.strokeStyle = `rgba(186, 230, 253, ${alpha * 0.9})`;
+    ctx.lineWidth = 2.5;
+    for (const baseAngle of this.arcAngles) {
+      const r1 = Math.max(0, this.radius - 35);
+      const r2 = this.radius + 20;
+      const midR = (r1 + r2) / 2;
+      const jitterAngle = baseAngle + (Math.sin(this.radius * 0.12 + baseAngle) * 0.15);
+
+      ctx.beginPath();
+      ctx.moveTo(this.x + Math.cos(baseAngle) * r1, this.y + Math.sin(baseAngle) * r1);
+      ctx.lineTo(this.x + Math.cos(jitterAngle) * midR, this.y + Math.sin(jitterAngle) * midR);
+      ctx.lineTo(this.x + Math.cos(baseAngle) * r2, this.y + Math.sin(baseAngle) * r2);
+      ctx.stroke();
+    }
 
     ctx.restore();
   }
