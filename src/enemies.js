@@ -135,9 +135,9 @@ export class WaveSpawner {
     this.gameTime = 0;
     this.spawnTimer = 0;
     this.hordeTimer = 0;
-    this.nextHordeTime = 75; // Đợt tràn đầu tiên ở 75s (đủ thời gian lên cấp 3-4)
+    this.nextHordeTime = 50; // Đợt tràn đầu tiên ở 50s
     this.bossTimer = 0;
-    this.nextBossTime = 135;  // Boss xuất hiện ở phút 2:15
+    this.nextBossTime = 120;  // Boss xuất hiện ở phút thứ 2
   }
 
   update(dt, player) {
@@ -150,9 +150,9 @@ export class WaveSpawner {
     // Độ khó tăng dần theo cấp độ người chơi và thời gian chơi
     const waveMult = 1.0 + (this.gameTime / 60) * 0.20 + (lvl - 1) * 0.08;
 
-    // Tần suất ra quái: Cấp 1 thưa thớt (1.6s một lần). Càng lên cấp cao khoảng cách càng ngắn dần
-    const baseInterval = 1.6;
-    const spawnInterval = Math.max(0.25, baseInterval / (1 + (lvl - 1) * 0.16 + (this.gameTime / 60) * 0.12));
+    // Tần suất ra quái tăng gấp đôi (+100%): Cấp 1 ra quái mỗi ~0.85s (thay vì 1.6s)
+    const baseInterval = 0.85;
+    const spawnInterval = Math.max(0.18, baseInterval / (1 + (lvl - 1) * 0.14 + (this.gameTime / 60) * 0.10));
 
     // Regular Spawning
     if (this.spawnTimer >= spawnInterval) {
@@ -163,14 +163,14 @@ export class WaveSpawner {
     // Horde Event Spawning (chỉ kích hoạt khi đủ thời gian và level >= 3)
     if (this.hordeTimer >= this.nextHordeTime && lvl >= 3) {
       this.hordeTimer = 0;
-      this.nextHordeTime = 65; // Mỗi 65s có 1 đợt quái tràn
+      this.nextHordeTime = 55; // Mỗi 55s có 1 đợt quái tràn
       this.triggerHorde(player, waveMult, lvl);
     }
 
     // Boss Spawning (chỉ kích hoạt khi đủ thời gian và level >= 5)
     if (this.bossTimer >= this.nextBossTime && lvl >= 5) {
       this.bossTimer = 0;
-      this.nextBossTime = 120; // Mỗi 2 phút 1 Siêu Boss
+      this.nextBossTime = 110; // Mỗi 110s có 1 Siêu Boss
       this.spawnBoss(player, waveMult, lvl);
     }
   }
@@ -184,8 +184,8 @@ export class WaveSpawner {
   }
 
   spawnStandardPack(player, waveMult, lvl = 1) {
-    // Số lượng quái mỗi đợt: Cấp 1 chỉ ra 1 quái (thỉnh thoảng 2). Cấp càng cao ra càng đông
-    const packSize = Math.max(1, Math.min(7, Math.floor(1 + (lvl - 1) * 0.35 + (this.gameTime / 90) * 0.25)));
+    // Số lượng quái mỗi đợt tăng 100%: Cấp 1 ra 2-3 quái. Cấp 5-10 tăng lên 5-8 quái
+    const packSize = Math.max(2, Math.min(10, Math.floor(2 + (lvl - 1) * 0.65 + (this.gameTime / 70) * 0.3)));
     for (let i = 0; i < packSize; i++) {
       const p = this.getSpawnPos(player, 380 + Math.random() * 80);
       const rand = Math.random();
@@ -225,8 +225,8 @@ export class WaveSpawner {
 
   triggerHorde(player, waveMult, lvl = 1) {
     this.game.triggerHordeAlert();
-    // Bầy quái tăng dần theo cấp: cấp 3 ra ~20 con, cấp cao ra 50-75 con
-    const count = Math.min(75, Math.floor(18 + (lvl - 1) * 3.5 + waveMult * 5));
+    // Bầy quái tăng 100%: cấp 3 ra ~32-38 con, cấp cao ra 70-95 con
+    const count = Math.min(95, Math.floor(28 + (lvl - 1) * 5 + waveMult * 7));
     for (let i = 0; i < count; i++) {
       const angle = (i / count) * Math.PI * 2;
       const dist = 390 + Math.random() * 80;
