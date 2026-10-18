@@ -519,6 +519,30 @@ export class UpgradeSystem {
     // Red Mythic Pool (1-2% drop rate)
     const mythics = this.getMythicCards();
 
+    // Ship Archetype Synergy Priority (Tăng 3.5x tỉ lệ ra nâng cấp theo hệ tàu)
+    const shipSynergyMap = {
+      rammer: new Set(['thrust', 'juggernaut', 'drill', 'spikedthorns', 'crashnova', 'orbs']),
+      serpent: new Set(['growsegments', 'toxicexhaust', 'spikedthorns', 'irondragon', 'glaive']),
+      novashield: new Set(['energycore', 'burnfield', 'immortality', 'nanorepair'])
+    };
+    const preferredSynergies = shipSynergyMap[player.shipId] || new Set();
+
+    // Weighted picker prioritizing ship synergies
+    const pickWeighted = (list) => {
+      if (!list || list.length === 0) return null;
+      let totalWeight = 0;
+      const weights = list.map(c => {
+        const w = preferredSynergies.has(c.id) ? 3.5 : 1.0;
+        totalWeight += w;
+        return totalWeight;
+      });
+      const r = Math.random() * totalWeight;
+      for (let i = 0; i < list.length; i++) {
+        if (r <= weights[i]) return list[i];
+      }
+      return list[list.length - 1];
+    };
+
     // Pick exactly 3 unique cards
     const selected = [];
     const usedIds = new Set();
@@ -527,13 +551,15 @@ export class UpgradeSystem {
     if (player.level >= 10 && Math.random() < 0.6) {
       const fusions = pool.filter(c => c.categoryKey === 'fusion' && !usedIds.has(c.id));
       if (fusions.length > 0) {
-        const picked = fusions[Math.floor(Math.random() * fusions.length)];
-        usedIds.add(picked.id);
-        selected.push(picked);
+        const picked = pickWeighted(fusions);
+        if (picked) {
+          usedIds.add(picked.id);
+          selected.push(picked);
+        }
       }
     }
 
-    // Fill remaining slots respecting rarity rolls
+    // Fill remaining slots respecting rarity rolls and synergy bias
     while (selected.length < 3) {
       const rolledRarity = this.rollRarity();
       let candidates = [];
@@ -552,9 +578,13 @@ export class UpgradeSystem {
       }
 
       if (candidates.length > 0) {
-        const picked = candidates[Math.floor(Math.random() * candidates.length)];
-        usedIds.add(picked.id);
-        selected.push(picked);
+        const picked = pickWeighted(candidates);
+        if (picked) {
+          usedIds.add(picked.id);
+          selected.push(picked);
+        } else {
+          break;
+        }
       } else {
         break; // Pool exhausted
       }

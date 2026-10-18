@@ -22,9 +22,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const chestModal = document.getElementById('chest-modal');
   const hangarTabShipsBtn = document.getElementById('hangar-tab-ships-btn');
   const hangarTabTechBtn = document.getElementById('hangar-tab-tech-btn');
+  const hangarTabCodexBtn = document.getElementById('hangar-tab-codex-btn');
   const hangarShipsView = document.getElementById('hangar-ships-view');
   const hangarTechView = document.getElementById('hangar-tech-view');
+  const hangarCodexView = document.getElementById('hangar-codex-view');
   const hangarShipsList = document.getElementById('hangar-ships-list');
+  const hangarCodexList = document.getElementById('hangar-codex-list');
 
   // Starship Selection Elements
   const shipSelectorBox = document.getElementById('ship-selector-box');
@@ -406,24 +409,123 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Hangar Tabs Switching
-  if (hangarTabShipsBtn && hangarTabTechBtn) {
-    hangarTabShipsBtn.addEventListener('click', () => {
-      sound.playCardSelect();
-      hangarTabShipsBtn.classList.add('active');
-      hangarTabTechBtn.classList.remove('active');
-      if (hangarShipsView) hangarShipsView.classList.remove('hidden');
-      if (hangarTechView) hangarTechView.classList.add('hidden');
-      renderHangarShips();
-    });
+  // Hangar Tabs Switching (3 tabs)
+  function switchHangarTab(activeTab) {
+    sound.playCardSelect();
+    hangarTabShipsBtn?.classList.remove('active');
+    hangarTabTechBtn?.classList.remove('active');
+    hangarTabCodexBtn?.classList.remove('active');
 
-    hangarTabTechBtn.addEventListener('click', () => {
-      sound.playCardSelect();
-      hangarTabTechBtn.classList.add('active');
-      hangarTabShipsBtn.classList.remove('active');
-      if (hangarTechView) hangarTechView.classList.remove('hidden');
-      if (hangarShipsView) hangarShipsView.classList.add('hidden');
+    hangarShipsView?.classList.add('hidden');
+    hangarTechView?.classList.add('hidden');
+    hangarCodexView?.classList.add('hidden');
+
+    if (activeTab === 'ships') {
+      hangarTabShipsBtn?.classList.add('active');
+      hangarShipsView?.classList.remove('hidden');
+      renderHangarShips();
+    } else if (activeTab === 'tech') {
+      hangarTabTechBtn?.classList.add('active');
+      hangarTechView?.classList.remove('hidden');
       renderHangar();
+    } else if (activeTab === 'codex') {
+      hangarTabCodexBtn?.classList.add('active');
+      hangarCodexView?.classList.remove('hidden');
+      renderHangarCodex();
+    }
+  }
+
+  if (hangarTabShipsBtn) hangarTabShipsBtn.addEventListener('click', () => switchHangarTab('ships'));
+  if (hangarTabTechBtn) hangarTabTechBtn.addEventListener('click', () => switchHangarTab('tech'));
+  if (hangarTabCodexBtn) hangarTabCodexBtn.addEventListener('click', () => switchHangarTab('codex'));
+
+  // Render Hangar Upgrades & Weapons Codex Vault
+  function renderHangarCodex() {
+    if (!hangarCodexList) return;
+    hangarCodexList.innerHTML = '';
+    const isVi = i18n.current === 'vi';
+
+    const groups = [
+      {
+        title: isVi ? '1. NHÓM NÂNG CẤP CHỈ SỐ (PHỔ THÔNG)' : '1. STAT UPGRADES (COMMON / RARE)',
+        color: '#38bdf8',
+        items: [
+          { icon: '🚀', name: isVi ? 'Gia Tốc (Thrust)' : 'Thrust Accelerator', rarity: isVi ? 'Phổ thông' : 'Common', rarityClass: 'common', desc: isVi ? 'Tốc độ bay +25%, tốc độ xoay tàu +15%.' : '+25% Flight Speed, +15% Ship Turn Rate.' },
+          { icon: '🛡️', name: isVi ? 'Khuếch Đại (Juggernaut)' : 'Juggernaut Hull', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Tăng 40% kích thước & khối lượng tàu, tăng 30% máu, giảm 15% tốc độ xoay.' : '+40% Ship Size & Mass, +30% Max HP, -15% Turn Rate.' },
+          { icon: '🛸', name: isVi ? 'Thu Nhỏ (Micro-Craft)' : 'Micro-Craft', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Giảm 30% kích thước hitbox, tốc độ bay +35% (né đạn siêu dễ).' : '-30% Hitbox Size, +35% Flight Speed (dodge bullets easily).' },
+          { icon: '🔋', name: isVi ? 'Lõi Năng Lượng (Energy Core)' : 'Energy Core', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Tốc độ hồi khiên +40%, giảm thời gian kích nổ khiên.' : '+40% Shield Recharge Rate, faster shield detonation cooldown.' },
+          { icon: '🐉', name: isVi ? 'Mọc Đốt (Grow Segments)' : 'Segment Sprout', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Thêm 2 đốt thân phía sau (Tàu Rắn) hoặc kéo dài vệt lửa phản lực gây cháy (Tàu khác).' : '+2 Segments (Serpent) or extended fiery jet flame trail (Other ships).' },
+          { icon: '💉', name: isVi ? 'Sửa Chữa Khẩn Cấp (Nanorepair)' : 'Nanorepair System', rarity: isVi ? 'Phổ thông' : 'Common', rarityClass: 'common', desc: isVi ? 'Tăng 25 Max HP và lập tức hồi 60 HP.' : '+25 Max HP and instantly restores 60 HP.' }
+        ]
+      },
+      {
+        title: isVi ? '2. NHÓM ĐỘT BIẾN LỐI CHƠI (BIẾN ĐỔI CƠ CHẾ)' : '2. GAMEPLAY MUTATIONS (MECHANICAL ALTERATIONS)',
+        color: '#c084fc',
+        items: [
+          { icon: '🌪️', name: isVi ? 'Đâm Xuyên (Drill)' : 'Drill Momentum', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Khi húc quái chết, tàu không bị khựng lại mà lao thẳng qua tiếp!' : 'When ramming kills a monster, ship does not stutter and pierces right through!' },
+          { icon: '🔥', name: isVi ? 'Khiên Lửa (Burn Field)' : 'Burn Field', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Khiên liên tục gây sát thương thiêu đốt toàn bộ quái trong bán kính xung quanh.' : 'Shield continuously burns all nearby enemies in range.' },
+          { icon: '💫', name: isVi ? 'Đạn Nảy (Ricochet)' : 'Ricochet Kinetic', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Đạn hoặc mảnh vỡ khi va chạm nảy sang mục tiêu lân cận.' : 'Projectiles and shrapnel ricochet toward nearby targets.' },
+          { icon: '☣️', name: isVi ? 'Khí Độc Đuôi (Toxic Exhaust)' : 'Toxic Exhaust Trail', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Đuôi tàu (hoặc các đốt rắn) xả khói làm chậm và rút máu quái đi vào.' : 'Ship engine or serpent segments vent toxic smoke that slows & damages enemies.' },
+          { icon: '🌵', name: isVi ? 'Gai Phản Đòn (Spiked Thorns)' : 'Spiked Thorns', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Phản lại 100% sát thương va chạm khi quái vật chạm vào thân tàu.' : 'Reflects 100% ram/collision damage back to attackers.' }
+        ]
+      },
+      {
+        title: isVi ? '3. SIÊU NÂNG CẤP FUSION MODS (CẤP 10+)' : '3. FUSION MODS (LEVEL 10+ REQUIRED)',
+        color: '#facc15',
+        items: [
+          { icon: '💥', name: isVi ? 'Bom Quán Tính (Crash Nova)' : 'Crash Nova Shockwave', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Mỗi khi húc trúng mục tiêu, lập tức kích nổ một đợt sóng xung kích quét sạch xung quanh.' : 'Ramming targets triggers an instant explosive kinetic shockwave!' },
+          { icon: '🐲', name: isVi ? 'Mãng Xà Bọc Thép (Iron Dragon)' : 'Iron Dragon Armor', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Các đốt thân rắn nhận giáp & gai, quái chạm vào đốt thân bị đánh bật ngược ra xa.' : 'Serpent segments gain heavy plating & spikes, knocking monsters violently backward.' },
+          { icon: '⚚', name: isVi ? 'Bất Tử Hóa (Immortality)' : 'Overload Immortality', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Toàn bộ máu quy đổi thành khiên, sát thương nổ sóng khiên tăng gấp 3 lần!' : 'All health converted into energy shields; shield burst damage tripled!' },
+          { icon: '☢️', name: isVi ? 'Bom Hạt Nhân (Tactical Nuke)' : 'Tactical Nuke Bomb', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Kích nổ hạt nhân quét sạch 100% quái vật hiện diện trên màn hình!' : 'Detonates an ultra-weapon clearing 100% enemies on screen!' }
+        ]
+      },
+      {
+        title: isVi ? '4. THẦN THOẠI ĐỎ CỰC HIẾM (MYTHIC - TỈ LỆ 1.5%)' : '4. MYTHIC RED CARDS (1.5% DROP RATE)',
+        color: '#ef4444',
+        items: [
+          { icon: '⚡', name: isVi ? 'Khế Ước Thần Mệnh (Destiny Pact)' : 'Divine Destiny Pact', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Lần nâng cấp tiếp theo chỉ ra đúng 1 lựa chọn duy nhất nhưng là kỹ năng hiếm cực mạnh!' : 'Next level up forces a single guaranteed ultra-rare God-Tier card!' },
+          { icon: '🕳️', name: isVi ? 'Kỳ Điểm Vũ Trụ (Singularity)' : 'Cosmic Singularity', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Tạo hố đen mini kéo hút và nghiền nát toàn bộ kẻ địch mỗi 6 giây.' : 'Spawns gravitational singularities pulling & crushing swarms every 6s.' },
+          { icon: '🩸', name: isVi ? 'Huyết Ma Cuồng Nộ (Blood God)' : 'Blood God Rampage', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Tăng gấp đôi toàn bộ sát thương (+100%), hạ gục quái lập tức hồi phục máu.' : 'Doubles all damage (+100%) and regenerates HP on kills.' },
+          { icon: '💀', name: isVi ? 'Lưỡi Hái Tử Thần (Reaper)' : 'Reaper Execution', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Lập tức trảm sát quái vật có lượng máu dưới 25% (kể cả Boss).' : 'Instantly executes any monster below 25% HP (including Bosses).' },
+          { icon: '⏳', name: isVi ? 'Ngưng Đọng Thời Không (Chronos)' : 'Chronos Stasis', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Đóng băng thời gian toàn bộ quái vật trong 5 giây, tăng 60% sát thương.' : 'Freezes all enemies for 5 seconds and grants +60% damage boost.' }
+        ]
+      },
+      {
+        title: isVi ? '5. KHO VŨ KHÍ HẠM ĐỘI (FLEET ARSENAL)' : '5. FLEET WEAPON ARSENAL',
+        color: '#10b981',
+        items: [
+          { icon: '⚡', name: isVi ? 'Pháo Plasma Kép' : 'Plasma Blaster', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'common', desc: isVi ? 'Bắn loạt tia năng lượng phía trước. Tiến hóa: Bắn 5 siêu tia xuyên thấu liên thanh.' : 'Frontal laser cannons. Evolution: 5 piercing hyper-lasers with rapid fire.' },
+          { icon: '🪐', name: isVi ? 'Quả Cầu Hộ Thể' : 'Orbiting Orbs', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'common', desc: isVi ? 'Vòng xoay cầu plasma càn quét quái áp sát. Tiến hóa: 6 quả cầu tạo lá chắn bất tử.' : 'Rotating spheres shredding close swarms. Evolution: 6 impenetrable barrier spheres.' },
+          { icon: '🌩️', name: isVi ? 'Sét Chuỗi Lan' : 'Chain Lightning', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'common', desc: isVi ? 'Phóng sét gián đoạn chuỗi địch. Tiến hóa: Sấm sét hủy diệt 12 mục tiêu cùng lúc.' : 'Zaps clusters of enemies. Evolution: Thunderbolts strike 12 targets simultaneously.' },
+          { icon: '🌀', name: isVi ? 'Phi Tiêu Nảy' : 'Bouncing Glaive', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'rare', desc: isVi ? 'Phi đao năng lượng tốc độ cao dội nảy liên tục qua nhiều tầng quái vật.' : 'High-velocity energy disc bouncing across multiple enemies.' },
+          { icon: '🚀', name: isVi ? 'Tên Lửa Tầm Nhiệt' : 'Heat-Seeking Missiles', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'rare', desc: isVi ? 'Tên lửa tự tìm và nổ diện rộng. Tiến hóa: Chùm 10 đầu đạn hủy diệt.' : 'Homing missiles with blast radius. Evolution: 10 cluster warheads.' },
+          { icon: '🛸', name: isVi ? 'Drone Đồng Minh' : 'Wingmen Drones', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'rare', desc: isVi ? '2 máy bay phụ trợ bám sát phi thuyền. Tiến hóa: Đội hình 4 drone tự hành cực mạnh.' : 'Escort companion drones. Evolution: 4 autonomous heavy support gunships.' }
+        ]
+      }
+    ];
+
+    groups.forEach(g => {
+      const gTitle = document.createElement('div');
+      gTitle.className = 'codex-group-title';
+      gTitle.style.color = g.color;
+      gTitle.textContent = g.title;
+      hangarCodexList.appendChild(gTitle);
+
+      g.items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'codex-card';
+        card.innerHTML = `
+          <div class="codex-icon">${item.icon}</div>
+          <div class="codex-info">
+            <div class="codex-header-row">
+              <span class="codex-name">${item.name}</span>
+              <span class="card-rarity-pill ${item.rarityClass}">${item.rarity}</span>
+            </div>
+            <div class="codex-desc">${item.desc}</div>
+          </div>
+        `;
+        hangarCodexList.appendChild(card);
+      });
     });
   }
 
@@ -435,6 +537,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if (hangarTabShipsBtn) hangarTabShipsBtn.textContent = i18n.t('hangarTabShips');
     if (hangarTabTechBtn) hangarTabTechBtn.textContent = i18n.t('hangarTabTech');
+    if (hangarTabCodexBtn) hangarTabCodexBtn.textContent = i18n.t('hangarTabCodex');
 
     const upgrades = [
       { id: 'hull', titleKey: 'upgradeHull', descKey: 'upgradeHullDesc', icon: '🛡️' },
@@ -491,6 +594,7 @@ window.addEventListener('DOMContentLoaded', () => {
     sound.playCardSelect();
     renderHangar();
     renderHangarShips();
+    renderHangarCodex();
     hangarModal.classList.add('active');
     updateModalState();
   }
@@ -925,6 +1029,34 @@ window.addEventListener('DOMContentLoaded', () => {
           <span class="stat-box-sub">🔭 Tầm nhìn: ${visionZoom}%</span>
         </div>
       `;
+    }
+
+    // Mobile Threat Auto-Fade: Tự làm mờ (opacity 0.15) khi quái vật áp sát < 230px để chống điểm mù
+    const isAnyPanelOpen = (!damageMeterPanel.classList.contains('hidden')) || (shipStatsPanel && !shipStatsPanel.classList.contains('hidden'));
+    if (isAnyPanelOpen && game.state === 'playing' && game.player) {
+      let isThreatNear = false;
+      const px = game.player.x;
+      const py = game.player.y;
+      const thresholdSq = 230 * 230;
+      const enemies = game.enemies || [];
+      for (let i = 0; i < enemies.length; i++) {
+        const e = enemies[i];
+        if (e.isDead) continue;
+        const dx = e.x - px;
+        const dy = e.y - py;
+        if (dx * dx + dy * dy < thresholdSq) {
+          isThreatNear = true;
+          break;
+        }
+      }
+
+      if (isThreatNear) {
+        damageMeterPanel.classList.add('threat-fade');
+        if (shipStatsPanel) shipStatsPanel.classList.add('threat-fade');
+      } else {
+        damageMeterPanel.classList.remove('threat-fade');
+        if (shipStatsPanel) shipStatsPanel.classList.remove('threat-fade');
+      }
     }
 
     requestAnimationFrame(gameLoop);

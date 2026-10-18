@@ -1167,6 +1167,98 @@ body.in-modal #horde-alert {
   cursor: default;
 }
 
+/* CODEX WEAPONS & UPGRADES VAULT */
+.hangar-codex-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-height: 68vh;
+  overflow-y: auto;
+  padding-right: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.codex-group-title {
+  font-size: 11.5px;
+  font-weight: 900;
+  color: #38bdf8;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-top: 6px;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.codex-card {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.15s ease;
+}
+
+.codex-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.codex-icon {
+  font-size: 26px;
+  min-width: 36px;
+  text-align: center;
+}
+
+.codex-info {
+  flex: 1;
+}
+
+.codex-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.codex-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.codex-desc {
+  font-size: 11px;
+  color: #cbd5e1;
+  line-height: 1.35;
+}
+
+/* Threat Auto-Fade on Mobile & Desktop: khi quái áp sát thì tự mờ để chống điểm mù */
+.threat-fade {
+  opacity: 0.15 !important;
+  filter: blur(1px);
+  pointer-events: none !important;
+  transition: opacity 0.22s ease-out, filter 0.22s ease-out;
+}
+
+@media (max-width: 600px) {
+  /* Dock Cạnh Trái Kính Mờ (Glassmorphism 40%) cho DPS và Chỉ số tàu */
+  #damage-meter-panel, #ship-stats-panel {
+    background: rgba(15, 23, 42, 0.42) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+    max-width: 155px !important;
+    transition: opacity 0.22s ease, filter 0.22s ease;
+  }
+}
+
 .hangar-gold-pill {
   background: rgba(30, 41, 59, 0.8);
   border: 1px solid #facc15;

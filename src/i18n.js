@@ -74,6 +74,7 @@ export const translations = {
 
     hangarTabShips: '🚀 STARSHIPS & SYNERGY',
     hangarTabTech: '⚙️ PERMANENT TECH',
+    hangarTabCodex: '📚 UPGRADE CODEX',
     hangarSelectShipBtn: 'DEPLOY THIS SHIP',
 
     hudHomeBtn: '🏠 MENU',
@@ -309,6 +310,7 @@ export const translations = {
 
     hangarTabShips: '🚀 CHI HẠM & KỸ NĂNG',
     hangarTabTech: '⚙️ CƯỜNG HÓA VĨNH VIỄN',
+    hangarTabCodex: '📚 KHO BỂ NÂNG CẤP',
     hangarSelectShipBtn: 'CHỌN XUẤT TRẬN',
 
     hudHomeBtn: '🏠 MENU',
