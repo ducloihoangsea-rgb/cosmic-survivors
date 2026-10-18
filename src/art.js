@@ -39,8 +39,6 @@ export class ArtEngine {
         ctx.fillStyle = '#064e3b';
         ctx.strokeStyle = '#10b981';
         ctx.lineWidth = 2.2;
-        ctx.shadowColor = '#059669';
-        ctx.shadowBlur = 10;
         ctx.beginPath();
         ctx.arc(seg.x, seg.y, seg.radius, 0, Math.PI * 2);
         ctx.fill();
@@ -68,8 +66,6 @@ export class ArtEngine {
     gradFlame.addColorStop(1, 'transparent');
 
     ctx.fillStyle = gradFlame;
-    ctx.shadowColor = glowColor;
-    ctx.shadowBlur = 15;
     ctx.beginPath();
     ctx.moveTo(-10, -5);
     ctx.lineTo(-12 - flameLen, 0);
@@ -108,8 +104,6 @@ export class ArtEngine {
     ctx.fillStyle = hullGrad;
     ctx.strokeStyle = mainColor;
     ctx.lineWidth = 2.4;
-    ctx.shadowColor = glowColor;
-    ctx.shadowBlur = invuln ? 25 : 14;
 
     if (shipId === 'rammer') {
       // ☄️ RAMMER: Heavy Meteor Battering Ram Wedge with Magma Spikes
@@ -169,11 +163,46 @@ export class ArtEngine {
 
       // Glowing Dragon Eyes
       ctx.fillStyle = '#fde047';
-      ctx.shadowColor = '#fde047';
-      ctx.shadowBlur = 8;
       ctx.beginPath();
       ctx.arc(8, -6, 2.2, 0, Math.PI * 2);
       ctx.arc(8, 6, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+
+    } else if (shipId === 'carrier') {
+      // 🛸 CARRIER: Futuristic Drone Mothership with Hangar Bays & Launch Bays
+      ctx.beginPath();
+      ctx.moveTo(26, 0);          // Forward sensor nose
+      ctx.lineTo(16, -10);
+      ctx.lineTo(18, -24);        // Left forward drone flight deck
+      ctx.lineTo(-4, -26);        // Left wing flank
+      ctx.lineTo(-14, -18);       // Left thruster bay
+      ctx.lineTo(-10, -6);
+      ctx.lineTo(-14, 0);         // Central engine exhaust
+      ctx.lineTo(-10, 6);
+      ctx.lineTo(-14, 18);        // Right thruster bay
+      ctx.lineTo(-4, 26);         // Right wing flank
+      ctx.lineTo(18, 24);         // Right forward drone flight deck
+      ctx.lineTo(16, 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Dual Flight Launch Decks (Hangar Doors)
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = 2.0;
+      ctx.beginPath();
+      ctx.moveTo(12, -18);
+      ctx.lineTo(-2, -18);
+      ctx.moveTo(12, 18);
+      ctx.lineTo(-2, 18);
+      ctx.stroke();
+
+      // Drone Launch Beacon Lights (Nhấp nháy xanh ngọc)
+      const beaconColor = Math.sin(animTime * 12) > 0 ? '#38bdf8' : '#a855f7';
+      ctx.fillStyle = beaconColor;
+      ctx.beginPath();
+      ctx.arc(8, -18, 2.5, 0, Math.PI * 2);
+      ctx.arc(8, 18, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
     } else {
@@ -207,8 +236,6 @@ export class ArtEngine {
         const barrierRad = (player.radius + (player.isPreview ? 8 : 14) + barrierPulse) * (player.stats?.shieldRadiusMult || 1.0);
         ctx.strokeStyle = '#00f2fe';
         ctx.lineWidth = player.isPreview ? 2.0 : 2.6;
-        ctx.shadowColor = '#00f2fe';
-        ctx.shadowBlur = player.isPreview ? 10 : 16;
         ctx.beginPath();
         ctx.arc(0, 0, barrierRad, animTime * 2.5, animTime * 2.5 + Math.PI * 1.4);
         ctx.stroke();
@@ -316,8 +343,6 @@ export class ArtEngine {
     if (enemy.freezeTimer > 0) {
       ctx.strokeStyle = '#38bdf8';
       ctx.lineWidth = 2.5;
-      ctx.shadowColor = '#00f2fe';
-      ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.arc(0, 0, enemy.radius + 5, 0, Math.PI * 2);
       ctx.stroke();
@@ -358,8 +383,6 @@ export class ArtEngine {
   drawCrawler(ctx, enemy, t, isHit) {
     const color = isHit ? '#ffffff' : '#ef4444';
     const darkColor = isHit ? '#e2e8f0' : '#450a0a';
-    ctx.shadowColor = isHit ? '#ffffff' : '#ef4444';
-    ctx.shadowBlur = 8;
 
     // 4 Animated skittering legs
     ctx.strokeStyle = color;
@@ -396,8 +419,6 @@ export class ArtEngine {
   // 2. Speeder (Neon Phantom Mantis / Jet)
   drawSpeeder(ctx, enemy, t, isHit) {
     const color = isHit ? '#ffffff' : '#d946ef';
-    ctx.shadowColor = isHit ? '#ffffff' : '#c026d3';
-    ctx.shadowBlur = 10;
 
     // Animated Fluttering Wings
     const wingSwing = Math.sin(t * 2) * 0.3;
@@ -450,8 +471,6 @@ export class ArtEngine {
   // 3. Brute (Armored Hex Goliath)
   drawBrute(ctx, enemy, t, isHit) {
     const color = isHit ? '#ffffff' : '#06b6d4';
-    ctx.shadowColor = isHit ? '#ffffff' : '#0891b2';
-    ctx.shadowBlur = 12;
 
     // Outer Armored Hexagon
     ctx.fillStyle = isHit ? '#f1f5f9' : '#083344';
@@ -488,8 +507,6 @@ export class ArtEngine {
   drawBoss(ctx, enemy, animTime, isHit) {
     const mainColor = isHit ? '#ffffff' : '#f59e0b';
     const coreColor = isHit ? '#ffffff' : '#ef4444';
-    ctx.shadowColor = mainColor;
-    ctx.shadowBlur = 24;
 
     // Rotating Outer Ring with 4 Energy Blades
     const ringAngle = animTime * 1.5;
@@ -549,8 +566,6 @@ export class ArtEngine {
 
     const r = gem.radius;
     const color = gem.color;
-    ctx.shadowColor = gem.glow;
-    ctx.shadowBlur = 10;
 
     // 8-Faceted Cut Diamond Gem
     ctx.fillStyle = color;
@@ -587,10 +602,8 @@ export class ArtEngine {
     const glintPhase = (animTime * 3 + gem.sparkleTimer) % (Math.PI * 2);
     if (Math.sin(glintPhase) > 0.7) {
       ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#ffffff';
-      ctx.shadowBlur = 8;
       ctx.beginPath();
-      ctx.arc(-r * 0.2, -r * 0.2, 1.8, 0, Math.PI * 2);
+      ctx.arc(-r * 0.2, -r * 0.2, 2.2, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -635,6 +648,57 @@ export class ArtEngine {
         }
       }
     }
+  }
+
+  // Draw Autonomous Mini Drone (Tàu Carrier thả ra)
+  drawMiniDrone(ctx, drone, animTime) {
+    ctx.save();
+    ctx.translate(drone.x, drone.y);
+    ctx.rotate(drone.angle);
+
+    // Thruster trail
+    ctx.fillStyle = drone.isEvolved ? '#ef4444' : '#38bdf8';
+    ctx.beginPath();
+    ctx.moveTo(-6, 0);
+    ctx.lineTo(-12, -3);
+    ctx.lineTo(-9, 0);
+    ctx.lineTo(-12, 3);
+    ctx.closePath();
+    ctx.fill();
+
+    // Drone chassis
+    ctx.fillStyle = '#1e1b4b';
+    ctx.strokeStyle = drone.isEvolved ? '#facc15' : '#c084fc';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(12, 0);
+    ctx.lineTo(-6, -8);
+    ctx.lineTo(-3, 0);
+    ctx.lineTo(-6, 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Drone Sensor Eye
+    ctx.fillStyle = drone.isEvolved ? '#ef4444' : '#38bdf8';
+    ctx.beginPath();
+    ctx.arc(3, 0, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Mini Health Bar on top (Giữ ngang)
+    ctx.rotate(-drone.angle);
+    const barW = 20;
+    const barH = 3;
+    const hpPct = Math.max(0, Math.min(1, drone.hp / drone.maxHp));
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+    ctx.fillRect(-barW / 2, -14, barW, barH);
+    ctx.fillStyle = hpPct > 0.5 ? '#22c55e' : (hpPct > 0.25 ? '#eab308' : '#ef4444');
+    ctx.fillRect(-barW / 2, -14, barW * hpPct, barH);
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(-barW / 2, -14, barW, barH);
+
+    ctx.restore();
   }
 }
 

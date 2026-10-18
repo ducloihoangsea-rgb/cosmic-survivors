@@ -34,11 +34,9 @@ export class FloatingText {
     ctx.textAlign = 'center';
 
     if (this.isCrit) {
-      ctx.shadowColor = '#ffea00';
-      ctx.shadowBlur = 10;
       ctx.fillStyle = '#ffea00';
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 4;
+      ctx.strokeStyle = '#78350f';
       ctx.strokeText(this.text, this.x, this.y);
       ctx.fillText(this.text, this.x, this.y);
     } else {
@@ -169,9 +167,6 @@ export class LuckyChest {
 
     const pulse = 1 + Math.sin(animTime * 6) * 0.12;
     ctx.scale(pulse, pulse);
-
-    ctx.shadowColor = '#facc15';
-    ctx.shadowBlur = 18;
 
     // Golden Treasure Chest Box
     ctx.fillStyle = '#b45309';

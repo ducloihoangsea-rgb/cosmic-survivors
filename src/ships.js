@@ -164,7 +164,64 @@ export const SHIP_ROSTER = {
       vi: ['Lõi Năng Lượng (Tăng tốc sạc khiên)', 'Khiên Lửa (Burn Field)', 'Bất Tử Hóa (Nổ khiên x3)'],
       en: ['Energy Core (+Recharge Speed)', 'Burn Field (Aura Damage)', 'Immortality (Single Barrier x3 Nova)']
     }
+  },
+  carrier: {
+    id: 'carrier',
+    nameKey: 'shipCarrierName',
+    roleKey: 'shipCarrierRole',
+    descKey: 'shipCarrierDesc',
+    traitNameKey: 'shipCarrierTrait',
+    traitDescKey: 'shipCarrierTraitDesc',
+    icon: '🛸',
+    color: '#a855f7',
+    accentColor: '#c084fc',
+    glowColor: '#9333ea',
+    stats: {
+      hp: 80,
+      dmg: 95,
+      spd: 75,
+      range: 90
+    },
+    baseStats: {
+      maxHp: 200,
+      baseSpeed: 210,
+      damageMult: 1.0,
+      fireRateMult: 1.0,
+      critChance: 0.15,
+      critMult: 2.0,
+      magnetRadius: 140,
+      droneSpawnInterval: 5.0,
+      droneSpawnCount: 2,
+      droneDuration: 12.0,
+      droneMaxHp: 140,
+      droneDamage: 35
+    },
+    startingWeapon: 'blaster',
+    trait: 'carrier',
+    specs: {
+      vi: [
+        { label: 'Hạm Đội Drone Tự Hành', val: 'Mỗi 5s tự động phóng 2 Mini Drone' },
+        { label: 'Thanh Máu & Độ Bền', val: '140 HP riêng • Tồn tại 12s (Tiến hóa: 18s)' },
+        { label: 'Trí Tuệ Nhân Tạo AI', val: 'Tự động săn lùng và bắn phá quái vật gần nhất' },
+        { label: 'Đỡ Đòn & Hấp Thụ', val: 'Hấp thụ đòn đánh quái thay cho tàu mẹ' },
+        { label: 'Vũ khí khởi đầu', val: 'Súng Plasma' },
+        { label: 'Kỹ năng Nộ (Space / EMP)', val: 'Quân Đoàn Siêu Cấp (Thả tức thì 4 Mini Drone cường hóa)' }
+      ],
+      en: [
+        { label: 'Autonomous Drone Fleet', val: 'Deploys 2 combat Mini Drones every 5s' },
+        { label: 'Health & Lifetime', val: '140 independent HP • 12s duration (Evolved: 18s)' },
+        { label: 'Targeting AI', val: 'Autonomously hunts down the nearest hostile targets' },
+        { label: 'Shield & Decoy', val: 'Draws enemy attacks & absorbs damage for mothership' },
+        { label: 'Starting Weapon', val: 'Plasma Blaster' },
+        { label: 'Ultimate (Space / EMP)', val: 'Overcharge Swarm (Instantly launches 4 Super Drones)' }
+      ]
+    },
+    synergies: {
+      vi: ['Quân Đoàn Drone (Tiến Hóa: 3 Drone 18s)', 'Gia Tốc Hồi Chiêu (-0.2s/cấp)', 'Drone Bọc Thép (+Máu & Sát Thương)'],
+      en: ['Swarm Fleet (Evolved: 3 Drones 18s)', 'Rapid Deployment (-0.2s CD/rank)', 'Armored Drones (+HP & Damage)']
+    }
   }
 };
 
 export const SHIP_KEYS = Object.keys(SHIP_ROSTER);
+

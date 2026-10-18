@@ -211,7 +211,9 @@ export class WeaponManager {
       const ox = player.x + Math.cos(a) * radius;
       const oy = player.y + Math.sin(a) * radius;
 
-      for (const enemy of enemies) {
+      const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(ox, oy, 18 + 35) : enemies;
+      for (const enemy of candidates) {
+        if (enemy.isDead) continue;
         const dist = Math.hypot(enemy.x - ox, enemy.y - oy);
         if (dist < 18 + enemy.radius) {
           if (!enemy.lastOrbHit || Date.now() - enemy.lastOrbHit > 220) {
@@ -246,8 +248,9 @@ export class WeaponManager {
     for (let i = 0; i < chainCount; i++) {
       let next = null;
       let minDist = 220;
-      for (const e of enemies) {
-        if (!struck.has(e)) {
+      const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(current.x, current.y, minDist) : enemies;
+      for (const e of candidates) {
+        if (!struck.has(e) && !e.isDead) {
           const d = Math.hypot(e.x - current.x, e.y - current.y);
           if (d < minDist) {
             minDist = d;
@@ -335,8 +338,12 @@ export class WeaponManager {
         const oy = player.y + Math.sin(a) * radius;
 
         ctx.save();
-        ctx.shadowColor = orb.level >= 5 ? '#f43f5e' : '#38bdf8';
-        ctx.shadowBlur = 14;
+        // Zero-CPU Glow Halo (Vẽ vòng ngoài mờ thay cho shadowBlur)
+        ctx.fillStyle = orb.level >= 5 ? 'rgba(244, 63, 94, 0.35)' : 'rgba(56, 189, 248, 0.35)';
+        ctx.beginPath();
+        ctx.arc(ox, oy, 15, 0, Math.PI * 2);
+        ctx.fill();
+
         ctx.fillStyle = orb.level >= 5 ? '#fda4af' : '#7dd3fc';
         ctx.beginPath();
         ctx.arc(ox, oy, 11, 0, Math.PI * 2);
@@ -364,8 +371,6 @@ export class WeaponManager {
         ctx.save();
         ctx.translate(dx, dy);
         ctx.rotate(a + Math.PI / 2);
-        ctx.shadowColor = '#00f2fe';
-        ctx.shadowBlur = 10;
         ctx.fillStyle = '#0284c7';
         ctx.beginPath();
         ctx.moveTo(9, 0);
@@ -427,7 +432,9 @@ class BlasterBullet {
       return;
     }
 
-    for (const e of enemies) {
+    const candidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, this.radius + 35) : enemies;
+    for (const e of candidates) {
+      if (e.isDead) continue;
       const dist = Math.hypot(e.x - this.x, e.y - this.y);
       if (dist < this.radius + e.radius) {
         game.damageEnemy(e, this.damage, false, this.source);
@@ -469,10 +476,13 @@ class BlasterBullet {
 
   draw(ctx) {
     ctx.save();
-    ctx.shadowColor = this.customColor || (this.evolved ? '#e11d48' : '#00f2fe');
-    ctx.shadowBlur = 10;
-    ctx.fillStyle = this.customColor || (this.evolved ? '#fb7185' : '#4facfe');
+    // Zero-CPU Glow Halo
+    ctx.fillStyle = this.customColor || (this.evolved ? 'rgba(225, 29, 72, 0.35)' : 'rgba(0, 242, 254, 0.35)');
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius + 3, 0, Math.PI * 2);
+    ctx.fill();
 
+    ctx.fillStyle = this.customColor || (this.evolved ? '#fb7185' : '#4facfe');
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
@@ -576,8 +586,6 @@ class HeatSeekingMissile {
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
 
-    ctx.shadowColor = this.evolved ? '#ef4444' : '#f59e0b';
-    ctx.shadowBlur = 10;
     ctx.fillStyle = this.evolved ? '#dc2626' : '#ea580c';
 
     // Missile body
@@ -629,8 +637,6 @@ class EmpShockwave {
   draw(ctx) {
     const alpha = Math.max(0, 1.0 - this.radius / this.maxRadius);
     ctx.save();
-    ctx.shadowColor = '#00f2fe';
-    ctx.shadowBlur = 22;
     ctx.strokeStyle = `rgba(0, 242, 254, ${alpha})`;
     ctx.lineWidth = 6;
 
@@ -663,8 +669,6 @@ class LightningVisual {
   draw(ctx) {
     if (this.points.length < 2) return;
     ctx.save();
-    ctx.shadowColor = '#38bdf8';
-    ctx.shadowBlur = 16;
     ctx.strokeStyle = '#e0f2fe';
     ctx.lineWidth = 3.5;
     ctx.beginPath();
@@ -744,8 +748,6 @@ class BouncingGlaive {
     ctx.save();
     ctx.translate(this.x, this.y);
     ctx.rotate(this.angle);
-    ctx.shadowColor = '#a855f7';
-    ctx.shadowBlur = 12;
     ctx.fillStyle = '#c084fc';
 
     for (let i = 0; i < 3; i++) {
@@ -854,8 +856,6 @@ export class BlackHole {
     }
 
     // Fiery Corona
-    ctx.shadowColor = '#ef4444';
-    ctx.shadowBlur = 25;
     ctx.strokeStyle = '#f43f5e';
     ctx.lineWidth = 6;
     ctx.beginPath();

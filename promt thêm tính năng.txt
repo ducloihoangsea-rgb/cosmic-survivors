@@ -6,5 +6,11 @@ có thể hiển thị chỉ số dps và chỉ số của tàu cùng 1 lúc tr�
 nếu chơi trên điện thoại bạn để xuất giải pháp nếu hiển thị thế nào nếu bẩm hiển thị dps và chỉ số tàu cùng hiển thị trên màn hình cũng lúc  vẫn thấy được hết các chỉ số nhưng không làm ảnh hưởng đến trải nghiệm chơi game
 ===================================================================
 tạo 1 cái kiểu như xưởng lưu trữ vũ khí,Các nâng cấp trong bể và mô tả đầy đủ trong đấy Dễ đọc,tăng cao tỉ lệ ra các nâng cấp theo hệ của tàu phù hợp với lối chơi của tầu đó. Ví dụ tài tank ra nhiều nâng cấp phòng thủ v.v....Tăng số lượng quái. Tăng máu quái tăng sát thương làm game khó hơn nữa
+
 ===================================================================
-Để phân tính các skill có t
+trong game nova drift trên steam (https://store.steampowered.com/app/858210/Nova_Drift/) bạn dùng công cụ rea để nghiên cứu để phân tính các skill xuất hiện mỗi khi con tàu được chọn và lên level trong màn chơi, các loại tàu các chỉ số và tính năng của các tàu đó( gamer có thể lựa chọn khi bắt đầu chơi) bạn cần tôi cung cấp cho bạn những gì để bóc tách toàn bộ game .Hãy đưa ra 1 danh sách yêu cầu cho tôi và hướng dẩn cho tôi cách thực hiện 
+===================================================================
+mỗi lần thay đổi vũ khí hay up skill là có 1 cái bảng hiện lên như trong game nova drift để chọn vũ khí và xem chi tiết thông số của nó,như vậy con tàu cũng trông ngầu hơn 
+=================================================================== 
+thêm loại tàu mới có kỹ năng nội tại là mỗi 5s thả 2 mini drone(mỗi drone có khả năng tồn tại 12s nếu không bị nhận sát thương cũng tự động bị tiêu hủy) có khả năng di chuyển, có thanh máu riêng , có thể nhận sát thương và bị tiêu hủy, có khả năng di chuyển độc lập tấn công mục tiêu.
+thêm kỹ năng nâng cấp drone chỉ xuất hiện khi chơi bằng tàu này, tăng cấp lên thì chỉ tăng sát thương và máu. mỗi lần lên cấp -0,2s cooldown. Tối đa 5 cấp là tiến hóa(khi tiến hóa mỗi lần thả 3 drone và thời gian tồn tại là 18s)

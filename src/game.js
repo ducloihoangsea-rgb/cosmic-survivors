@@ -8,6 +8,8 @@ import { art } from './art.js';
 import { i18n } from './i18n.js';
 import { meta } from './meta.js';
 import { SHIP_ROSTER } from './ships.js';
+import { SpatialHashGrid } from './spatial-grid.js';
+import { MiniDrone } from './drone.js';
 
 export class Game {
   constructor(canvas) {
@@ -18,7 +20,7 @@ export class Game {
 
     // Selected Starship Archetype
     const savedShip = localStorage.getItem('dopamine_ship');
-    this.selectedShipId = (savedShip === 'rammer' || savedShip === 'serpent' || savedShip === 'novashield') ? savedShip : 'rammer';
+    this.selectedShipId = (savedShip === 'rammer' || savedShip === 'serpent' || savedShip === 'novashield' || savedShip === 'carrier') ? savedShip : 'rammer';
 
     // Game State
     this.state = 'start'; // 'start', 'playing', 'levelup', 'chest', 'gameover'
@@ -72,6 +74,9 @@ export class Game {
     this.particles = [];
     this.floatingTexts = [];
     this.toxicPuddles = [];
+    this.miniDrones = [];
+    this.carrierSpawnTimer = 0;
+    this.spatialGrid = new SpatialHashGrid(96);
     this.activeBoss = null;
 
     // UI callbacks
@@ -138,6 +143,19 @@ export class Game {
       this.ultimateCharge = 0;
       if (this.player.isNovaShield) {
         this.player.triggerNovaBlast(true);
+      } else if (this.player.isCarrier) {
+        sound.playEmpShockwave();
+        for (let i = 0; i < 4; i++) {
+          const angle = (i / 4) * Math.PI * 2;
+          const d = new MiniDrone(
+            this.player.x + Math.cos(angle) * 35,
+            this.player.y + Math.sin(angle) * 35,
+            (this.player.droneLevel || 1) + 1,
+            true
+          );
+          this.miniDrones.push(d);
+        }
+        this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 50, '🛸 OVERCHARGE SWARM! 🛸', '#a855f7', 22, true));
       } else {
         this.weaponManager.triggerEmpShockwave(this.player);
         this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 45, '⚡ EMP SHOCKWAVE ⚡', '#00f2fe', 22, true));
@@ -385,6 +403,9 @@ export class Game {
     // 2. Wave Spawner
     this.waveSpawner.update(dt, this.player);
 
+    // Update Spatial Hash Grid with all current enemies for O(1) queries
+    this.spatialGrid.insertAll(this.enemies);
+
     // 3. Update Weapons
     this.weaponManager.update(dt, this.player, this.enemies);
 
@@ -430,6 +451,37 @@ export class Game {
       tp.update(dt, this.enemies, this);
       if (tp.isDead) {
         this.toxicPuddles.splice(i, 1);
+      }
+    }
+
+    // 3.6. Carrier Autonomous Drone Deployment
+    if (this.player.isCarrier) {
+      this.carrierSpawnTimer -= dt;
+      const cd = Math.max(3.0, 5.0 - (this.player.droneCooldownReduction || 0));
+      if (this.carrierSpawnTimer <= 0) {
+        this.carrierSpawnTimer = cd;
+        const count = this.player.droneSpawnCount || (this.player.isDroneEvolved ? 3 : 2);
+        for (let i = 0; i < count; i++) {
+          const spawnAngle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+          const spawnDist = 26;
+          const md = new MiniDrone(
+            this.player.x + Math.cos(spawnAngle) * spawnDist,
+            this.player.y + Math.sin(spawnAngle) * spawnDist,
+            this.player.droneLevel || 1,
+            this.player.isDroneEvolved || false
+          );
+          this.miniDrones.push(md);
+        }
+        sound.playShoot('wingmen');
+      }
+    }
+
+    // 3.7. Update Mini Drones
+    for (let i = this.miniDrones.length - 1; i >= 0; i--) {
+      const md = this.miniDrones[i];
+      md.update(dt, this.player, this.enemies, this);
+      if (md.isDead) {
+        this.miniDrones.splice(i, 1);
       }
     }
 
@@ -548,6 +600,11 @@ export class Game {
     // Draw Weapons / Projectiles / Drones / Shockwaves
     this.weaponManager.draw(ctx, this.player);
 
+    // Draw Mini Drones
+    for (const md of this.miniDrones) {
+      md.draw(ctx, this.gameTime);
+    }
+
     // Draw Player
     this.player.draw(ctx);
 
@@ -571,8 +628,6 @@ export class Game {
       ctx.save();
       ctx.strokeStyle = `hsl(${(Date.now() / 4) % 360}, 100%, 60%)`;
       ctx.lineWidth = 14;
-      ctx.shadowColor = '#ec4899';
-      ctx.shadowBlur = 20;
       ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
       ctx.restore();
     }
@@ -609,6 +664,9 @@ export class Game {
     this.particles = [];
     this.floatingTexts = [];
     this.toxicPuddles = [];
+    this.miniDrones = [];
+    this.carrierSpawnTimer = 0;
+    this.spatialGrid.clear();
     this.initShipLoadout();
     this.waveSpawner = new WaveSpawner(this);
   }
@@ -636,11 +694,18 @@ class Player {
     this.nextLevelXp = 15;
     this.revivesLeft = 0;
 
-    // Archetype Traits (3 Distinct Paradigms)
+    // Archetype Traits (4 Distinct Paradigms)
     this.isRammer = shipDef.trait === 'rammer';
     this.isSerpent = shipDef.trait === 'serpent';
     this.isNovaShield = shipDef.trait === 'novashield';
+    this.isCarrier = shipDef.trait === 'carrier';
     this.noGuns = !!shipDef.baseStats.noGuns;
+
+    // Carrier Drone stats
+    this.droneLevel = 1;
+    this.isDroneEvolved = false;
+    this.droneCooldownReduction = 0;
+    this.droneSpawnCount = shipDef.baseStats.droneSpawnCount || 2;
 
     // Serpent trail history buffer & segment positions
     this.trailBuffer = [];
@@ -1003,11 +1068,9 @@ export class ToxicPuddle {
   }
 
   draw(ctx) {
-    const alpha = Math.max(0, this.life / this.maxLife) * 0.4;
+    const alpha = Math.max(0, this.life / this.maxLife) * 0.45;
     ctx.save();
     ctx.fillStyle = `rgba(168, 85, 247, ${alpha})`;
-    ctx.shadowColor = '#a855f7';
-    ctx.shadowBlur = 10;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     ctx.fill();

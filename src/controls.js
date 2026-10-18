@@ -176,11 +176,12 @@ export class Controller {
 
     // Joystick Knob
     ctx.fillStyle = '#38bdf8';
-    ctx.shadowColor = '#00f2fe';
-    ctx.shadowBlur = 10;
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.arc(kx, ky, 20, 0, Math.PI * 2);
     ctx.fill();
+    ctx.stroke();
     ctx.restore();
   }
 }

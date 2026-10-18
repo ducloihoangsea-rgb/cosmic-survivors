@@ -66,6 +66,17 @@ export const translations = {
     shipNovaShieldTrait: '🛡️ Nova Blast',
     shipNovaShieldTraitDesc: 'No main gun. Surrounding shield detonates a massive destructive shockwave when broken (or press Space)! Recharges in 3.5s.',
 
+    // 4. Drone Carrier
+    shipCarrierName: 'AEGIS DRONE CARRIER',
+    shipCarrierRole: '🛸 AUTONOMOUS DRONES / CARRIER',
+    shipCarrierDesc: 'Deploys autonomous combat mini-drones with independent health bars, targeting AI, and damage absorption.',
+    shipCarrierTrait: '🛸 Swarm Drone Fleet',
+    shipCarrierTraitDesc: 'Every 5s, deploys 2 independent Mini Drones (140 HP) that seek enemies and absorb hits for 12s.',
+    upgradeDroneTitle: 'Drone Swarm',
+    upgradeDroneDesc: '+25% Drone Damage, +40 Drone HP, -0.2s Spawn Cooldown.',
+    upgradeDroneEvoTitle: '🔥 EVOLUTION: SUPREME MOTHERSHIP',
+    upgradeDroneEvoDesc: 'Deploys 3 reinforced Mini Drones per wave, and Drone lifetime extends to 18 seconds!',
+
     statHp: 'HULL / MASS',
     statDmg: 'DAMAGE',
     statSpd: 'SPEED',
@@ -311,6 +322,17 @@ export const translations = {
     shipNovaShieldDesc: 'Không có súng thường. Tận dụng áp sát kích nổ bom khiên diện rộng càn quét sạch sẽ màn hình.',
     shipNovaShieldTrait: '🛡️ Sóng Nổ Xung Kích',
     shipNovaShieldTraitDesc: 'Không súng thường. Khiên khi bị bắn vỡ (hoặc bấm Space) sẽ nổ tung một vòng sóng xung kích cực đại tỏa ra xung quanh!',
+
+    // 4. Drone Carrier
+    shipCarrierName: 'HẠM ĐỘI DRONE (CARRIER)',
+    shipCarrierRole: '🛸 MẪU HẠM DRONE / TỰ ĐỘNG CHIẾN ĐẤU',
+    shipCarrierDesc: 'Hàng không mẫu hạm tự động thả các mini drone độc lập có thanh máu riêng, trí tuệ nhân tạo và khả năng đỡ đòn.',
+    shipCarrierTrait: '🛸 Quân Đoàn Mini Drone',
+    shipCarrierTraitDesc: 'Mỗi 5s tự động thả 2 Mini Drone (140 HP) bay săn quái và đỡ đòn cho tàu mẹ trong 12s.',
+    upgradeDroneTitle: 'Hạm Đội Drone',
+    upgradeDroneDesc: '+25% Sát thương Drone, +40 Máu Drone, -0.2s Thời gian hồi chiêu thả.',
+    upgradeDroneEvoTitle: '🔥 TIẾN HÓA: MẪU HẠM TỐI THƯỢNG',
+    upgradeDroneEvoDesc: 'Mỗi đợt phóng 3 Mini Drone cực mạnh, thời gian tồn tại của Drone tăng lên 18 giây!',
 
     statHp: 'GIÁP / KHỐI LƯỢNG',
     statDmg: 'CÔNG',

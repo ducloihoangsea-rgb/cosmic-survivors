@@ -320,6 +320,39 @@ export class UpgradeSystem {
     // NHÓM 2: ĐỘT BIẾN LỐI CHƠI (Biến đổi cơ chế)
     // ==========================================
 
+    // KỸ NĂNG ĐẶC BIỆT: Hạm Đội Drone (Chỉ xuất hiện cho Tàu Carrier)
+    const droneLvl = player.droneLevel || 1;
+    if (player.isCarrier && droneLvl < 5) {
+      const isNextEvo = (droneLvl + 1) === 5;
+      pool.push({
+        id: 'drone_upgrade',
+        categoryKey: 'mutation',
+        category: i18n.t('categoryMutation'),
+        title: isNextEvo 
+          ? i18n.t('upgradeDroneEvoTitle') 
+          : `${i18n.t('upgradeDroneTitle')} Lv.${droneLvl + 1}`,
+        desc: isNextEvo 
+          ? i18n.t('upgradeDroneEvoDesc') 
+          : i18n.t('upgradeDroneDesc'),
+        rarityKey: isNextEvo ? rLegendary.key : rRare.key,
+        rarity: isNextEvo ? rLegendary.label : rRare.label,
+        icon: '🛸',
+        currentLevel: droneLvl,
+        nextLevel: droneLvl + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.droneLevel = (player.droneLevel || 1) + 1;
+          player.droneCooldownReduction = (player.droneCooldownReduction || 0) + 0.2;
+          if (player.droneLevel >= 5) {
+            player.isDroneEvolved = true;
+            player.droneSpawnCount = 3;
+            player.droneDuration = 18.0;
+          }
+          if (player.buffLevels) player.buffLevels.drone_upgrade = player.droneLevel;
+        }
+      });
+    }
+
     // 7. Đâm Xuyên (Drill): Khi húc quái chết, tàu không bị khựng lại mà lao thẳng qua tiếp
     if (!player.hasDrill) {
       pool.push({
