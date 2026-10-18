@@ -62,7 +62,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const startThemeBtn = document.getElementById('start-theme-btn');
   const startHangarBtn = document.getElementById('start-hangar-btn');
   const overHangarBtn = document.getElementById('over-hangar-btn');
-  const startCodexBtn = document.getElementById('start-codex-btn');
   const hangarCloseBtn = document.getElementById('hangar-close-btn');
   const chestClaimBtn = document.getElementById('chest-claim-btn');
   const btnUltimate = document.getElementById('btn-ultimate');
@@ -141,7 +140,6 @@ window.addEventListener('DOMContentLoaded', () => {
     startBtn.textContent = i18n.t('startBtn');
     startHangarBtn.textContent = i18n.t('hangarBtn');
     overHangarBtn.textContent = i18n.t('hangarBtn');
-    if (startCodexBtn) startCodexBtn.textContent = lang === 'vi' ? '📚 KHO VŨ KHÍ & NÂNG CẤP' : '📚 UPGRADES & WEAPONS';
     tipMobile.textContent = i18n.t('tipMobile');
     tipPc.textContent = i18n.t('tipPc');
 
@@ -842,12 +840,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   startHangarBtn.addEventListener('click', openHangar);
   overHangarBtn.addEventListener('click', openHangar);
-  if (startCodexBtn) {
-    startCodexBtn.addEventListener('click', () => {
-      openHangar();
-      switchHangarTab('codex');
-    });
-  }
   setupCodexFilters();
   const hangarHeaderCloseBtn = document.getElementById('hangar-header-close-btn');
   const closeHangar = () => {
