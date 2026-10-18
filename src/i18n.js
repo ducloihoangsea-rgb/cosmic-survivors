@@ -124,6 +124,8 @@ export const translations = {
     energycoreDesc: '+40% Shield Recharge Rate, faster shield detonation cooldown.',
     growsegmentsTitle: 'Segment Sprout',
     growsegmentsDesc: '+2 Segments (Serpent) or extended fiery jet flame trail (Other ships).',
+    cosmicScopeTitle: 'Cosmic Scope',
+    cosmicScopeDesc: '+25% Panoramic Vision FOV, +45px Magnet Gathering Radius.',
 
     // Group 2: Gameplay Mutations (Mechanical Alterations)
     drillTitle: 'Drill Momentum',
@@ -360,6 +362,8 @@ export const translations = {
     energycoreDesc: 'Tốc độ hồi khiên +40%, giảm thời gian kích nổ khiên.',
     growsegmentsTitle: 'Mọc Đốt (Grow Segments)',
     growsegmentsDesc: 'Thêm 2 đốt thân phía sau (Tàu Rắn) hoặc kéo dài vệt lửa phản lực gây cháy (Tàu khác).',
+    cosmicScopeTitle: 'Ống Kính Vũ Trụ (Cosmic Scope)',
+    cosmicScopeDesc: 'Mở rộng 25% tầm nhìn camera toàn cảnh, tăng 45px bán kính hút ngọc từ xa.',
 
     // Nhóm 2: Nhóm Đột Biến Lối Chơi (Biến đổi cơ chế)
     drillTitle: 'Đâm Xuyên (Drill)',

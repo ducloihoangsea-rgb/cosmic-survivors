@@ -520,6 +520,15 @@ window.addEventListener('DOMContentLoaded', () => {
             borderClass: 'card-border-common',
             synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tank (Hồi phục & Gia tăng HP)' : '☄️ Best: Rammer (Hull Sustain)' },
             desc: isVi ? 'Tăng 25 Max HP và lập tức phục hồi 60 HP. Giữ vững sinh mệnh khi bị quái vật cắn ép góc.' : '+25 Max HP and instantly restores 60 HP. Reliable survival sustain.'
+          },
+          {
+            icon: '🔭',
+            name: isVi ? 'Ống Kính Vũ Trụ (Cosmic Scope)' : 'Cosmic Scope Lens',
+            rarity: isVi ? 'Hiếm' : 'Rare',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'general', label: isVi ? '✨ Phù hợp: Mọi chiến hạm (Bao quát chiến trường)' : '✨ Universal: Maximize Battlefield Vision' },
+            desc: isVi ? 'Mở rộng 25% tầm nhìn camera toàn cảnh, tăng 45px bán kính hút ngọc từ xa.' : '+25% Panoramic Vision FOV, +45px Magnet Gathering Radius.'
           }
         ]
       },

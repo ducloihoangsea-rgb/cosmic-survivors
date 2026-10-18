@@ -6,3 +6,5 @@ có thể hiển thị chỉ số dps và chỉ số của tàu cùng 1 lúc tr�
 nếu chơi trên điện thoại bạn để xuất giải pháp nếu hiển thị thế nào nếu bẩm hiển thị dps và chỉ số tàu cùng hiển thị trên màn hình cũng lúc  vẫn thấy được hết các chỉ số nhưng không làm ảnh hưởng đến trải nghiệm chơi game
 ===================================================================
 tạo 1 cái kiểu như xưởng lưu trữ vũ khí,Các nâng cấp trong bể và mô tả đầy đủ trong đấy Dễ đọc,tăng cao tỉ lệ ra các nâng cấp theo hệ của tàu phù hợp với lối chơi của tầu đó. Ví dụ tài tank ra nhiều nâng cấp phòng thủ v.v....Tăng số lượng quái. Tăng máu quái tăng sát thương làm game khó hơn nữa
+
+Làm tầm nhìn rộng lên hoặc thêm nâng cấp tăng tầm nhìn vào kỹ năng được chọn khi lên level trong ván game

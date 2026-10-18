@@ -55,9 +55,10 @@ export class Game {
     };
     this.totalDamageDealt = 0;
 
-    // Camera & Screen Shake
+    // Camera & Screen Shake (Wider default FOV)
     this.camera = { x: 0, y: 0 };
-    this.cameraZoom = 1.0;
+    const isInitMobile = typeof window !== 'undefined' && (window.innerWidth <= 768 || window.innerHeight <= 600);
+    this.cameraZoom = isInitMobile ? 0.80 : 0.86;
     this.screenShake = 0;
     this.freezeFrames = 0;
 
@@ -371,6 +372,13 @@ export class Game {
     const move = this.controller.getVector();
     this.player.update(dt, move);
 
+    // Dynamic Camera Zoom & Panoramic FOV (Mở rộng tầm nhìn theo nâng cấp Ống Kính Vũ Trụ)
+    const isMobile = this.canvas.width <= 768 || this.canvas.height <= 600;
+    const baseZoom = isMobile ? 0.80 : 0.86;
+    const visionLvl = this.player?.buffLevels?.cosmicscope || 0;
+    const targetZoom = baseZoom / (1 + visionLvl * 0.25);
+    this.cameraZoom += (targetZoom - this.cameraZoom) * Math.min(1, dt * 4.5);
+
     this.camera.x = this.player.x - this.canvas.width / 2;
     this.camera.y = this.player.y - this.canvas.height / 2;
 
@@ -581,7 +589,7 @@ export class Game {
     this.dopamineMeter = 0;
     this.ultimateCharge = 0;
     this.isFrenzy = false;
-    this.cameraZoom = 1.0;
+    this.cameraZoom = (this.canvas.width <= 768 || this.canvas.height <= 600) ? 0.80 : 0.86;
     this.damageStats = {
       blaster: 0,
       orbs: 0,
@@ -688,6 +696,7 @@ class Player {
       microcraft: 0,
       energycore: 0,
       growsegments: 0,
+      cosmicscope: 0,
       drill: 0,
       burnfield: 0,
       ricochet: 0,

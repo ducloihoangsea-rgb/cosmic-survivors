@@ -295,6 +295,27 @@ export class UpgradeSystem {
       });
     }
 
+    // 7. Ống Kính Vũ Trụ (Cosmic Scope): Mở rộng 25% tầm nhìn camera, +45px bán kính hút ngọc
+    if (getBuffLvl('cosmicscope') < 3) {
+      pool.push({
+        id: 'cosmicscope',
+        categoryKey: 'stat',
+        category: i18n.t('categoryStat'),
+        title: `${i18n.t('cosmicScopeTitle')} Lv.${getBuffLvl('cosmicscope') + 1}`,
+        desc: i18n.t('cosmicScopeDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🔭',
+        currentLevel: getBuffLvl('cosmicscope'),
+        nextLevel: getBuffLvl('cosmicscope') + 1,
+        maxLevel: 3,
+        apply: () => {
+          player.stats.magnetRadius = (player.stats.magnetRadius || 130) + 45;
+          if (player.buffLevels) player.buffLevels.cosmicscope = (player.buffLevels.cosmicscope || 0) + 1;
+        }
+      });
+    }
+
     // ==========================================
     // NHÓM 2: ĐỘT BIẾN LỐI CHƠI (Biến đổi cơ chế)
     // ==========================================
