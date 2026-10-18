@@ -203,7 +203,7 @@ window.addEventListener('DOMContentLoaded', () => {
         <span class="ship-card-selected-tag">${i18n.t('shipSelectedBadge')}</span>
         ${ship.isRare ? `<span class="ship-card-rare-tag">${i18n.t('shipRareBadge')}</span>` : ''}
         <div class="ship-canvas-wrap">
-          <canvas width="54" height="54"></canvas>
+          <canvas width="88" height="88"></canvas>
         </div>
         <div class="ship-card-name">${i18n.t(ship.nameKey)}</div>
         <div class="ship-card-role">${i18n.t(ship.roleKey)}</div>
@@ -343,7 +343,7 @@ window.addEventListener('DOMContentLoaded', () => {
       card.innerHTML = `
         <div class="hangar-ship-top">
           <div class="ship-canvas-wrap">
-            <canvas width="54" height="54"></canvas>
+            <canvas width="88" height="88"></canvas>
           </div>
           <div class="hangar-ship-heading">
             <div class="ship-card-name">${i18n.t(ship.nameKey)}</div>

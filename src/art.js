@@ -87,15 +87,17 @@ export class ArtEngine {
       ctx.fill();
     });
 
-    // 3. Energy Shield / Magnet Aura Ring (Subtle Cyberpunk HUD)
-    ctx.shadowBlur = 0;
-    ctx.strokeStyle = isFrenzy ? 'rgba(244, 63, 94, 0.25)' : 'rgba(0, 242, 254, 0.15)';
-    ctx.lineWidth = 1.5;
-    ctx.setLineDash([8, 6]);
-    ctx.beginPath();
-    ctx.arc(0, 0, player.magnetRadius, animTime, animTime + Math.PI * 2);
-    ctx.stroke();
-    ctx.setLineDash([]);
+    // 3. Energy Shield / Magnet Aura Ring (Subtle Cyberpunk HUD, ingame only)
+    if (!player.isPreview && player.magnetRadius > 0) {
+      ctx.shadowBlur = 0;
+      ctx.strokeStyle = isFrenzy ? 'rgba(244, 63, 94, 0.25)' : 'rgba(0, 242, 254, 0.15)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([8, 6]);
+      ctx.beginPath();
+      ctx.arc(0, 0, player.magnetRadius, animTime, animTime + Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
 
     // Wing Gradient
     const hullGrad = ctx.createLinearGradient(-16, 0, 24, 0);
@@ -201,12 +203,12 @@ export class ArtEngine {
       // Rotating Energy Barrier Bubble (When Active)
       const hasShield = (player.shieldHp === undefined || player.shieldHp > 0);
       if (hasShield) {
-        const barrierPulse = Math.sin(animTime * 8) * 3;
-        const barrierRad = (player.radius + 14 + barrierPulse) * (player.stats?.shieldRadiusMult || 1.0);
+        const barrierPulse = Math.sin(animTime * 8) * (player.isPreview ? 1.5 : 3);
+        const barrierRad = (player.radius + (player.isPreview ? 8 : 14) + barrierPulse) * (player.stats?.shieldRadiusMult || 1.0);
         ctx.strokeStyle = '#00f2fe';
-        ctx.lineWidth = 2.6;
+        ctx.lineWidth = player.isPreview ? 2.0 : 2.6;
         ctx.shadowColor = '#00f2fe';
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = player.isPreview ? 10 : 16;
         ctx.beginPath();
         ctx.arc(0, 0, barrierRad, animTime * 2.5, animTime * 2.5 + Math.PI * 1.4);
         ctx.stroke();
@@ -258,24 +260,28 @@ export class ArtEngine {
     ctx.translate(canvas.width / 2, canvas.height / 2);
 
     // Subtle breathing hover motion
-    const hoverY = Math.sin(animTime * 3) * 3;
+    const hoverY = Math.sin(animTime * 3) * 2;
     ctx.translate(0, hoverY);
     ctx.rotate(-Math.PI / 2); // Point ship upwards on preview card
+
+    // Safety scale to keep all glows, thrusters and segments inside canvas without clipping edges
+    ctx.scale(0.80, 0.80);
 
     const mockPlayer = {
       x: 0,
       y: 0,
       facingAngle: 0,
       shipId: shipId,
-      magnetRadius: 28,
-      radius: 16,
+      magnetRadius: 0,
+      isPreview: true,
+      radius: 14,
       invulnerableTimer: 0,
       shieldHp: shipId === 'novashield' ? 100 : 0,
       isNovaShield: shipId === 'novashield',
       segmentPositions: shipId === 'serpent' ? [
-        { x: -12, y: Math.sin(animTime * 4) * 3, radius: 9 },
-        { x: -22, y: Math.sin(animTime * 4 + 1) * 4, radius: 7 },
-        { x: -30, y: Math.sin(animTime * 4 + 2) * 5, radius: 5 }
+        { x: -10, y: Math.sin(animTime * 4) * 2.2, radius: 8 },
+        { x: -19, y: Math.sin(animTime * 4 + 1) * 2.8, radius: 6.5 },
+        { x: -27, y: Math.sin(animTime * 4 + 2) * 3.2, radius: 5 }
       ] : null,
       game: { isFrenzy: false }
     };
