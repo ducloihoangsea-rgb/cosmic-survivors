@@ -1637,10 +1637,11 @@ body:not(.theme-light) .stat-box-sub {
   right: auto;
   width: 290px;
   max-width: min(340px, calc(100vw - 24px));
+  opacity: var(--dock-panel-opacity, 0.85);
   background: rgba(var(--dock-panel-rgb), var(--dock-panel-opacity, 0.85));
   border: 1.5px solid var(--dock-border);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(calc(var(--dock-panel-opacity, 0.85) * 8px));
+  -webkit-backdrop-filter: blur(calc(var(--dock-panel-opacity, 0.85) * 8px));
   border-radius: 16px;
   padding: 12px 14px;
   z-index: 35;
@@ -1648,10 +1649,12 @@ body:not(.theme-light) .stat-box-sub {
   animation: slide-in-meter 0.18s ease-out;
   flex-shrink: 0;
   color: var(--dock-text-main);
+  transition: opacity 0.18s ease, background 0.18s ease;
 }
 
 /* KHI CHỈNH ĐỘ MỜ 100%: HOÀN TOÀN ĐẶC, KHÔNG TRONG SUỐT, KHÔNG THẤY NỀN ARENA */
 body.dock-opaque-solid .damage-meter-panel {
+  opacity: 1 !important;
   background: var(--dock-panel-solid) !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;

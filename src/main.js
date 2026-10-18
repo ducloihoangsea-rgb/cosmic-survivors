@@ -357,6 +357,31 @@ window.addEventListener('DOMContentLoaded', () => {
     const num = Math.min(100, Math.max(15, parseInt(val, 10) || 45));
     const alpha = (num / 100).toFixed(2);
     document.documentElement.style.setProperty('--dock-panel-opacity', alpha);
+
+    // Áp dụng trực tiếp vào style của cả 2 bảng để có hiệu lực mờ/đậm tức thì
+    if (damageMeterPanel) {
+      damageMeterPanel.style.opacity = alpha;
+      if (num >= 98) {
+        damageMeterPanel.style.backdropFilter = 'none';
+        damageMeterPanel.style.webkitBackdropFilter = 'none';
+      } else {
+        const blurPx = Math.max(0, Math.round(num * 0.08));
+        damageMeterPanel.style.backdropFilter = `blur(${blurPx}px)`;
+        damageMeterPanel.style.webkitBackdropFilter = `blur(${blurPx}px)`;
+      }
+    }
+    if (shipStatsPanel) {
+      shipStatsPanel.style.opacity = alpha;
+      if (num >= 98) {
+        shipStatsPanel.style.backdropFilter = 'none';
+        shipStatsPanel.style.webkitBackdropFilter = 'none';
+      } else {
+        const blurPx = Math.max(0, Math.round(num * 0.08));
+        shipStatsPanel.style.backdropFilter = `blur(${blurPx}px)`;
+        shipStatsPanel.style.webkitBackdropFilter = `blur(${blurPx}px)`;
+      }
+    }
+
     if (num >= 98) {
       document.body.classList.add('dock-opaque-solid');
     } else {
@@ -376,12 +401,17 @@ window.addEventListener('DOMContentLoaded', () => {
     panelOpacitySlider.addEventListener('input', (e) => {
       applyDockOpacity(e.target.value);
     });
+    panelOpacitySlider.addEventListener('change', (e) => {
+      applyDockOpacity(e.target.value);
+    });
   }
 
   // Settings Modal Handlers (Mở và đóng bảng cài đặt)
   function openSettings() {
     sound.playCardSelect();
     updateSoundBtnUI();
+    const curOpacity = localStorage.getItem('dopamine_dock_opacity') || '45';
+    applyDockOpacity(curOpacity);
     if (settingsModal) {
       settingsModal.classList.add('active');
       updateModalState();
@@ -390,6 +420,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
   function closeSettings() {
     sound.playCardSelect();
+    if (panelOpacitySlider) {
+      applyDockOpacity(panelOpacitySlider.value);
+    }
     if (settingsModal) {
       settingsModal.classList.remove('active');
       updateModalState();
