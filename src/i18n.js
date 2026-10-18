@@ -2,7 +2,7 @@
 
 export const translations = {
   en: {
-    gameTitle: 'SURVIVOR<br>BURST',
+    gameTitle: 'COSMIC<br>SURVIVOR',
     subTagline: '⚡ DOPAMINE OVERLOAD ⚡',
     startBtn: 'START HUNTING',
     hangarBtn: '⚙️ SHIP HANGAR',
@@ -188,8 +188,8 @@ export const translations = {
   },
 
   vi: {
-    gameTitle: 'CHIẾN BINH<br>DOPAMINE',
-    subTagline: '⚡ BÙNG NỔ CỰC KHOÁI ⚡',
+    gameTitle: 'CHIẾN HẠM<br>VÔ CỰC',
+    subTagline: '⚡ BÙNG NỔ DOPAMINE ⚡',
     startBtn: 'BẮT ĐẦU SĂN',
     hangarBtn: '⚙️ XƯỞNG PHI THUYỀN',
     tipMobile: '📱 Di động: Kéo ngón cái để lướt • Nút EMP',
