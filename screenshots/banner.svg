@@ -1,0 +1,256 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="100%" height="100%">
+  <defs>
+    <!-- Background Space Gradients -->
+    <radialGradient id="spaceGlow1" cx="20%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#4c1d95" stop-opacity="0.45" />
+      <stop offset="60%" stop-color="#1e1b4b" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#030712" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="spaceGlow2" cx="80%" cy="70%" r="55%">
+      <stop offset="0%" stop-color="#0369a1" stop-opacity="0.4" />
+      <stop offset="50%" stop-color="#082f49" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#030712" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="spaceGlow3" cx="50%" cy="45%" r="40%">
+      <stop offset="0%" stop-color="#059669" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#030712" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="coreNovaGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00f2fe" stop-opacity="0.9" />
+      <stop offset="35%" stop-color="#0284c7" stop-opacity="0.45" />
+      <stop offset="70%" stop-color="#0369a1" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Starship Filters & Glows -->
+    <filter id="neonGlowRed" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="7" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="neonGlowGreen" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="neonGlowCyan" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Linear Gradients for Hull Artwork -->
+    <linearGradient id="rammerHull" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f87171" />
+      <stop offset="50%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#7f1d1d" />
+    </linearGradient>
+    <linearGradient id="flameThrust" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="25%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
+    </linearGradient>
+
+    <linearGradient id="serpentHull" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7b7" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <linearGradient id="novaHull" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="40%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Deep Cosmos Background -->
+  <rect width="1280" height="640" fill="#030712" />
+  <rect width="1280" height="640" fill="url(#spaceGlow1)" />
+  <rect width="1280" height="640" fill="url(#spaceGlow2)" />
+  <rect width="1280" height="640" fill="url(#spaceGlow3)" />
+
+  <!-- Starfield Stars -->
+  <g fill="#ffffff" opacity="0.8">
+    <circle cx="85" cy="72" r="1.5" />
+    <circle cx="160" cy="190" r="1.2" opacity="0.6" />
+    <circle cx="240" cy="85" r="2" />
+    <circle cx="310" cy="240" r="1" opacity="0.5" />
+    <circle cx="450" cy="110" r="1.8" />
+    <circle cx="560" cy="65" r="2.2" />
+    <circle cx="680" cy="140" r="1" opacity="0.4" />
+    <circle cx="790" cy="90" r="1.6" />
+    <circle cx="910" cy="180" r="1.3" />
+    <circle cx="1020" cy="80" r="2.5" />
+    <circle cx="1180" cy="130" r="1.5" />
+    <circle cx="1220" cy="220" r="1.2" />
+    <circle cx="1140" cy="350" r="2" />
+    <circle cx="1050" cy="480" r="1.4" opacity="0.7" />
+    <circle cx="1240" cy="520" r="1.8" />
+    <circle cx="930" cy="590" r="1.5" />
+    <circle cx="820" cy="530" r="2.2" />
+    <circle cx="710" cy="580" r="1.2" />
+    <circle cx="590" cy="520" r="1.7" />
+    <circle cx="430" cy="570" r="2.4" />
+    <circle cx="280" cy="510" r="1.3" />
+    <circle cx="150" cy="460" r="2" />
+    <circle cx="70" cy="530" r="1.5" />
+    <circle cx="190" cy="320" r="1" />
+  </g>
+  <!-- Cosmic Dust & Nebula Specks -->
+  <g fill="#38bdf8" opacity="0.5">
+    <circle cx="380" cy="180" r="1.5" />
+    <circle cx="870" cy="240" r="2" />
+    <circle cx="740" cy="420" r="1.8" />
+    <circle cx="510" cy="390" r="1.2" />
+    <circle cx="640" cy="210" r="2.5" />
+  </g>
+  <g fill="#f43f5e" opacity="0.45">
+    <circle cx="180" cy="140" r="2" />
+    <circle cx="290" cy="380" r="1.6" />
+    <circle cx="480" cy="490" r="2.2" />
+  </g>
+
+  <!-- ============================================== -->
+  <!-- 1. LEFT SHIP: METEOR RAMMER (Tàu Tông Húc)     -->
+  <!-- ============================================== -->
+  <g transform="translate(240, 360) rotate(-18)">
+    <!-- Blazing Flame Plume -->
+    <polygon points="-40,0 -160,-22 -110,-5 -220,0 -110,5 -160,22" fill="url(#flameThrust)" filter="url(#neonGlowRed)" opacity="0.9" />
+    <polygon points="-30,0 -110,-10 -80,-2 -150,0 -80,2 -110,10" fill="#ffffff" opacity="0.8" />
+
+    <!-- Heavy Battering Hull -->
+    <polygon points="65,0 15,36 -35,26 -20,0 -35,-26 15,-36" fill="url(#rammerHull)" stroke="#fca5a5" stroke-width="2.5" filter="url(#neonGlowRed)" />
+    <!-- Armored Ram Prow (Reinforced Spikes) -->
+    <polygon points="65,0 35,16 20,0 35,-16" fill="#fecaca" />
+    <line x1="20" y1="0" x2="-20" y2="0" stroke="#f87171" stroke-width="3" />
+    <circle cx="15" cy="0" r="7" fill="#ffffff" filter="url(#neonGlowRed)" />
+
+    <!-- Kinetic Shock Wave Rings -->
+    <path d="M 50,-40 A 55 55 0 0 1 50,40" fill="none" stroke="#f97316" stroke-width="3.5" opacity="0.75" />
+    <path d="M 75,-60 A 80 80 0 0 1 75,60" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="8 6" opacity="0.6" />
+  </g>
+
+  <!-- ============================================== -->
+  <!-- 2. CENTER SHIP: CYBER SERPENT DRAGON (Tàu Rắn) -->
+  <!-- ============================================== -->
+  <g transform="translate(640, 310)">
+    <!-- Bioluminescent Trailing Spine / Poison Smoke -->
+    <path d="M -180,80 Q -120,-30 -40,30 T 80,-20" fill="none" stroke="#10b981" stroke-width="8" stroke-linecap="round" filter="url(#neonGlowGreen)" opacity="0.35" />
+    <path d="M -220,110 Q -150,90 -90,40" fill="none" stroke="#a855f7" stroke-width="16" stroke-linecap="round" opacity="0.25" filter="url(#neonGlowGreen)" />
+
+    <!-- Segment 5 (Tail Tip) -->
+    <circle cx="-160" cy="72" r="10" fill="#047857" stroke="#34d399" stroke-width="2" />
+    <!-- Segment 4 -->
+    <circle cx="-115" cy="28" r="13" fill="url(#serpentHull)" stroke="#6ee7b7" stroke-width="2.2" filter="url(#neonGlowGreen)" />
+    <polygon points="-115,10 -105,28 -125,28" fill="#a7f3d0" />
+    <!-- Segment 3 -->
+    <circle cx="-65" cy="18" r="16" fill="url(#serpentHull)" stroke="#6ee7b7" stroke-width="2.5" />
+    <polygon points="-65,-4 -52,18 -78,18" fill="#a7f3d0" />
+    <!-- Segment 2 -->
+    <circle cx="-10" cy="30" r="19" fill="url(#serpentHull)" stroke="#6ee7b7" stroke-width="2.5" filter="url(#neonGlowGreen)" />
+    <polygon points="-10,6 6,30 -26,30" fill="#ffffff" />
+
+    <!-- Head Segment (Dragon Mandibles & Horns) -->
+    <g transform="translate(55, -2)">
+      <polygon points="45,0 10,24 -20,18 -10,0 -20,-18 10,-24" fill="url(#serpentHull)" stroke="#a7f3d0" stroke-width="3" filter="url(#neonGlowGreen)" />
+      <!-- Crest Spikes -->
+      <polygon points="5, -24 15,-40 -2,-20" fill="#34d399" />
+      <polygon points="5, 24 15,40 -2,20" fill="#34d399" />
+      <!-- Dragon Eyes -->
+      <circle cx="22" cy="-9" r="4.5" fill="#fef08a" filter="url(#neonGlowGreen)" />
+      <circle cx="22" cy="9" r="4.5" fill="#fef08a" filter="url(#neonGlowGreen)" />
+      <!-- Energy Fang -->
+      <polygon points="45,0 28,6 34,0 28,-6" fill="#ffffff" />
+    </g>
+  </g>
+
+  <!-- ============================================== -->
+  <!-- 3. RIGHT SHIP: NOVA SHIELD VESSEL (Tàu Khiên)  -->
+  <!-- ============================================== -->
+  <g transform="translate(1010, 350) rotate(14)">
+    <!-- Expanding Nova Barrier Dome -->
+    <circle cx="0" cy="0" r="95" fill="url(#coreNovaGlow)" />
+    <circle cx="0" cy="0" r="80" fill="none" stroke="#00f2fe" stroke-width="3" filter="url(#neonGlowCyan)" stroke-dasharray="14 8" opacity="0.85" />
+    <circle cx="0" cy="0" r="96" fill="none" stroke="#38bdf8" stroke-width="1.8" opacity="0.6" />
+
+    <!-- Energy Field Nodes (Satellites) -->
+    <circle cx="0" cy="-80" r="5" fill="#ffffff" filter="url(#neonGlowCyan)" />
+    <circle cx="69" cy="40" r="5" fill="#ffffff" filter="url(#neonGlowCyan)" />
+    <circle cx="-69" cy="40" r="5" fill="#ffffff" filter="url(#neonGlowCyan)" />
+
+    <!-- Starship Vessel Centerpiece -->
+    <polygon points="0,-42 36,25 0,14 -36,25" fill="url(#novaHull)" stroke="#bae6fd" stroke-width="2.5" filter="url(#neonGlowCyan)" />
+    <polygon points="0,-22 18,16 0,8 -18,16" fill="#0284c7" />
+    <circle cx="0" cy="0" r="10" fill="#ffffff" filter="url(#neonGlowCyan)" />
+
+    <!-- Pulse Waves -->
+    <circle cx="0" cy="0" r="115" fill="none" stroke="#00f2fe" stroke-width="1" stroke-dasharray="4 6" opacity="0.4" />
+  </g>
+
+  <!-- ============================================== -->
+  <!-- HEADER TYPOGRAPHY & HERO TITLE                -->
+  <!-- ============================================== -->
+  <g text-anchor="middle">
+    <!-- Top Genre Tag -->
+    <text x="640" y="85" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="14" font-weight="900" fill="#38bdf8" letter-spacing="8" opacity="0.95">
+      ★ NEXT-GEN ROGUELITE BULLET HELL ★
+    </text>
+
+    <!-- Main Title -->
+    <text x="640" y="145" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="56" font-weight="950" fill="#ffffff" letter-spacing="4" filter="url(#textGlow)">
+      COSMIC SURVIVORS
+    </text>
+    <!-- Dual Gradient Fill Overlay on Title -->
+    <text x="640" y="145" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="56" font-weight="950" fill="url(#rammerHull)" letter-spacing="4" opacity="0.3">
+      COSMIC SURVIVORS
+    </text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="640" y="185" font-family="'Segoe UI', Roboto, 'Helvetica Neue', sans-serif" font-size="17" font-weight="600" fill="#94a3b8" letter-spacing="2">
+      CHIẾN HẠM VÔ CỰC • 3 ARCHETYPES • 15 CURATED FUSION UPGRADES
+    </text>
+  </g>
+
+  <!-- ============================================== -->
+  <!-- BOTTOM ARCHETYPE PILLS                         -->
+  <!-- ============================================== -->
+  <!-- Pill 1: Rammer -->
+  <g transform="translate(140, 560)">
+    <rect width="280" height="42" rx="21" fill="rgba(15, 23, 42, 0.75)" stroke="#ef4444" stroke-width="1.8" />
+    <text x="140" y="26" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#fca5a5" letter-spacing="1">
+      ☄️ TÀU TÔNG HÚC (RAMMER)
+    </text>
+  </g>
+
+  <!-- Pill 2: Serpent -->
+  <g transform="translate(500, 560)">
+    <rect width="280" height="42" rx="21" fill="rgba(15, 23, 42, 0.75)" stroke="#10b981" stroke-width="1.8" />
+    <text x="140" y="26" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#6ee7b7" letter-spacing="1">
+      🐉 TÀU RỒNG XÀ (SERPENT)
+    </text>
+  </g>
+
+  <!-- Pill 3: Nova Shield -->
+  <g transform="translate(860, 560)">
+    <rect width="280" height="42" rx="21" fill="rgba(15, 23, 42, 0.75)" stroke="#00f2fe" stroke-width="1.8" />
+    <text x="140" y="26" text-anchor="middle" font-family="'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="800" fill="#7dd3fc" letter-spacing="1">
+      🛡️ KHIÊN XUNG KÍCH (NOVA)
+    </text>
+  </g>
+</svg>
