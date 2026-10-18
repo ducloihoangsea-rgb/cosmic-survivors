@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#030712">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>CHIẾN BINH DOPAMINE - Survivor Burst</title>
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <div id="app-container">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- TOP HUD -->
+    <div id="hud">
+      <!-- XP Bar -->
+      <div class="xp-container">
+        <div id="xp-bar"></div>
+      </div>
+
+      <div class="hud-top-row">
+        <div id="level-badge" class="level-badge">CẤP 1</div>
+
+        <div class="stats-center">
+          <div class="stat-item"><span id="timer-display">00:00</span></div>
+          <div class="stat-item"><span id="kills-display">0 💀</span></div>
+        </div>
+
+        <div class="hud-right-group">
+          <div class="hp-container">
+            <div class="hp-track">
+              <div id="hp-bar"></div>
+            </div>
+          </div>
+          <!-- Mid-game quick language switcher -->
+          <div class="hud-lang-toggle">
+            <button id="hud-lang-btn" class="hud-lang-badge" title="Đổi ngôn ngữ / Change Language">🇻🇳 VI</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dopamine Frenzy Gauge & Kill Combo Row -->
+      <div class="dopamine-and-combo-row">
+        <div class="dopamine-container">
+          <span id="dopamine-label" class="dopamine-label">BÙNG NỔ DOPAMINE</span>
+          <div class="dopamine-track">
+            <div id="dopamine-bar"></div>
+          </div>
+        </div>
+
+        <!-- Dynamic Kill Combo Display -->
+        <div id="combo-badge" class="combo-badge hidden">
+          <span id="combo-text">🔥 12 COMBO (x1.2)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- REAL-TIME DAMAGE METER (COLLAPSED BUTTON) -->
+    <div id="meter-toggle-btn" class="meter-toggle-btn" title="Xem sát thương chi tiết / Damage Breakdown">
+      <span class="meter-btn-icon">📊</span>
+      <span class="meter-btn-label">DPS</span>
+    </div>
+
+    <!-- REAL-TIME DAMAGE METER (EXPANDED PANEL) -->
+    <div id="damage-meter-panel" class="damage-meter-panel hidden">
+      <div class="meter-header">
+        <div class="meter-header-left">
+          <span class="meter-header-icon">📊</span>
+          <span id="meter-title" class="meter-header-title">BẢNG SÁT THƯƠNG KỸ NĂNG</span>
+        </div>
+        <button id="meter-close-btn" class="meter-close-btn" title="Thu gọn / Collapse">✕</button>
+      </div>
+
+      <div class="meter-total-row">
+        <span id="meter-total-label">Tổng Sát Thương</span>
+        <span id="meter-total-val" class="meter-total-val">0</span>
+      </div>
+
+      <div id="meter-skills-list" class="meter-skills-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- TOUCH ULTIMATE BUTTON (Mobile & Desktop Touch) -->
+    <div id="btn-ultimate" class="ultimate-btn-container" title="Bấm hoặc Phím Cách: Sóng Chấn Động EMP">
+      <svg class="ultimate-svg" viewBox="0 0 100 100">
+        <circle class="ult-bg-circle" cx="50" cy="50" r="44"></circle>
+        <circle id="ult-progress-circle" class="ult-fill-circle" cx="50" cy="50" r="44"></circle>
+      </svg>
+      <div class="ult-inner">
+        <span class="ult-icon">⚡</span>
+        <span class="ult-label">EMP</span>
+      </div>
+    </div>
+
+    <!-- HORDE ALERT NOTIFICATION -->
+    <div id="horde-alert">
+      ⚠️ CẢNH BÁO: BẦY QUÁI ĐANG TRÀN VÀO! ⚠️
+    </div>
+
+    <!-- START SCREEN MODAL -->
+    <div id="start-screen" class="modal-overlay active">
+      <div class="lang-selector-bar">
+        <button id="lang-btn-vi" class="lang-pill active">🇻🇳 Tiếng Việt</button>
+        <button id="lang-btn-en" class="lang-pill">🇬🇧 English</button>
+      </div>
+
+      <div class="logo-container">
+        <h1 id="start-title" class="game-logo">CHIẾN BINH<br>DOPAMINE</h1>
+        <div id="start-sub" class="sub-tagline">⚡ BÙNG NỔ CỰC KHOÁI ⚡</div>
+      </div>
+
+      <div class="start-btn-group">
+        <button id="start-btn" class="btn-primary">BẮT ĐẦU SĂN</button>
+        <button id="start-hangar-btn" class="btn-secondary">⚙️ XƯỞNG PHI THUYỀN</button>
+      </div>
+
+      <div class="control-tips">
+        <span id="tip-mobile">📱 Di động: Kéo ngón cái để lướt • Nút EMP</span>
+        <span id="tip-pc">💻 PC: Phím WASD • Phím Cách (Space): Sóng EMP</span>
+      </div>
+    </div>
+
+    <!-- HANGAR TECH TREE MODAL -->
+    <div id="hangar-modal" class="modal-overlay">
+      <div class="hangar-card-box">
+        <div class="hangar-header">
+          <div>
+            <h2 id="hangar-title" class="modal-title" style="text-align: left; margin: 0;">XƯỞNG CÔNG NGHỆ</h2>
+            <div id="hangar-sub" class="modal-subtitle" style="text-align: left; margin-bottom: 4px;">Cường hóa vĩnh viễn phi thuyền bằng Vàng tích lũy.</div>
+          </div>
+          <div class="hangar-gold-pill">
+            <span class="gold-icon">🪙</span>
+            <span id="hangar-gold-val">0</span>
+          </div>
+        </div>
+
+        <div id="hangar-list" class="hangar-upgrades-list">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <button id="hangar-close-btn" class="btn-primary" style="margin-top: 14px; width: 100%;">ĐÓNG XƯỞNG</button>
+      </div>
+    </div>
+
+    <!-- LUCKY SLOT MACHINE CHEST MODAL -->
+    <div id="chest-modal" class="modal-overlay">
+      <div class="chest-box">
+        <h2 id="chest-title" class="modal-title" style="color: #facc15;">🎰 RƯƠNG MAY MẮN 🎰</h2>
+        <div id="chest-sub" class="modal-subtitle">Guồng quay Slot Machine kích hoạt...</div>
+
+        <div class="slot-machine-reels">
+          <div class="slot-reel" id="reel-1">❓</div>
+          <div class="slot-reel" id="reel-2">❓</div>
+          <div class="slot-reel" id="reel-3">❓</div>
+        </div>
+
+        <div id="chest-result" class="chest-rewards-container hidden">
+          <div id="chest-jackpot-banner" class="jackpot-banner">🎉 MEGA JACKPOT! 🎉</div>
+          <div id="chest-cards-box" class="cards-grid">
+            <!-- Chest cards dynamically revealed -->
+          </div>
+        </div>
+
+        <button id="chest-claim-btn" class="btn-primary hidden" style="margin-top: 14px; width: 100%;">NHẬN THƯỞNG</button>
+      </div>
+    </div>
+
+    <!-- LEVEL UP / 3-CARD MODAL -->
+    <div id="levelup-modal" class="modal-overlay">
+      <h2 id="levelup-title" class="modal-title">LÊN CẤP THÀNH CÔNG!</h2>
+      <div id="levelup-sub" class="modal-subtitle">Chọn công nghệ cường hóa sinh học:</div>
+      <div id="cards-container" class="cards-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div id="gameover-modal" class="modal-overlay">
+      <h2 id="gameover-title" class="modal-title" style="color: #ef4444;">HỆ THỐNG THẤT THỦ</h2>
+      <div id="gameover-sub" class="modal-subtitle">Bạn đã chiến đấu đến giọt dopamine cuối cùng.</div>
+
+      <div class="stats-board">
+        <div class="board-row">
+          <span id="stat-lbl-survive">Thời Gian Sống Sót</span>
+          <span id="stat-survive" class="board-val">00:00</span>
+        </div>
+        <div class="board-row">
+          <span id="stat-lbl-kills">Quái Đã Tiêu Diệt</span>
+          <span id="stat-kills" class="board-val">0</span>
+        </div>
+        <div class="board-row">
+          <span id="stat-lbl-score">Điểm Số</span>
+          <span id="stat-score" class="board-val">0</span>
+        </div>
+        <div class="board-row">
+          <span id="stat-lbl-gold">Kho Vàng Tích Lũy</span>
+          <span id="stat-gold" class="board-val">0 🪙</span>
+        </div>
+      </div>
+
+      <div class="gameover-btn-group">
+        <button id="retry-btn" class="btn-primary">CHƠI LẠI NGAY</button>
+        <button id="over-hangar-btn" class="btn-secondary">⚙️ XƯỞNG NÂNG CẤP</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
