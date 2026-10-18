@@ -3,43 +3,49 @@ import { art } from './art.js';
 import { FloatingText, Particle } from './particles.js';
 
 export class Enemy {
-  constructor(x, y, type = 'crawler', waveMultiplier = 1.0) {
+  constructor(x, y, type = 'crawler', waveMultiplier = 1.0, playerLevel = 1) {
     this.x = x;
     this.y = y;
     this.type = type;
     this.isDead = false;
 
+    // Tiến trình theo cấp người chơi: cấp thấp quái yếu/chậm, cấp cao thử thách tăng dần
+    const lvl = Math.max(1, playerLevel);
+    const speedScale = 1.0 + Math.min(1.0, (lvl - 1) * 0.04 + (waveMultiplier - 1.0) * 0.12);
+    const hpScale = (1.0 + (lvl - 1) * 0.16) * waveMultiplier;
+    const dmgScale = 1.0 + (lvl - 1) * 0.08 + (waveMultiplier - 1.0) * 0.12;
+
     if (type === 'crawler') {
       this.radius = 12;
-      this.speed = (105 + Math.random() * 35) * waveMultiplier;
-      this.maxHp = 78 * waveMultiplier; // Máu quái thường tăng mạnh lên 78
+      this.speed = (58 + Math.random() * 16) * speedScale; // Cấp 1: 58-74 px/s (dễ thở, né tốt)
+      this.maxHp = Math.max(18, Math.round(22 * hpScale)); // Cấp 1: 22 HP (1-2 phát súng cơ bản là nổ)
       this.color = '#ef4444'; // Red
       this.gemValue = 1;
-      this.damage = 25; // Sát thương cắn 25
+      this.damage = Math.round(8 * dmgScale); // Cấp 1: 8 sát thương (không sốc chết)
       this.score = 10;
     } else if (type === 'speeder') {
       this.radius = 9;
-      this.speed = (180 + Math.random() * 45) * waveMultiplier; // Rượt cực nhanh
-      this.maxHp = 42 * waveMultiplier; // Máu quái nhanh tăng lên 42
+      this.speed = (92 + Math.random() * 22) * speedScale; // Cấp 1: 92-114 px/s (không bị bay vọt tới tấp)
+      this.maxHp = Math.max(12, Math.round(15 * hpScale)); // Cấp 1: 15 HP (mỏng manh)
       this.color = '#d946ef'; // Magenta
       this.gemValue = 2;
-      this.damage = 20; // Sát thương đâm 20
+      this.damage = Math.round(6 * dmgScale); // Cấp 1: 6 sát thương
       this.score = 15;
     } else if (type === 'brute') {
       this.radius = 22;
-      this.speed = 70 * waveMultiplier;
-      this.maxHp = 520 * waveMultiplier; // Quái tank tăng lên 520 HP
+      this.speed = 42 * speedScale; // Di chuyển chậm, đầm chắc
+      this.maxHp = Math.max(80, Math.round(120 * hpScale)); // Cấp 1: 120 HP (thay vì 520 HP)
       this.color = '#06b6d4'; // Cyan
       this.gemValue = 10;
-      this.damage = 55; // Sát thương húc 55
+      this.damage = Math.round(16 * dmgScale); // Cấp 1: 16 sát thương
       this.score = 50;
     } else if (type === 'boss') {
       this.radius = 36;
-      this.speed = 80;
-      this.maxHp = 3800 * waveMultiplier; // Boss siêu trâu 3800 HP
+      this.speed = 60 * Math.min(1.4, speedScale);
+      this.maxHp = Math.max(600, Math.round(850 * hpScale)); // Cấp 1: 850 HP (thay vì 3800 HP)
       this.color = '#eab308'; // Gold
       this.gemValue = 50;
-      this.damage = 75; // Sát thương Boss 75
+      this.damage = Math.round(35 * dmgScale); // Cấp 1: 35 sát thương
       this.score = 500;
       this.isBoss = true;
     }
@@ -129,9 +135,9 @@ export class WaveSpawner {
     this.gameTime = 0;
     this.spawnTimer = 0;
     this.hordeTimer = 0;
-    this.nextHordeTime = 20; // Bầy quái ập vào siêu sớm ở giây 20
+    this.nextHordeTime = 75; // Đợt tràn đầu tiên ở 75s (đủ thời gian lên cấp 3-4)
     this.bossTimer = 0;
-    this.nextBossTime = 40;  // Boss xuất hiện sớm ngay ở giây 40
+    this.nextBossTime = 135;  // Boss xuất hiện ở phút 2:15
   }
 
   update(dt, player) {
@@ -140,27 +146,32 @@ export class WaveSpawner {
     this.hordeTimer += dt;
     this.bossTimer += dt;
 
-    const waveMult = 1.0 + (this.gameTime / 60) * 0.75; // Tăng tiến độ khó nhanh và mạnh
-    const spawnInterval = Math.max(0.04, 0.35 - (this.gameTime / 60) * 0.10); // Xả quái dày đặc liên tục
+    const lvl = Math.max(1, player?.level || 1);
+    // Độ khó tăng dần theo cấp độ người chơi và thời gian chơi
+    const waveMult = 1.0 + (this.gameTime / 60) * 0.20 + (lvl - 1) * 0.08;
+
+    // Tần suất ra quái: Cấp 1 thưa thớt (1.6s một lần). Càng lên cấp cao khoảng cách càng ngắn dần
+    const baseInterval = 1.6;
+    const spawnInterval = Math.max(0.25, baseInterval / (1 + (lvl - 1) * 0.16 + (this.gameTime / 60) * 0.12));
 
     // Regular Spawning
     if (this.spawnTimer >= spawnInterval) {
       this.spawnTimer = 0;
-      this.spawnStandardPack(player, waveMult);
+      this.spawnStandardPack(player, waveMult, lvl);
     }
 
-    // Horde Event Spawning
-    if (this.hordeTimer >= this.nextHordeTime) {
+    // Horde Event Spawning (chỉ kích hoạt khi đủ thời gian và level >= 3)
+    if (this.hordeTimer >= this.nextHordeTime && lvl >= 3) {
       this.hordeTimer = 0;
-      this.nextHordeTime = 35; // Mỗi 35s bầy quái hung hãn lại tràn vào vây kín
-      this.triggerHorde(player, waveMult);
+      this.nextHordeTime = 65; // Mỗi 65s có 1 đợt quái tràn
+      this.triggerHorde(player, waveMult, lvl);
     }
 
-    // Boss Spawning
-    if (this.bossTimer >= this.nextBossTime) {
+    // Boss Spawning (chỉ kích hoạt khi đủ thời gian và level >= 5)
+    if (this.bossTimer >= this.nextBossTime && lvl >= 5) {
       this.bossTimer = 0;
-      this.nextBossTime = 60; // Mỗi 60s có 1 Siêu Boss
-      this.spawnBoss(player, waveMult);
+      this.nextBossTime = 120; // Mỗi 2 phút 1 Siêu Boss
+      this.spawnBoss(player, waveMult, lvl);
     }
   }
 
@@ -172,39 +183,62 @@ export class WaveSpawner {
     };
   }
 
-  spawnStandardPack(player, waveMult) {
-    // Sinh từ 2-6 quái vật đồng thời theo thời gian
-    const packSize = 2 + Math.min(5, Math.floor(waveMult * 1.4));
+  spawnStandardPack(player, waveMult, lvl = 1) {
+    // Số lượng quái mỗi đợt: Cấp 1 chỉ ra 1 quái (thỉnh thoảng 2). Cấp càng cao ra càng đông
+    const packSize = Math.max(1, Math.min(7, Math.floor(1 + (lvl - 1) * 0.35 + (this.gameTime / 90) * 0.25)));
     for (let i = 0; i < packSize; i++) {
       const p = this.getSpawnPos(player, 380 + Math.random() * 80);
       const rand = Math.random();
 
-      if (rand < 0.55) {
-        this.game.enemies.push(new Enemy(p.x, p.y, 'crawler', waveMult));
-      } else if (rand < 0.82) {
-        this.game.enemies.push(new Enemy(p.x, p.y, 'speeder', waveMult));
+      // Phân bổ chủng loại quái theo cấp độ
+      if (lvl === 1) {
+        // Cấp 1: 100% crawler chậm, dễ né, dễ tiêu diệt
+        this.game.enemies.push(new Enemy(p.x, p.y, 'crawler', waveMult, lvl));
+      } else if (lvl === 2) {
+        // Cấp 2: 85% crawler, 15% speeder
+        if (rand < 0.85) {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'crawler', waveMult, lvl));
+        } else {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'speeder', waveMult, lvl));
+        }
+      } else if (lvl <= 4) {
+        // Cấp 3-4: 70% crawler, 22% speeder, 8% brute
+        if (rand < 0.70) {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'crawler', waveMult, lvl));
+        } else if (rand < 0.92) {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'speeder', waveMult, lvl));
+        } else {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'brute', waveMult, lvl));
+        }
       } else {
-        this.game.enemies.push(new Enemy(p.x, p.y, 'brute', waveMult));
+        // Cấp 5+: Đầy đủ quái vật
+        if (rand < 0.50) {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'crawler', waveMult, lvl));
+        } else if (rand < 0.80) {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'speeder', waveMult, lvl));
+        } else {
+          this.game.enemies.push(new Enemy(p.x, p.y, 'brute', waveMult, lvl));
+        }
       }
     }
   }
 
-  triggerHorde(player, waveMult) {
+  triggerHorde(player, waveMult, lvl = 1) {
     this.game.triggerHordeAlert();
-    // 70-120 speeders & crawlers vây kín 360 độ
-    const count = 70 + Math.floor(waveMult * 25);
+    // Bầy quái tăng dần theo cấp: cấp 3 ra ~20 con, cấp cao ra 50-75 con
+    const count = Math.min(75, Math.floor(18 + (lvl - 1) * 3.5 + waveMult * 5));
     for (let i = 0; i < count; i++) {
       const angle = (i / count) * Math.PI * 2;
-      const dist = 380 + Math.random() * 80;
+      const dist = 390 + Math.random() * 80;
       const x = player.x + Math.cos(angle) * dist;
       const y = player.y + Math.sin(angle) * dist;
-      this.game.enemies.push(new Enemy(x, y, Math.random() > 0.35 ? 'crawler' : 'speeder', waveMult * 0.95));
+      this.game.enemies.push(new Enemy(x, y, Math.random() > 0.4 ? 'crawler' : 'speeder', waveMult * 0.9, lvl));
     }
   }
 
-  spawnBoss(player, waveMult) {
+  spawnBoss(player, waveMult, lvl = 1) {
     const p = this.getSpawnPos(player, 460);
-    const boss = new Enemy(p.x, p.y, 'boss', waveMult);
+    const boss = new Enemy(p.x, p.y, 'boss', waveMult, lvl);
     this.game.enemies.push(boss);
     this.game.activeBoss = boss;
   }
