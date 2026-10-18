@@ -146,6 +146,7 @@ export class UpgradeSystem {
     const rRare = getRarity('Rare');
     const rEpic = getRarity('Epic');
     const rLegendary = getRarity('Legendary');
+    const rAwakening = getRarity('Awakening');
 
     const getBuffLvl = (id) => player.buffLevels?.[id] || 0;
 
@@ -353,8 +354,8 @@ export class UpgradeSystem {
       });
     }
 
-    // 7. Đâm Xuyên (Drill): Khi húc quái chết, tàu không bị khựng lại mà lao thẳng qua tiếp
-    if (!player.hasDrill) {
+    // 7. Đâm Xuyên (Drill): Chỉ xuất hiện khi chọn tàu đâm (Rammer)
+    if ((player.isRammer || player.shipId === 'rammer') && !player.hasDrill) {
       pool.push({
         id: 'drill',
         categoryKey: 'mutation',
@@ -374,8 +375,8 @@ export class UpgradeSystem {
       });
     }
 
-    // 8. Khiên Lửa (Burn Field): Khiên liên tục gây sát thương thiêu đốt toàn bộ quái trong bán kính xung quanh
-    if (!player.hasBurnField) {
+    // 8. Khiên Lửa (Burn Field): Chỉ xuất hiện khi chọn tàu khiên (Nova Shield)
+    if ((player.isShieldNova || player.shipId === 'novashield') && !player.hasBurnField) {
       pool.push({
         id: 'burnfield',
         categoryKey: 'mutation',
@@ -462,8 +463,8 @@ export class UpgradeSystem {
     // NHÓM 3: SIÊU NÂNG CẤP (Fusion Mods - Cấp 10+)
     // ==========================================
     if (player.level >= 10) {
-      // 12. Bom Quán Tính (Crash Nova): Mỗi khi húc trúng mục tiêu, lập tức kích nổ một đợt sóng khiên
-      if (!player.hasCrashNova) {
+      // 12. Bom Quán Tính (Crash Nova): Chỉ xuất hiện khi chọn tàu khiên (Nova Shield)
+      if ((player.isShieldNova || player.shipId === 'novashield') && !player.hasCrashNova) {
         pool.push({
           id: 'crashnova',
           categoryKey: 'fusion',
@@ -483,8 +484,8 @@ export class UpgradeSystem {
         });
       }
 
-      // 13. Mãng Xà Bọc Thép (Iron Dragon): Các đốt thân rắn nhận giáp & gai, quái chạm vào đốt thân bị bật ngược ra xa
-      if (!player.hasIronDragon) {
+      // 13. Mãng Xà Bọc Thép (Iron Dragon): Chỉ xuất hiện khi chọn tàu rắn (Serpent)
+      if ((player.isSerpent || player.shipId === 'ship_serpent' || player.shipId === 'serpent') && !player.hasIronDragon) {
         pool.push({
           id: 'irondragon',
           categoryKey: 'fusion',
@@ -504,8 +505,8 @@ export class UpgradeSystem {
         });
       }
 
-      // 14. Bất Tử Hóa (Immortality): Toàn bộ máu quy đổi thành khiên, sát thương nổ khiên tăng gấp 3
-      if (!player.hasImmortality) {
+      // 14. Bất Tử Hóa (Immortality): Chỉ xuất hiện khi chọn tàu khiên (Nova Shield)
+      if ((player.isShieldNova || player.shipId === 'novashield') && !player.hasImmortality) {
         pool.push({
           id: 'immortality',
           categoryKey: 'fusion',
@@ -542,14 +543,181 @@ export class UpgradeSystem {
     }
 
     // ==========================================
-    // VŨ KHÍ HIỆN CÓ CỦA TÀU (Chỉ nâng cấp nếu tàu đang sở hữu)
+    // NHÓM 4: LÕI PHỤ TRỢ (Support Cores - Đạt cấp mở khóa Thức Tỉnh)
     // ==========================================
-    const weaponKeys = ['blaster', 'orbs', 'lightning', 'glaive', 'missiles', 'wingmen'];
-    const weaponIcons = { blaster: '⚡', orbs: '🪐', lightning: '🌩️', glaive: '🌀', missiles: '🚀', wingmen: '🛸' };
+    // 1. Lõi Tốc Đánh (core_firerate)
+    if (getBuffLvl('core_firerate') < 5) {
+      pool.push({
+        id: 'core_firerate',
+        categoryKey: 'core',
+        category: i18n.t('categoryCore'),
+        title: `${i18n.t('core_firerateTitle')} Lv.${getBuffLvl('core_firerate') + 1}`,
+        desc: i18n.t('core_firerateDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '⚡',
+        currentLevel: getBuffLvl('core_firerate'),
+        nextLevel: getBuffLvl('core_firerate') + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.stats.fireRateMult = (player.stats.fireRateMult || 1.0) + 0.20;
+          if (player.buffLevels) player.buffLevels.core_firerate = (player.buffLevels.core_firerate || 0) + 1;
+        }
+      });
+    }
+
+    // 2. Lõi Bán Kính Nổ (core_blast)
+    if (getBuffLvl('core_blast') < 5) {
+      pool.push({
+        id: 'core_blast',
+        categoryKey: 'core',
+        category: i18n.t('categoryCore'),
+        title: `${i18n.t('core_blastTitle')} Lv.${getBuffLvl('core_blast') + 1}`,
+        desc: i18n.t('core_blastDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '💥',
+        currentLevel: getBuffLvl('core_blast'),
+        nextLevel: getBuffLvl('core_blast') + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.stats.blastRadiusMult = (player.stats.blastRadiusMult || 1.0) + 0.35;
+          if (player.buffLevels) player.buffLevels.core_blast = (player.buffLevels.core_blast || 0) + 1;
+        }
+      });
+    }
+
+    // 3. Lõi Triệu Hồi (core_summon)
+    if (getBuffLvl('core_summon') < 5) {
+      pool.push({
+        id: 'core_summon',
+        categoryKey: 'core',
+        category: i18n.t('categoryCore'),
+        title: `${i18n.t('core_summonTitle')} Lv.${getBuffLvl('core_summon') + 1}`,
+        desc: i18n.t('core_summonDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🛸',
+        currentLevel: getBuffLvl('core_summon'),
+        nextLevel: getBuffLvl('core_summon') + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.stats.summonDmgMult = (player.stats.summonDmgMult || 1.0) + 0.40;
+          if (player.buffLevels) player.buffLevels.core_summon = (player.buffLevels.core_summon || 0) + 1;
+        }
+      });
+    }
+
+    // 4. Lõi Tầm Xa (core_range)
+    if (getBuffLvl('core_range') < 5) {
+      pool.push({
+        id: 'core_range',
+        categoryKey: 'core',
+        category: i18n.t('categoryCore'),
+        title: `${i18n.t('core_rangeTitle')} Lv.${getBuffLvl('core_range') + 1}`,
+        desc: i18n.t('core_rangeDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🔭',
+        currentLevel: getBuffLvl('core_range'),
+        nextLevel: getBuffLvl('core_range') + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.stats.rangeMult = (player.stats.rangeMult || 1.0) + 0.35;
+          if (player.buffLevels) player.buffLevels.core_range = (player.buffLevels.core_range || 0) + 1;
+        }
+      });
+    }
+
+    // 5. Lõi Khiên (core_shield)
+    if (getBuffLvl('core_shield') < 5) {
+      pool.push({
+        id: 'core_shield',
+        categoryKey: 'core',
+        category: i18n.t('categoryCore'),
+        title: `${i18n.t('core_shieldTitle')} Lv.${getBuffLvl('core_shield') + 1}`,
+        desc: i18n.t('core_shieldDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🛡️',
+        currentLevel: getBuffLvl('core_shield'),
+        nextLevel: getBuffLvl('core_shield') + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.maxShieldEnergy = (player.maxShieldEnergy || 100) + 50;
+          player.shieldEnergy = (player.shieldEnergy || 0) + 50;
+          player.shieldRechargeSpeed = (player.shieldRechargeSpeed || 1.0) + 0.25;
+          if (player.buffLevels) player.buffLevels.core_shield = (player.buffLevels.core_shield || 0) + 1;
+        }
+      });
+    }
+
+    // 6. Lõi Giáp Thân Tàu (core_hull)
+    if (getBuffLvl('core_hull') < 5) {
+      pool.push({
+        id: 'core_hull',
+        categoryKey: 'core',
+        category: i18n.t('categoryCore'),
+        title: `${i18n.t('core_hullTitle')} Lv.${getBuffLvl('core_hull') + 1}`,
+        desc: i18n.t('core_hullDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🦾',
+        currentLevel: getBuffLvl('core_hull'),
+        nextLevel: getBuffLvl('core_hull') + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.maxHp = Math.round(player.maxHp * 1.4);
+          player.hp = Math.min(player.maxHp, player.hp + 60);
+          player.stats.mass = (player.stats.mass || 1.0) * 1.35;
+          if (player.buffLevels) player.buffLevels.core_hull = (player.buffLevels.core_hull || 0) + 1;
+        }
+      });
+    }
+
+    // 7. Lõi Đốt Rồng (core_tail)
+    if (getBuffLvl('core_tail') < 5) {
+      pool.push({
+        id: 'core_tail',
+        categoryKey: 'core',
+        category: i18n.t('categoryCore'),
+        title: `${i18n.t('core_tailTitle')} Lv.${getBuffLvl('core_tail') + 1}`,
+        desc: i18n.t('core_tailDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🐉',
+        currentLevel: getBuffLvl('core_tail'),
+        nextLevel: getBuffLvl('core_tail') + 1,
+        maxLevel: 5,
+        apply: () => {
+          player.stats.bonusSegments = (player.stats.bonusSegments || 0) + 2;
+          if (player.buffLevels) player.buffLevels.core_tail = (player.buffLevels.core_tail || 0) + 1;
+        }
+      });
+    }
+
+    // ==========================================
+    // NHÓM 5: VŨ KHÍ TÀU (Nâng cấp & Mở khóa vũ khí mới)
+    // ==========================================
+    const weaponKeys = ['blaster', 'orbs', 'lightning', 'glaive', 'missiles', 'wingmen', 'laser', 'bombs'];
+    const weaponIcons = { 
+      blaster: '⚡', 
+      orbs: '🪐', 
+      lightning: '🌩️', 
+      glaive: '🌀', 
+      missiles: '🚀', 
+      wingmen: '🛸',
+      laser: '🔦',
+      bombs: '💣'
+    };
+
+    const activeWeaponsCount = weaponKeys.filter(k => wm.weapons[k] && wm.weapons[k].level > 0).length;
 
     for (const wKey of weaponKeys) {
       const weapon = wm.weapons[wKey];
-      if (weapon && weapon.level > 0 && weapon.level < weapon.maxLevel) {
+      if (!weapon) continue;
+
+      if (weapon.level > 0 && weapon.level < weapon.maxLevel) {
         const curLvl = weapon.level;
         const isEvo = curLvl === 4;
         const r = isEvo ? rLegendary : (curLvl >= 2 ? rRare : rCommon);
@@ -567,7 +735,172 @@ export class UpgradeSystem {
           maxLevel: weapon.maxLevel,
           apply: () => { weapon.level++; }
         });
+      } else if (weapon.level === 0 && activeWeaponsCount < 5) {
+        pool.push({
+          id: wKey,
+          categoryKey: 'offense',
+          category: i18n.t('categoryOffense'),
+          title: `${i18n.t(`${wKey}Title`)} [MỞ KHÓA]`,
+          desc: i18n.t(`${wKey}Desc`),
+          rarityKey: rRare.key,
+          rarity: rRare.label,
+          icon: weaponIcons[wKey] || '⚡',
+          currentLevel: 0,
+          nextLevel: 1,
+          maxLevel: weapon.maxLevel,
+          apply: () => { weapon.level = 1; }
+        });
       }
+    }
+
+    // ==========================================
+    // NHÓM 0: THỨC TỈNH VŨ KHÍ & TÀU (Awakening / Evolution)
+    // ==========================================
+    const awakeningPool = [];
+
+    // 1. Súng máy (Blaster Lv5) + Lõi Tốc Đánh (core_firerate)
+    if (wm.weapons.blaster && wm.weapons.blaster.level >= 5 && getBuffLvl('core_firerate') >= 1 && !wm.weapons.blaster.isAwakened) {
+      awakeningPool.push({
+        id: 'awaken_blaster',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenBlasterTitle'),
+        desc: i18n.t('awakenBlasterDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '🌟',
+        apply: () => {
+          wm.weapons.blaster.isAwakened = true;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 GATLING LASERSTORM! 🌟', '#facc15', 24, true));
+          sound.playCrit();
+        }
+      });
+    }
+
+    // 2. Thả bom (Bombs Lv5) + Lõi Bán Kính Nổ (core_blast)
+    if (wm.weapons.bombs && wm.weapons.bombs.level >= 5 && getBuffLvl('core_blast') >= 1 && !wm.weapons.bombs.isAwakened) {
+      awakeningPool.push({
+        id: 'awaken_bombs',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenBombsTitle'),
+        desc: i18n.t('awakenBombsDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '🌟',
+        apply: () => {
+          wm.weapons.bombs.isAwakened = true;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 APOCALYPSE NUKE MINES! 🌟', '#facc15', 24, true));
+          sound.playCrit();
+        }
+      });
+    }
+
+    // 3. Drone (Wingmen Lv5 / Carrier) + Lõi Triệu Hồi (core_summon)
+    if (((wm.weapons.wingmen && wm.weapons.wingmen.level >= 5) || player.isCarrier) && getBuffLvl('core_summon') >= 1 && !player.isDroneAwakened && !wm.weapons.wingmen.isAwakened) {
+      awakeningPool.push({
+        id: 'awaken_drone',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenDroneTitle'),
+        desc: i18n.t('awakenDroneDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '🌟',
+        apply: () => {
+          wm.weapons.wingmen.isAwakened = true;
+          player.isDroneAwakened = true;
+          if (player.isCarrier) {
+            player.droneSpawnCount = 5;
+            player.droneDuration = 999;
+          }
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 MOTHERSHIP ARMADA! 🌟', '#facc15', 24, true));
+          sound.playCrit();
+        }
+      });
+    }
+
+    // 4. Laze (Laser Lv5) + Lõi Tầm Xa (core_range)
+    if (wm.weapons.laser && wm.weapons.laser.level >= 5 && getBuffLvl('core_range') >= 1 && !wm.weapons.laser.isAwakened) {
+      awakeningPool.push({
+        id: 'awaken_laser',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenLaserTitle'),
+        desc: i18n.t('awakenLaserDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '🌟',
+        apply: () => {
+          wm.weapons.laser.isAwakened = true;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 ORBITAL DEATH RAY! 🌟', '#facc15', 24, true));
+          sound.playCrit();
+        }
+      });
+    }
+
+    // 5. Tàu Khiên + Lõi Khiên (core_shield)
+    if ((player.isShieldNova || player.shipId === 'novashield') && getBuffLvl('core_shield') >= 1 && !player.isShieldAwakened) {
+      awakeningPool.push({
+        id: 'awaken_shield',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenShieldTitle'),
+        desc: i18n.t('awakenShieldDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '🌟',
+        apply: () => {
+          player.isShieldAwakened = true;
+          player.maxShieldEnergy = (player.maxShieldEnergy || 100) + 100;
+          player.shieldEnergy = player.maxShieldEnergy;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 AEGIS OF ETERNITY! 🌟', '#facc15', 24, true));
+          sound.playCrit();
+        }
+      });
+    }
+
+    // 6. Tàu Đâm + Lõi Giáp (core_hull)
+    if ((player.isRammer || player.shipId === 'rammer') && getBuffLvl('core_hull') >= 1 && !player.isRammerAwakened) {
+      awakeningPool.push({
+        id: 'awaken_rammer',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenRammerTitle'),
+        desc: i18n.t('awakenRammerDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '🌟',
+        apply: () => {
+          player.isRammerAwakened = true;
+          player.stats.mass = (player.stats.mass || 1.0) * 2.5;
+          player.radius = Math.round(player.radius * 1.3);
+          player.stats.speedMult += 0.35;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 DREADNOUGHT LEVIATHAN! 🌟', '#facc15', 24, true));
+          sound.playCrit();
+        }
+      });
+    }
+
+    // 7. Tàu Rắn + Lõi Đốt (core_tail)
+    if ((player.isSerpent || player.shipId === 'ship_serpent' || player.shipId === 'serpent') && getBuffLvl('core_tail') >= 1 && !player.isSerpentAwakened) {
+      awakeningPool.push({
+        id: 'awaken_serpent',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenSerpentTitle'),
+        desc: i18n.t('awakenSerpentDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '🌟',
+        apply: () => {
+          player.isSerpentAwakened = true;
+          player.stats.bonusSegments = (player.stats.bonusSegments || 0) + 8;
+          player.hasIronDragon = true;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 OUROBOROS GOD DRAGON! 🌟', '#facc15', 24, true));
+          sound.playCrit();
+        }
+      });
     }
 
     // Red Mythic Pool (1-2% drop rate)
@@ -575,9 +908,9 @@ export class UpgradeSystem {
 
     // Ship Archetype Synergy Priority (Tăng 6x tỉ lệ ra nâng cấp theo hệ tàu + bảo đảm thẻ hợp hệ)
     const shipSynergyMap = {
-      rammer: new Set(['juggernaut', 'nanorepair', 'spikedthorns', 'thrust', 'drill', 'crashnova', 'bloodfrenzy', 'orbs']),
-      serpent: new Set(['growsegments', 'toxicexhaust', 'irondragon', 'spikedthorns', 'microcraft', 'glaive', 'lightning']),
-      novashield: new Set(['energycore', 'burnfield', 'immortality', 'tacticalnuke', 'chronos', 'nanorepair', 'missiles'])
+      rammer: new Set(['juggernaut', 'nanorepair', 'spikedthorns', 'thrust', 'drill', 'core_hull', 'orbs', 'bombs']),
+      serpent: new Set(['growsegments', 'toxicexhaust', 'irondragon', 'spikedthorns', 'microcraft', 'core_tail', 'glaive', 'lightning']),
+      novashield: new Set(['energycore', 'burnfield', 'crashnova', 'immortality', 'core_shield', 'tacticalnuke', 'laser', 'missiles'])
     };
     const preferredSynergies = shipSynergyMap[player.shipId] || new Set();
 
@@ -601,18 +934,29 @@ export class UpgradeSystem {
     const selected = [];
     const usedIds = new Set();
 
+    // Slot 0: ƯU TIÊN TUYỆT ĐỐI cho Thức Tỉnh (Awakening) khi hội đủ điều kiện (Vũ khí Max Lv5 + Lõi)
+    if (awakeningPool.length > 0) {
+      const pickedAwakening = awakeningPool[Math.floor(Math.random() * awakeningPool.length)];
+      if (pickedAwakening) {
+        usedIds.add(pickedAwakening.id);
+        selected.push(pickedAwakening);
+      }
+    }
+
     // Slot 1: ĐẢM BẢO luôn ưu tiên rút 1 thẻ hợp hệ (Phòng thủ cho Tank, Đốt cho Rắn, Khiên cho Nova)
-    const synergyCards = pool.filter(c => preferredSynergies.has(c.id) && !usedIds.has(c.id));
-    if (synergyCards.length > 0 && Math.random() < 0.90) {
-      const pickedSynergy = synergyCards[Math.floor(Math.random() * synergyCards.length)];
-      if (pickedSynergy) {
-        usedIds.add(pickedSynergy.id);
-        selected.push(pickedSynergy);
+    if (selected.length < 3) {
+      const synergyCards = pool.filter(c => preferredSynergies.has(c.id) && !usedIds.has(c.id));
+      if (synergyCards.length > 0 && Math.random() < 0.90) {
+        const pickedSynergy = synergyCards[Math.floor(Math.random() * synergyCards.length)];
+        if (pickedSynergy) {
+          usedIds.add(pickedSynergy.id);
+          selected.push(pickedSynergy);
+        }
       }
     }
 
     // If level >= 10, guarantee at least 1 Fusion Mod slot if available (65% chance)
-    if (player.level >= 10 && Math.random() < 0.65) {
+    if (selected.length < 3 && player.level >= 10 && Math.random() < 0.65) {
       const fusions = pool.filter(c => c.categoryKey === 'fusion' && !usedIds.has(c.id));
       if (fusions.length > 0) {
         const picked = pickWeighted(fusions);
@@ -657,3 +1001,4 @@ export class UpgradeSystem {
     return selected;
   }
 }
+

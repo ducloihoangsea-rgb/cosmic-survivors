@@ -334,9 +334,19 @@ export class ArtEngine {
     } else if (enemy.type === 'brute') {
       // Armored Heavy Mech Titan
       this.drawBrute(ctx, enemy, t, isHit);
+    } else if (enemy.type === 'swarmer') {
+      this.drawSwarmer(ctx, enemy, t, isHit);
+    } else if (enemy.type === 'shooter') {
+      this.drawShooter(ctx, enemy, t, isHit);
+    } else if (enemy.type === 'bomber') {
+      this.drawBomber(ctx, enemy, t, isHit);
+    } else if (enemy.type === 'elite_void' || enemy.type === 'elite_behemoth' || enemy.type === 'elite_harbinger' || enemy.isElite) {
+      this.drawElite(ctx, enemy, animTime, isHit);
     } else if (enemy.type === 'boss') {
       // Doomsday Dreadnought Boss
       this.drawBoss(ctx, enemy, animTime, isHit);
+    } else {
+      this.drawCrawler(ctx, enemy, t, isHit);
     }
 
     // Frost Stasis Visual Ring
@@ -557,6 +567,159 @@ export class ArtEngine {
     ctx.beginPath();
     ctx.arc(0, 0, eyePulse, 0, Math.PI * 2);
     ctx.fill();
+  }
+
+  // 5. Swarmer (Fast Nano Dart Mite)
+  drawSwarmer(ctx, enemy, t, isHit) {
+    const color = isHit ? '#ffffff' : '#ec4899';
+    ctx.fillStyle = isHit ? '#ffffff' : '#831843';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+
+    // Small sharp dart shape
+    ctx.beginPath();
+    ctx.moveTo(8, 0);
+    ctx.lineTo(-6, -6);
+    ctx.lineTo(-3, 0);
+    ctx.lineTo(-6, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Red eye
+    ctx.fillStyle = '#f43f5e';
+    ctx.beginPath();
+    ctx.arc(2, 0, 1.8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 6. Shooter (Sniper Gunner Pod)
+  drawShooter(ctx, enemy, t, isHit) {
+    const color = isHit ? '#ffffff' : '#10b981';
+    ctx.fillStyle = isHit ? '#ffffff' : '#064e3b';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8;
+
+    // Heavy sniper pod with railgun nozzle
+    ctx.beginPath();
+    ctx.moveTo(14, 0);
+    ctx.lineTo(4, -3);
+    ctx.lineTo(-8, -10);
+    ctx.lineTo(-12, 0);
+    ctx.lineTo(-8, 10);
+    ctx.lineTo(4, 3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Capacitor energy core
+    const pulse = 2.5 + Math.sin(t * 1.5) * 1;
+    ctx.fillStyle = '#34d399';
+    ctx.beginPath();
+    ctx.arc(-2, 0, pulse, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 7. Bomber (Volatile Spiked Naval Mine)
+  drawBomber(ctx, enemy, t, isHit) {
+    const color = isHit ? '#ffffff' : '#f97316';
+    const dark = isHit ? '#ffffff' : '#7c2d12';
+    ctx.fillStyle = dark;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.0;
+
+    const r = enemy.radius || 15;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 0.75, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Protruding detonator spikes
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 2.0;
+    for (let i = 0; i < 6; i++) {
+      const a = (i * Math.PI) / 3 + t * 0.2;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a) * r * 0.7, Math.sin(a) * r * 0.7);
+      ctx.lineTo(Math.cos(a) * (r + 4), Math.sin(a) * (r + 4));
+      ctx.stroke();
+    }
+
+    // Flashing danger beacon
+    const flash = Math.sin(t * 4) > 0 ? '#ef4444' : '#fbbf24';
+    ctx.fillStyle = flash;
+    ctx.beginPath();
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // 8. Elite Hostiles (Void, Behemoth, Harbinger with Royal Crown & Energy Halo)
+  drawElite(ctx, enemy, animTime, isHit) {
+    let mainColor = '#a855f7'; // Void
+    let coreColor = '#c084fc';
+    if (enemy.type === 'elite_behemoth') {
+      mainColor = '#ea580c'; // Magma
+      coreColor = '#f97316';
+    } else if (enemy.type === 'elite_harbinger') {
+      mainColor = '#06b6d4'; // Cosmic
+      coreColor = '#22d3ee';
+    }
+    if (isHit) {
+      mainColor = '#ffffff';
+      coreColor = '#ffffff';
+    }
+
+    const r = enemy.radius || 30;
+
+    // Rotating Energy Wings
+    ctx.save();
+    ctx.rotate(animTime * 1.8);
+    ctx.strokeStyle = coreColor;
+    ctx.lineWidth = 2.2;
+    ctx.setLineDash([10, 6]);
+    ctx.beginPath();
+    ctx.arc(0, 0, r + 6, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Main Diamond Armored Chassis
+    ctx.fillStyle = isHit ? '#ffffff' : '#0f172a';
+    ctx.strokeStyle = mainColor;
+    ctx.lineWidth = 3.0;
+
+    ctx.beginPath();
+    ctx.moveTo(r, 0);
+    ctx.lineTo(0, -r);
+    ctx.lineTo(-r, 0);
+    ctx.lineTo(0, r);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Central pulsing Eye
+    const eyeSize = (r * 0.35) + Math.sin(animTime * 5) * 2;
+    ctx.fillStyle = coreColor;
+    ctx.beginPath();
+    ctx.arc(0, 0, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Royal Elite Crown on head
+    ctx.fillStyle = '#facc15';
+    ctx.strokeStyle = '#ca8a04';
+    ctx.lineWidth = 1.2;
+    const cy = -r - 6;
+    ctx.beginPath();
+    ctx.moveTo(-11, cy);
+    ctx.lineTo(-9, cy - 12);
+    ctx.lineTo(-3, cy - 6);
+    ctx.lineTo(0, cy - 14);
+    ctx.lineTo(3, cy - 6);
+    ctx.lineTo(9, cy - 12);
+    ctx.lineTo(11, cy);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
   }
 
   // Draw 3D-Faceted Gem with Specular Shimmer

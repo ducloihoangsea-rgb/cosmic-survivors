@@ -53,13 +53,35 @@ export class WeaponManager {
         timer: 0,
         angle: 0,
         icon: '🛸',
-        rarity: 'Epic'
+        rarity: 'Epic',
+        isAwakened: false
+      },
+      laser: {
+        id: 'laser',
+        level: 0,
+        maxLevel: 5,
+        timer: 0,
+        icon: '🔴',
+        rarity: 'Rare',
+        isAwakened: false
+      },
+      bombs: {
+        id: 'bombs',
+        level: 0,
+        maxLevel: 5,
+        timer: 0,
+        icon: '💣',
+        rarity: 'Epic',
+        isAwakened: false
       }
     };
 
     this.projectiles = [];
     this.shockwaves = [];
     this.blackHoles = [];
+    this.spaceBombs = [];
+    this.laserBeams = [];
+    this.laserAngle = 0;
   }
 
   spawnBlackHole(x, y, mult = 1.0) {
@@ -125,11 +147,33 @@ export class WeaponManager {
     const wm = this.weapons.wingmen;
     if (wm.level > 0) {
       wm.angle = (wm.angle + 1.8 * dt) % (Math.PI * 2);
-      const wCooldown = Math.max(0.3, (0.9 - wm.level * 0.12) / fireMult);
+      const wCooldown = Math.max(0.25, (0.9 - wm.level * 0.12) / fireMult);
       wm.timer += dt;
       if (wm.timer >= wCooldown) {
         wm.timer = 0;
         this.fireWingmen(player, enemies);
+      }
+    }
+
+    // 7. Prism Laser logic
+    const ls = this.weapons.laser;
+    if (ls.level > 0) {
+      const lCooldown = ls.isAwakened ? 0.35 : Math.max(0.4, (1.8 - ls.level * 0.25) / fireMult);
+      ls.timer += dt;
+      if (ls.timer >= lCooldown) {
+        ls.timer = 0;
+        this.fireLaser(player, enemies);
+      }
+    }
+
+    // 8. Space Mine Dropper logic
+    const bm = this.weapons.bombs;
+    if (bm.level > 0) {
+      const bCooldown = bm.isAwakened ? 0.9 : Math.max(0.8, (2.6 - bm.level * 0.3) / fireMult);
+      bm.timer += dt;
+      if (bm.timer >= bCooldown) {
+        bm.timer = 0;
+        this.fireBombs(player, enemies);
       }
     }
 
@@ -139,6 +183,24 @@ export class WeaponManager {
       p.update(dt, enemies, this.game);
       if (p.isDead) {
         this.projectiles.splice(i, 1);
+      }
+    }
+
+    // Update Space Bombs
+    for (let i = this.spaceBombs.length - 1; i >= 0; i--) {
+      const sb = this.spaceBombs[i];
+      sb.update(dt, enemies, this.game);
+      if (sb.isDead) {
+        this.spaceBombs.splice(i, 1);
+      }
+    }
+
+    // Update Laser Beams
+    for (let i = this.laserBeams.length - 1; i >= 0; i--) {
+      const lb = this.laserBeams[i];
+      lb.update(dt);
+      if (lb.isDead) {
+        this.laserBeams.splice(i, 1);
       }
     }
 
@@ -178,14 +240,35 @@ export class WeaponManager {
 
   fireBlaster(player, enemies) {
     if (enemies.length === 0) return;
-    const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(player.x, player.y, 750) : enemies[0];
+    const b = this.weapons.blaster;
+    const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(player.x, player.y, b.isAwakened ? 850 : 750) : enemies[0];
     if (!target) return;
     const angle = Math.atan2(target.y - player.y, target.x - player.x);
-    const bLvl = this.weapons.blaster.level;
+    const bLvl = b.level;
     const baseDamage = 18 + bLvl * 10;
-    const count = bLvl >= 5 ? 5 : (bLvl >= 3 ? 3 : (bLvl >= 2 ? 2 : 1));
 
     sound.playShoot('blaster');
+
+    if (b.isAwakened) {
+      // 🌟 THỨC TỈNH: Gatling Laserstorm - Xả đạn 8 nòng xuyên thấu 4 quái, đạn vàng kim
+      const count = 8;
+      for (let i = 0; i < count; i++) {
+        const spread = (i - (count - 1) / 2) * 0.12;
+        this.projectiles.push(new BlasterBullet(
+          player.x,
+          player.y,
+          angle + spread,
+          baseDamage * 1.6 * player.stats.damageMult,
+          4, // Pierce 4 enemies!
+          true,
+          '#facc15', // Gold glowing bullet
+          'blaster'
+        ));
+      }
+      return;
+    }
+
+    const count = bLvl >= 5 ? 5 : (bLvl >= 3 ? 3 : (bLvl >= 2 ? 2 : 1));
 
     for (let i = 0; i < count; i++) {
       const spread = (i - (count - 1) / 2) * 0.16;
@@ -300,9 +383,10 @@ export class WeaponManager {
   fireWingmen(player, enemies) {
     if (enemies.length === 0) return;
     const wm = this.weapons.wingmen;
-    const droneCount = wm.level >= 5 ? 4 : 2;
-    const radius = 50;
-    const damage = (16 + wm.level * 7) * player.stats.damageMult;
+    const droneCount = wm.isAwakened ? 6 : (wm.level >= 5 ? 4 : 2);
+    const radius = wm.isAwakened ? 65 : 50;
+    const summonMult = player.stats?.summonDmgMult || 1.0;
+    const damage = (16 + wm.level * 7) * player.stats.damageMult * summonMult * (wm.isAwakened ? 1.6 : 1.0);
 
     for (let i = 0; i < droneCount; i++) {
       const a = wm.angle + (i * Math.PI * 2) / droneCount;
@@ -310,12 +394,95 @@ export class WeaponManager {
       const dy = player.y + Math.sin(a) * radius;
 
       // Find nearest enemy to drone
-      const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(dx, dy, 380) : enemies[0];
+      const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(dx, dy, wm.isAwakened ? 500 : 380) : enemies[0];
 
       if (target) {
         const aimAngle = Math.atan2(target.y - dy, target.x - dx);
-        this.projectiles.push(new BlasterBullet(dx, dy, aimAngle, damage, 1, false, '#38bdf8', 'wingmen'));
+        if (wm.isAwakened) {
+          // Bắn 2 nòng đạn song song + thi thoảng phóng mini missile
+          this.projectiles.push(new BlasterBullet(dx - 3, dy, aimAngle, damage, 2, true, '#38bdf8', 'wingmen'));
+          this.projectiles.push(new BlasterBullet(dx + 3, dy, aimAngle, damage, 2, true, '#38bdf8', 'wingmen'));
+        } else {
+          this.projectiles.push(new BlasterBullet(dx, dy, aimAngle, damage, 1, false, '#38bdf8', 'wingmen'));
+        }
       }
+    }
+  }
+
+  fireLaser(player, enemies) {
+    if (enemies.length === 0) return;
+    const ls = this.weapons.laser;
+    const baseDmg = (32 + ls.level * 14) * player.stats.damageMult;
+    const rangeMult = player.stats.rangeMult || 1.0;
+    const beamLength = (ls.isAwakened ? 720 : 520) * rangeMult;
+    const beamWidth = ls.isAwakened ? 16 : (8 + ls.level * 2);
+
+    sound.playShoot('blaster');
+
+    if (ls.isAwakened) {
+      // 🌟 THỨC TỈNH: Orbital Death Ray - 2 chùm tia laser quỹ đạo xoay 360 độ xé toạc màn hình
+      this.laserAngle = (this.laserAngle || 0) + 0.75;
+      const angles = [this.laserAngle, this.laserAngle + Math.PI];
+
+      for (const a of angles) {
+        const x2 = player.x + Math.cos(a) * beamLength;
+        const y2 = player.y + Math.sin(a) * beamLength;
+        this.laserBeams.push(new LaserBeamVisual(player.x, player.y, x2, y2, beamWidth, '#facc15', true));
+
+        const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(player.x, player.y, beamLength) : enemies;
+        for (const e of candidates) {
+          if (e.isDead) continue;
+          const distToLine = distToSegment(e.x, e.y, player.x, player.y, x2, y2);
+          if (distToLine < beamWidth + e.radius) {
+            this.game.damageEnemy(e, baseDmg * 1.5, true, 'laser');
+          }
+        }
+      }
+    } else {
+      // Tia laze thường hội tụ vào quái gần nhất
+      const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(player.x, player.y, beamLength) : enemies[0];
+      if (!target) return;
+      const targetAngle = Math.atan2(target.y - player.y, target.x - player.x);
+      const beamCount = ls.level >= 4 ? 2 : 1;
+
+      for (let i = 0; i < beamCount; i++) {
+        const spread = (i - (beamCount - 1) / 2) * 0.22;
+        const a = targetAngle + spread;
+        const x2 = player.x + Math.cos(a) * beamLength;
+        const y2 = player.y + Math.sin(a) * beamLength;
+        this.laserBeams.push(new LaserBeamVisual(player.x, player.y, x2, y2, beamWidth, '#f43f5e', false));
+
+        const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(player.x, player.y, beamLength) : enemies;
+        for (const e of candidates) {
+          if (e.isDead) continue;
+          const distToLine = distToSegment(e.x, e.y, player.x, player.y, x2, y2);
+          if (distToLine < beamWidth + e.radius) {
+            this.game.damageEnemy(e, baseDmg, false, 'laser');
+          }
+        }
+      }
+    }
+  }
+
+  fireBombs(player, enemies) {
+    const bm = this.weapons.bombs;
+    const summonMult = player.stats?.summonDmgMult || 1.0;
+    const baseDmg = (45 + bm.level * 22) * player.stats.damageMult * summonMult;
+    const blastMult = player.stats.blastRadiusMult || 1.0;
+    const blastRadius = (75 + bm.level * 10) * blastMult;
+
+    // Drop behind player
+    const dropAngle = (player.facingAngle || 0) + Math.PI;
+    const bx = player.x + Math.cos(dropAngle) * 26;
+    const by = player.y + Math.sin(dropAngle) * 26;
+
+    sound.playShoot('blaster');
+    this.spaceBombs.push(new SpaceBomb(bx, by, baseDmg, blastRadius, bm.isAwakened));
+
+    if (bm.level >= 4 || bm.isAwakened) {
+      const b2x = player.x + Math.cos(dropAngle + 0.6) * 32;
+      const b2y = player.y + Math.sin(dropAngle + 0.6) * 32;
+      this.spaceBombs.push(new SpaceBomb(b2x, b2y, baseDmg * 0.9, blastRadius * 0.9, bm.isAwakened));
     }
   }
 
@@ -390,6 +557,16 @@ export class WeaponManager {
     // Draw Black Holes
     for (const bh of this.blackHoles) {
       bh.draw(ctx);
+    }
+
+    // Draw Space Bombs
+    for (const sb of this.spaceBombs) {
+      sb.draw(ctx);
+    }
+
+    // Draw Laser Beams
+    for (const lb of this.laserBeams) {
+      lb.draw(ctx);
     }
 
     // Draw all projectiles
@@ -936,6 +1113,169 @@ export class BlackHole {
     ctx.arc(0, 0, 5, 0, Math.PI * 2);
     ctx.fill();
 
+    ctx.restore();
+  }
+}
+
+// Distance from point (px, py) to segment (x1, y1) -> (x2, y2)
+export function distToSegment(px, py, x1, y1, x2, y2) {
+  const l2 = (x2 - x1) ** 2 + (y2 - y1) ** 2;
+  if (l2 === 0) return Math.hypot(px - x1, py - y1);
+  let t = ((px - x1) * (x2 - x1) + (py - y1) * (y2 - y1)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px - (x1 + t * (x2 - x1)), py - (y1 + t * (y2 - y1)));
+}
+
+export class SpaceBomb {
+  constructor(x, y, damage, blastRadius, isAwakened = false) {
+    this.x = x;
+    this.y = y;
+    this.damage = damage;
+    this.radius = isAwakened ? 16 : 11;
+    this.blastRadius = blastRadius;
+    this.isAwakened = isAwakened;
+    this.life = 3.2;
+    this.isDead = false;
+    this.pulse = Math.random() * Math.PI * 2;
+  }
+
+  update(dt, enemies, game) {
+    this.life -= dt;
+    this.pulse += dt * 6;
+    if (this.life <= 0) {
+      this.explode(game);
+      return;
+    }
+
+    const checkCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, this.radius + 30) : enemies;
+    for (const e of checkCandidates) {
+      if (e.isDead) continue;
+      const d = Math.hypot(e.x - this.x, e.y - this.y);
+      if (d < this.radius + e.radius) {
+        this.explode(game);
+        break;
+      }
+    }
+  }
+
+  explode(game) {
+    if (this.isDead) return;
+    this.isDead = true;
+    sound.playExplosion();
+    game.addScreenShake(this.isAwakened ? 14 : 7);
+
+    const summonMult = game.player?.stats?.summonDmgMult || 1.0;
+    const finalDmg = this.damage * summonMult;
+    const radius = this.blastRadius;
+
+    const hitCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, radius + 40) : game.enemies;
+    for (const e of hitCandidates) {
+      if (e.isDead) continue;
+      const d = Math.hypot(e.x - this.x, e.y - this.y);
+      if (d < radius + e.radius) {
+        game.damageEnemy(e, finalDmg, true, 'bombs');
+        const pushA = Math.atan2(e.y - this.y, e.x - this.x);
+        e.x += Math.cos(pushA) * 60;
+        e.y += Math.sin(pushA) * 60;
+      }
+    }
+
+    // Particles
+    const pCount = this.isAwakened ? 25 : 12;
+    for (let i = 0; i < pCount; i++) {
+      game.particles.push(new Particle(this.x, this.y, this.isAwakened ? '#facc15' : '#f97316', 5, 4, 0.7));
+    }
+
+    // 🌟 THỨC TỈNH: Phân tách thành 4 mìn con nổ chùm dây chuyền!
+    if (this.isAwakened && !this.isCluster) {
+      for (let i = 0; i < 4; i++) {
+        const a = (i / 4) * Math.PI * 2;
+        const subDist = 75;
+        const subX = this.x + Math.cos(a) * subDist;
+        const subY = this.y + Math.sin(a) * subDist;
+        const subBomb = new SpaceBomb(subX, subY, this.damage * 0.65, radius * 0.75, false);
+        subBomb.isCluster = true;
+        subBomb.life = 0.35 + Math.random() * 0.25;
+        game.weaponManager.spaceBombs.push(subBomb);
+      }
+    }
+  }
+
+  draw(ctx) {
+    ctx.save();
+    const glow = Math.sin(this.pulse) * 0.3 + 0.7;
+    ctx.fillStyle = this.isAwakened ? `rgba(234, 179, 8, ${glow})` : `rgba(249, 115, 22, ${glow})`;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius * 0.6, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 4 spikes
+    ctx.strokeStyle = this.isAwakened ? '#fde047' : '#fdba74';
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 4; i++) {
+      const a = (i / 4) * Math.PI * 2 + this.pulse;
+      ctx.beginPath();
+      ctx.moveTo(this.x + Math.cos(a) * this.radius, this.y + Math.sin(a) * this.radius);
+      ctx.lineTo(this.x + Math.cos(a) * (this.radius + 6), this.y + Math.sin(a) * (this.radius + 6));
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+export class LaserBeamVisual {
+  constructor(x1, y1, x2, y2, width, color = '#f43f5e', isAwakened = false) {
+    this.x1 = x1;
+    this.y1 = y1;
+    this.x2 = x2;
+    this.y2 = y2;
+    this.width = width;
+    this.color = color;
+    this.isAwakened = isAwakened;
+    this.life = isAwakened ? 0.38 : 0.22;
+    this.maxLife = this.life;
+    this.isDead = false;
+  }
+
+  update(dt) {
+    this.life -= dt;
+    if (this.life <= 0) this.isDead = true;
+  }
+
+  draw(ctx) {
+    ctx.save();
+    const alpha = Math.max(0, this.life / this.maxLife);
+
+    // Outer beam halo
+    ctx.strokeStyle = this.isAwakened ? `rgba(251, 191, 36, ${alpha * 0.45})` : `rgba(244, 63, 94, ${alpha * 0.4})`;
+    ctx.lineWidth = this.width * 2.6;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(this.x1, this.y1);
+    ctx.lineTo(this.x2, this.y2);
+    ctx.stroke();
+
+    // Main beam core
+    ctx.strokeStyle = this.isAwakened ? `rgba(250, 204, 21, ${alpha * 0.95})` : `rgba(244, 63, 94, ${alpha * 0.9})`;
+    ctx.lineWidth = this.width;
+    ctx.beginPath();
+    ctx.moveTo(this.x1, this.y1);
+    ctx.lineTo(this.x2, this.y2);
+    ctx.stroke();
+
+    // White hot center
+    ctx.strokeStyle = `rgba(255, 255, 255, ${alpha})`;
+    ctx.lineWidth = this.width * 0.35;
+    ctx.beginPath();
+    ctx.moveTo(this.x1, this.y1);
+    ctx.lineTo(this.x2, this.y2);
+    ctx.stroke();
     ctx.restore();
   }
 }

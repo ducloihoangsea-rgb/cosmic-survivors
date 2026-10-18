@@ -1,20 +1,26 @@
-Mỗi lần  nâng cấp kỹ năng phải thể hiện được kỹ năng đó đang ở level mấy để tôi biết có lựa chọn nâng cấp thêm hay không. trên điện thoại chơi đang bị mất tiêu đề mất phím bấm bắt đầu và xưởng phi thuyền hãy nghĩ ra cách để trên máy tính chơi cũng hiển thị được trên điện thoại cũng hiển thị được đầy đủ
-===================================================================
-có thể hiển thị chỉ số dps và chỉ số của tàu cùng 1 lúc trên màn hình, sắp 2 nút nằm cùng một cột dọc cho dễ bấm. Tăng kích thước và khoảng cách các nút trên điện thoại cho dễ bấm, trên điện thoại trên đầu màn hình bị mất chữ mất các nút chức năng hãy sắp xếp lại cho hợp lý và hiển thị đầy đủ, khi mở bảng nâng cấp hay xưởng phi thuyền lên thì che hết các phần không cần thiết trên màn hình đi, còn khi thoát ra thì hiển thị lại toàn bộ , trên điện thoại nếu không có dùng chuột thì nên tắt hiển thị con trỏ chuột để đỡ vướng mắt , khi mở xưởng phi thuyền lên thì có 1 mục để xem chi tiết các chỉ số kỹ năng và upgrade (hiển thị cùng với mục chọn tàu) , khi vào trận đấu thì chỉ hiển thị các chỉ số cơ bản , khi thoát ra thì hiển thị lại toàn bộ.
-
-===================================================================
-nếu chơi trên điện thoại bạn để xuất giải pháp nếu hiển thị thế nào nếu bẩm hiển thị dps và chỉ số tàu cùng hiển thị trên màn hình cũng lúc  vẫn thấy được hết các chỉ số nhưng không làm ảnh hưởng đến trải nghiệm chơi game
-===================================================================
-tạo 1 cái kiểu như xưởng lưu trữ vũ khí,Các nâng cấp trong bể và mô tả đầy đủ trong đấy Dễ đọc,tăng cao tỉ lệ ra các nâng cấp theo hệ của tàu phù hợp với lối chơi của tầu đó. Ví dụ tài tank ra nhiều nâng cấp phòng thủ v.v....Tăng số lượng quái. Tăng máu quái tăng sát thương làm game khó hơn nữa
-
-===================================================================
 trong game nova drift trên steam (https://store.steampowered.com/app/858210/Nova_Drift/) bạn dùng công cụ rea để nghiên cứu để phân tính các skill xuất hiện mỗi khi con tàu được chọn và lên level trong màn chơi, các loại tàu các chỉ số và tính năng của các tàu đó( gamer có thể lựa chọn khi bắt đầu chơi) bạn cần tôi cung cấp cho bạn những gì để bóc tách toàn bộ game .Hãy đưa ra 1 danh sách yêu cầu cho tôi và hướng dẩn cho tôi cách thực hiện 
 ===================================================================
 mỗi lần thay đổi vũ khí hay up skill là có 1 cái bảng hiện lên như trong game nova drift để chọn vũ khí và xem chi tiết thông số của nó,như vậy con tàu cũng trông ngầu hơn 
 =================================================================== 
-thêm loại tàu mới có kỹ năng nội tại là mỗi 5s thả 2 mini drone(mỗi drone có khả năng tồn tại 12s nếu không bị nhận sát thương cũng tự động bị tiêu hủy) có khả năng di chuyển, có thanh máu riêng , có thể nhận sát thương và bị tiêu hủy, có khả năng di chuyển độc lập tấn công mục tiêu.
-thêm kỹ năng nâng cấp drone chỉ xuất hiện khi chơi bằng tàu này, tăng cấp lên thì chỉ tăng sát thương và máu. mỗi lần lên cấp -0,2s cooldown. Tối đa 5 cấp là tiến hóa(khi tiến hóa mỗi lần thả 3 drone và thời gian tồn tại là 18s)
-=================================================================== 
-tôi đang chơi loại tràu triệu hồi drone tại sao sát thương nhiều vậy nhưng nó không hiển thị hết ra tất cả các những thứ đóng góp sát thương trong bảng dps đó phần lớn sát thương đã đi đâu mà trên bảng dps chỉ có vài % vậy?
+Quả nổ khiên vẫn op quá các vũ khí khác lép vế
+Nổ khiên chỉ xuất hiện khi chọn tàu khiên
+Đâm xuyên chỉ xuất hiện khi tàu đâm
+Thêm quái đa dạng
+Quái tinh anh chỉ xuất hiên các mốc 3 5 7p
+Giới hạn ván chơi chắc khoảng 10p
+Thêm các lõi vũ khí phụ trợ
+Drone súng máy. Thả bom
+Súng laze các thứ
+Các súng phụ trợ cũng có thể thức tỉnh nếu bắt cặp đc với các lõi phụ trợ
+Ví dụ súng máy có thể thức tỉnh nếu đi kèm kỹ năng phụ trợ tăng fire rate
+Thả bom có thể thức tỉnh nếu đi kèm với nâng cấp phụ tăng bán kính vụ nổ
+Drone có thể thức tỉnh nếu đi kèm nâng cấp tăng sát thương cho các triệu hồi
+Thả bom cũng tính là 1 triệu hồi
+Laze thức tỉnh khi đi kèm tăng tầm bắn
+Vân vân bạn có thể thêm vũ khí và phụ trợ phù hợp với vũ khí đó
+Tàu khiên thức tỉnh khi đi với lõi khiên
+Tầu đâm thứ tỉnh đc khi đi với lõi tăng máu kích thước
+Tàu rắn thức tỉnh khi đi với lõi tăng đuôi
+Chỉ có thể thức tỉnh khi có phụ trợ tương ứng và vũ khí đạt cấp tối đa
+===================================================================
 
-cho độ nhiều của quái lên từ level 1-10 nhiều hơn 100% số lượng hiện tại

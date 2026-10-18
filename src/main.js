@@ -120,6 +120,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const hangarGoldVal = document.getElementById('hangar-gold-val');
   const hangarList = document.getElementById('hangar-list');
 
+  // Victory Modal Elements
+  const victoryModal = document.getElementById('victory-modal');
+  const victoryTitle = document.getElementById('victory-title');
+  const victorySub = document.getElementById('victory-sub');
+  const vicStatSurvive = document.getElementById('vic-stat-survive');
+  const vicStatKills = document.getElementById('vic-stat-kills');
+  const vicStatScore = document.getElementById('vic-stat-score');
+  const vicStatGold = document.getElementById('vic-stat-gold');
+  const vicRetryBtn = document.getElementById('vic-retry-btn');
+  const vicHangarBtn = document.getElementById('vic-hangar-btn');
+
   // Slot Reels
   const reel1 = document.getElementById('reel-1');
   const reel2 = document.getElementById('reel-2');
@@ -188,6 +199,9 @@ window.addEventListener('DOMContentLoaded', () => {
     statLblScore.textContent = i18n.t('statScore');
     statLblGold.textContent = i18n.t('statGold');
     retryBtn.textContent = i18n.t('retryBtn');
+
+    if (victoryTitle) victoryTitle.textContent = i18n.t('victoryTitle');
+    if (victorySub) victorySub.textContent = i18n.t('victorySubtitle');
 
     if (lang === 'vi') {
       langBtnVi.classList.add('active');
@@ -300,6 +314,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const isModalOpen = (startScreen && startScreen.classList.contains('active')) ||
                         (levelUpModal && levelUpModal.classList.contains('active')) ||
                         (gameOverModal && gameOverModal.classList.contains('active')) ||
+                        (victoryModal && victoryModal.classList.contains('active')) ||
                         (chestModal && chestModal.classList.contains('active')) ||
                         (hangarModal && hangarModal.classList.contains('active')) ||
                         (settingsModal && settingsModal.classList.contains('active'));
@@ -1198,19 +1213,27 @@ window.addEventListener('DOMContentLoaded', () => {
       levelupSub.textContent = i18n.t('levelUpSubtitle');
     }
 
-    // Play special fanfare if any rolled card is Mythic!
+    // Play special fanfare if any rolled card is Mythic or Awakening!
     const hasMythic = cards.some(c => c.rarityKey === 'Mythic');
-    if (hasMythic) {
+    const hasAwakening = cards.some(c => c.rarityKey === 'Awakening');
+    if (hasAwakening) {
+      sound.playJackpot();
+    } else if (hasMythic) {
       sound.playMythicFanfare();
     }
 
     cards.forEach((card) => {
       const cardEl = document.createElement('div');
       cardEl.className = `upgrade-card rarity-${card.rarityKey}`;
+      if (card.rarityKey === 'Awakening') {
+        cardEl.classList.add('card-awakening');
+      }
 
       // Build Level Badge
       let levelBadgeHtml = '';
-      if (card.currentLevel !== undefined && card.maxLevel) {
+      if (card.rarityKey === 'Awakening') {
+        levelBadgeHtml = `<span class="card-level-badge progress" style="background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; border: 1px solid #facc15;">🌟 ${i18n.t('rarityAwakening')}</span>`;
+      } else if (card.currentLevel !== undefined && card.maxLevel) {
         if (card.currentLevel === 0) {
           levelBadgeHtml = `<span class="card-level-badge unlock">${i18n.current === 'vi' ? 'MỞ KHÓA (CẤP 1)' : 'UNLOCK (LV.1)'}</span>`;
         } else {
@@ -1264,6 +1287,40 @@ window.addEventListener('DOMContentLoaded', () => {
     gameOverModal.classList.add('active');
     resetLeftDockState();
     updateModalState();
+  };
+
+  // 10-Minute Survival Victory Handler
+  game.onVictoryCallback = (stats) => {
+    sound.playJackpot();
+    if (vicStatSurvive) vicStatSurvive.textContent = '10:00 (TỐI ĐA)';
+    if (vicStatKills) vicStatKills.textContent = game.kills.toString();
+    if (vicStatScore) vicStatScore.textContent = game.score.toLocaleString();
+    const earned = stats?.bonusGold || (game.earnedGold * 2);
+    if (vicStatGold) vicStatGold.textContent = `+${earned.toLocaleString()} 🪙 (${meta.gold.toLocaleString()})`;
+
+    if (victoryModal) victoryModal.classList.add('active');
+    resetLeftDockState();
+    updateModalState();
+  };
+
+  if (vicRetryBtn) {
+    vicRetryBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      if (victoryModal) victoryModal.classList.remove('active');
+      resetLeftDockState();
+      game.restart();
+      updateModalState();
+    });
+  }
+
+  if (vicHangarBtn) {
+    vicHangarBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      if (victoryModal) victoryModal.classList.remove('active');
+      resetLeftDockState();
+      openHangar();
+      updateModalState();
+    });
   };
 
   // Start Button Click (Vào trận đấu chỉ hiển thị chỉ số cơ bản)

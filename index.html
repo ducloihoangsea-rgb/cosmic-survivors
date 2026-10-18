@@ -291,6 +291,39 @@
       </div>
     </div>
 
+    <!-- 10-MINUTE VICTORY MODAL -->
+    <div id="victory-modal" class="modal-overlay">
+      <div class="modal-card victory-card-box">
+        <div class="victory-trophy">🏆</div>
+        <h2 id="victory-title" class="modal-title victory-title">CHIẾN THẮNG SINH TỒN 10 PHÚT!</h2>
+        <div id="victory-sub" class="modal-subtitle victory-subtitle">Bạn đã sống sót qua 10 phút ác mộng và quét sạch vũ trụ! Thưởng vàng gấp đôi!</div>
+
+        <div class="scoreboard-card victory-board">
+          <div class="board-row">
+            <span>Thời Gian Sống Sót</span>
+            <span id="vic-stat-survive" class="board-val" style="color: #facc15;">10:00 (TỐI ĐA)</span>
+          </div>
+          <div class="board-row">
+            <span>Quái Đã Tiêu Diệt</span>
+            <span id="vic-stat-kills" class="board-val">0</span>
+          </div>
+          <div class="board-row">
+            <span>Điểm Số</span>
+            <span id="vic-stat-score" class="board-val">0</span>
+          </div>
+          <div class="board-row">
+            <span>Thưởng Vàng (x2 Bonus)</span>
+            <span id="vic-stat-gold" class="board-val" style="color: #4ade80;">+0 🪙</span>
+          </div>
+        </div>
+
+        <div class="gameover-btn-group">
+          <button id="vic-retry-btn" class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #eab308);">CHƠI LẠI NGAY</button>
+          <button id="vic-hangar-btn" class="btn-secondary">⚙️ XƯỞNG NÂNG CẤP</button>
+        </div>
+      </div>
+    </div>
+
     <!-- SETTINGS MODAL -->
     <div id="settings-modal" class="modal-overlay">
       <div class="settings-card-box">
@@ -332,6 +365,6 @@
     </div>
   </div>
 
-  <script type="module" src="./src/main.js?v=3.7"></script>
+  <script type="module" src="./src/main.js?v=3.8"></script>
 </body>
 </html>

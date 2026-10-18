@@ -59,7 +59,9 @@ export class Game {
       flame: 0,
       serpent: 0,
       thorns: 0,
-      toxic: 0
+      toxic: 0,
+      laser: 0,
+      bombs: 0
     };
     this.totalDamageDealt = 0;
 
@@ -75,6 +77,7 @@ export class Game {
 
     // Entities
     this.enemies = [];
+    this.enemyBullets = [];
     this.gems = [];
     this.chests = [];
     this.particles = [];
@@ -88,6 +91,7 @@ export class Game {
     // UI callbacks
     this.onLevelUpCallback = null;
     this.onGameOverCallback = null;
+    this.onVictoryCallback = null;
     this.onHordeAlertCallback = null;
     this.onLuckyChestCallback = null;
 
@@ -504,6 +508,21 @@ export class Game {
       }
     }
 
+    // 4.5. Update Enemy Bullets
+    for (let i = this.enemyBullets.length - 1; i >= 0; i--) {
+      const eb = this.enemyBullets[i];
+      eb.update(dt, this.player, this);
+      if (eb.isDead) {
+        this.enemyBullets.splice(i, 1);
+      }
+    }
+
+    // 🌟 Giới Hạn Ván Chơi 10 Phút: 600s Sống Sót Hoàn Mỹ
+    if (this.gameTime >= 600 && this.state === 'playing') {
+      this.triggerVictory();
+      return;
+    }
+
     // 5. Update Gems
     for (let i = this.gems.length - 1; i >= 0; i--) {
       const g = this.gems[i];
@@ -581,6 +600,19 @@ export class Game {
     }
   }
 
+  triggerVictory() {
+    this.state = 'victory';
+    sound.playJackpot();
+    this.addScreenShake(20);
+    this.triggerNuke();
+    const rawGold = Math.floor(this.score / 5); // x2 Gold Bonus
+    this.earnedGold = meta.addGold(rawGold);
+
+    if (this.onVictoryCallback) {
+      this.onVictoryCallback();
+    }
+  }
+
   gameOver() {
     this.state = 'gameover';
     const rawGold = Math.floor(this.score / 10);
@@ -643,6 +675,13 @@ export class Game {
     for (const e of this.enemies) {
       if (e.x + e.radius >= vMinX && e.x - e.radius <= vMaxX && e.y + e.radius >= vMinY && e.y - e.radius <= vMaxY) {
         e.draw(ctx, this.gameTime);
+      }
+    }
+
+    // Draw Enemy Bullets (Culled)
+    for (const eb of this.enemyBullets) {
+      if (eb.x >= vMinX && eb.x <= vMaxX && eb.y >= vMinY && eb.y <= vMaxY) {
+        eb.draw(ctx);
       }
     }
 
@@ -714,10 +753,13 @@ export class Game {
       flame: 0,
       serpent: 0,
       thorns: 0,
-      toxic: 0
+      toxic: 0,
+      laser: 0,
+      bombs: 0
     };
     this.totalDamageDealt = 0;
     this.enemies = [];
+    this.enemyBullets = [];
     this.gems = [];
     this.chests = [];
     this.particles = [];
@@ -1002,37 +1044,40 @@ class Player {
   }
 
   triggerNovaBlast(isSuper = false) {
-    const mult = this.hasImmortality ? 3.0 : 1.0;
+    const mult = this.hasImmortality ? 2.0 : 1.0;
     const baseRadius = (this.baseStats?.novaRadius || 160) * (this.stats.shieldRadiusMult || 1.0) * (this.stats.mass || 1.0);
-    const radius = isSuper ? baseRadius * 1.6 : baseRadius;
-    const baseDmg = (this.baseStats?.novaDamage || 320) * this.stats.damageMult * (this.stats.mass || 1.0);
-    const dmg = (isSuper ? baseDmg * 2.0 : baseDmg) * mult;
+    const radius = isSuper ? baseRadius * 1.5 : baseRadius;
+    const baseDmg = (this.baseStats?.novaDamage || 160) * this.stats.damageMult * (this.stats.mass || 1.0);
+    const dmg = (isSuper ? baseDmg * 1.75 : baseDmg) * mult;
 
     sound.playExplosion();
-    this.game.addScreenShake(isSuper ? 16 : 10);
+    this.game.addScreenShake(isSuper ? 14 : 8);
 
     // Shockwave particle visual
-    for (let i = 0; i < (isSuper ? 36 : 22); i++) {
-      const angle = (i / (isSuper ? 36 : 22)) * Math.PI * 2;
+    const pCount = isSuper ? 30 : 18;
+    for (let i = 0; i < pCount; i++) {
+      const angle = (i / pCount) * Math.PI * 2;
       const spd = (radius / 18);
       const px = this.x + Math.cos(angle) * 15;
       const py = this.y + Math.sin(angle) * 15;
-      const p = new Particle(px, py, isSuper ? '#facc15' : (this.hasImmortality ? '#fbbf24' : '#00f2fe'), 6, 4.5, 0.9);
+      const p = new Particle(px, py, isSuper ? '#facc15' : (this.hasImmortality ? '#fbbf24' : '#00f2fe'), 5, 4, 0.8);
       p.vx = Math.cos(angle) * spd;
       p.vy = Math.sin(angle) * spd;
       this.game.particles.push(p);
     }
 
-    this.game.floatingTexts.push(new FloatingText(this.x, this.y - 45, isSuper ? '⚡ MEGA NOVA! ⚡' : (this.hasImmortality ? '👑 IMMORTAL NOVA! 👑' : '💥 NOVA BLAST! 💥'), '#00f2fe', 22, true));
+    this.game.floatingTexts.push(new FloatingText(this.x, this.y - 45, isSuper ? '⚡ MEGA NOVA! ⚡' : (this.hasImmortality ? '👑 IMMORTAL NOVA! 👑' : '💥 NOVA BLAST! 💥'), '#00f2fe', 20, true));
 
-    // Damage & knock back all enemies in radius
-    for (const enemy of this.game.enemies) {
+    // Damage & knock back enemies in radius via Spatial Grid
+    const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(this.x, this.y, radius + 40) : this.game.enemies;
+    for (const enemy of candidates) {
+      if (enemy.isDead) continue;
       const d = Math.hypot(enemy.x - this.x, enemy.y - this.y);
       if (d < radius + enemy.radius) {
         this.game.damageEnemy(enemy, dmg, true, 'novashield');
         if (d > 0.001) {
-          enemy.x += ((enemy.x - this.x) / d) * (isSuper ? 90 : 60);
-          enemy.y += ((enemy.y - this.y) / d) * (isSuper ? 90 : 60);
+          enemy.x += ((enemy.x - this.x) / d) * (isSuper ? 80 : 50);
+          enemy.y += ((enemy.y - this.y) / d) * (isSuper ? 80 : 50);
         }
       }
     }

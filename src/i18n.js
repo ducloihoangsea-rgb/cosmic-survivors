@@ -30,6 +30,7 @@ export const translations = {
     rarityEpic: 'Epic',
     rarityLegendary: 'Legendary',
     rarityMythic: 'MYTHIC',
+    rarityAwakening: 'AWAKENING',
 
     // Categories
     categoryOffense: '⚔️ OFFENSE',
@@ -38,6 +39,8 @@ export const translations = {
     categoryMutation: '🧬 MUTATION',
     categoryFusion: '🔥 FUSION MOD',
     categoryMythic: '👑 GOD-TIER',
+    categoryAwakening: '🌟 WEAPON AWAKENING',
+    categoryCore: '🧬 SUPPORT CORE',
 
     // Starship Roster (3 Unique Gameplay Classes)
     shipSelectTitle: 'CHOOSE YOUR STARSHIP',
@@ -242,6 +245,8 @@ export const translations = {
     skill_glaive: 'Bouncing Glaive',
     skill_missiles: 'Heat Missiles',
     skill_wingmen: 'Wingmen Drones',
+    skill_laser: 'Prism Laser Beam',
+    skill_bombs: 'Space Mines',
     skill_emp: 'EMP Shockwave',
     skill_nuke: 'Orbital Nuke',
     skill_blackhole: 'Cosmic Singularity',
@@ -254,6 +259,51 @@ export const translations = {
     skill_toxic: 'Toxic Gas Cloud',
     executeFloat: '💀 EXECUTED! 💀',
     destinyPactActivated: '⚡ DESTINY PACT SEALED! ⚡',
+
+    // New Weapons
+    laserTitle: 'Prism Laser Beam',
+    laserDesc: 'Fires piercing high-energy laser beams that incinerate enemies in a line.',
+    laserEvo: 'Extreme beam width with devastating thermal damage over time.',
+    bombsTitle: 'Space Mine Dropper',
+    bombsDesc: 'Deploys proximity explosive mines that detonate on contact or delay (Summon).',
+    bombsEvo: 'Deploys heavier plasma mines with massive blast radius.',
+
+    // Support Cores (Passives required for Awakening)
+    core_firerateTitle: 'Overclock Core',
+    core_firerateDesc: '+20% Weapon Attack Speed across all arsenals.',
+    core_blastTitle: 'Blast Matrix Core',
+    core_blastDesc: '+35% Blast Radius for Bombs, Missiles, and Shield blasts.',
+    core_summonTitle: 'Nanite Overlord Core',
+    core_summonDesc: '+40% Damage and HP for Drones & Space Mines (Summons).',
+    core_rangeTitle: 'Tachyon Scope Core',
+    core_rangeDesc: '+35% Weapon Range, Laser sweep distance, and Radar vision.',
+    core_shieldTitle: 'Barrier Matrix Core',
+    core_shieldDesc: '+50 Shield Max HP and -25% Shield recharge delay.',
+    core_hullTitle: 'Titan Armor Core',
+    core_hullDesc: '+40% Max HP and +35% Ramming Collision Mass.',
+    core_tailTitle: 'Dragon Tendon Core',
+    core_tailDesc: '+2 Armored Segments and +40% Dragon swipe damage.',
+
+    // Weapon & Ship Awakenings (Evolution)
+    awakenBlasterTitle: '🌟 GATLING LASERSTORM',
+    awakenBlasterDesc: 'AWAKENING (Blaster Lv5 + Overclock Core): 8-barrel rotary cannon spraying high-speed piercing plasma storm!',
+    awakenBombsTitle: '🌟 APOCALYPSE NUKE MINES',
+    awakenBombsDesc: 'AWAKENING (Bombs Lv5 + Blast Core): Each exploding mine fractures into 4 cascading cluster nukes!',
+    awakenDroneTitle: '🌟 MOTHERSHIP ARMADA',
+    awakenDroneDesc: 'AWAKENING (Drones Lv5 + Summoner Core): Drones equipped with quad-gatlings & homing missiles, permanent lifespan!',
+    awakenLaserTitle: '🌟 ORBITAL DEATH RAY',
+    awakenLaserDesc: 'AWAKENING (Laser Lv5 + Range Core): Dual 360-degree orbital thermal death rays ripping through the screen!',
+    awakenShieldTitle: '🌟 AEGIS OF ETERNITY',
+    awakenShieldDesc: 'AWAKENING (Nova Shield + Barrier Core): Rupture unleashes dual shockwaves and discharges static lightning storms!',
+    awakenRammerTitle: '🌟 DREADNOUGHT LEVIATHAN',
+    awakenRammerDesc: 'AWAKENING (Meteor Rammer + Armor Core): Impact damage x2.5, grants 1.5s invulnerability upon each ram kill!',
+    awakenSerpentTitle: '🌟 OUROBOROS GOD DRAGON',
+    awakenSerpentDesc: 'AWAKENING (Cosmic Serpent + Dragon Core): Flaming golden dragon scales, zapping chain lightning on contact!',
+
+    // Elite and Victory
+    eliteAlert: '⚠️ WARNING: ELITE HOSTILE DETECTED! ⚠️',
+    victoryTitle: '🏆 10-MINUTE SURVIVAL VICTORY! 🏆',
+    victorySubtitle: 'You survived the cosmic abyss and purged the universe! Double Gold Awarded!',
 
     // Game Over
     gameOverTitle: 'SYSTEM PURGED',
@@ -294,6 +344,7 @@ export const translations = {
     rarityEpic: 'Sử Thi',        // Tím
     rarityLegendary: 'Huyền Thoại', // Vàng
     rarityMythic: 'THẦN THOẠI',   // Đỏ (1-2%)
+    rarityAwakening: 'THỨC TỈNH', // Vàng kim 7 màu
 
     // Categories
     categoryOffense: '⚔️ TẤN CÔNG',
@@ -302,6 +353,8 @@ export const translations = {
     categoryMutation: '🧬 ĐỘT BIẾN',
     categoryFusion: '🔥 SIÊU NÂNG CẤP',
     categoryMythic: '👑 THẦN CẤP',
+    categoryAwakening: '🌟 THỨC TỈNH VŨ KHÍ',
+    categoryCore: '🧬 LÕI PHỤ TRỢ',
 
     // Starship Roster (3 Thân Tàu Khởi Đầu)
     shipSelectTitle: 'CHỌN PHI THUYỀN XUẤT TRẬN',
@@ -506,6 +559,8 @@ export const translations = {
     skill_glaive: 'Phi Tiêu Nảy',
     skill_missiles: 'Tên Lửa Tầm Nhiệt',
     skill_wingmen: 'Drone Đồng Minh',
+    skill_laser: 'Tia Laze Hội Tụ',
+    skill_bombs: 'Mìn Nổ Không Gian',
     skill_emp: 'Sóng Chấn Động EMP',
     skill_nuke: 'Bom Hạt Nhân',
     skill_blackhole: 'Hố Đen Kỳ Dị',
@@ -518,6 +573,51 @@ export const translations = {
     skill_toxic: 'Khí Độc Đuôi',
     executeFloat: '💀 KẾT LIỄU! 💀',
     destinyPactActivated: '⚡ KHẾ ƯỚC ĐỊNH MỆNH ĐÃ THIẾT LẬP! ⚡',
+
+    // Vũ Khí Mới
+    laserTitle: 'Tia Laze Hội Tụ',
+    laserDesc: 'Bắn chùm tia laser năng lượng cao xuyên thủng mọi kẻ địch trên một đường thẳng.',
+    laserEvo: 'Tia laze cực đại quét nhiệt thiêu đốt hàng loạt mục tiêu liên tục.',
+    bombsTitle: 'Thả Mìn Không Gian',
+    bombsDesc: 'Thả mìn nổ cảm ứng sau đuôi tàu, tự nổ diện rộng khi quái chạm vào (Thuộc Triệu Hồi).',
+    bombsEvo: 'Thả mìn hạt nhân plasma công suất lớn với bán kính hủy diệt khổng lồ.',
+
+    // Lõi Phụ Trợ (Điều kiện để Thức Tỉnh Vũ Khí & Tàu)
+    core_firerateTitle: 'Lõi Tốc Đánh (Overclock)',
+    core_firerateDesc: '+20% Tốc độ bắn & xả đạn cho toàn bộ vũ khí trên tàu.',
+    core_blastTitle: 'Lõi Bán Kính Nổ (Blast Matrix)',
+    core_blastDesc: '+35% Bán kính vụ nổ cho Mìn, Tên lửa và Sóng nổ khiên.',
+    core_summonTitle: 'Lõi Triệu Hồi (Nanite Overlord)',
+    core_summonDesc: '+40% Sát thương và Máu cho Drone & Mìn Không Gian (Đơn vị triệu hồi).',
+    core_rangeTitle: 'Lõi Tầm Xa (Tachyon Scope)',
+    core_rangeDesc: '+35% Tầm bắn, tầm quét laser và mở rộng tầm nhìn radar.',
+    core_shieldTitle: 'Lõi Khiên (Barrier Matrix)',
+    core_shieldDesc: '+50 HP Khiên Năng Lượng và giảm 25% thời gian nạp lại khiên.',
+    core_hullTitle: 'Lõi Giáp Thân Tàu (Titan Armor)',
+    core_hullDesc: '+40% Máu tối đa và +35% Khối lượng đâm húc.',
+    core_tailTitle: 'Lõi Đốt Rồng (Dragon Tendon)',
+    core_tailDesc: '+2 Đốt thân rồng bọc thép và +40% sát thương quẹt thân.',
+
+    // Thức Tỉnh Vũ Khí & Tàu (Awakening / Evolution)
+    awakenBlasterTitle: '🌟 GATLING LASERSTORM',
+    awakenBlasterDesc: 'THỨC TỈNH (Blaster Lv5 + Lõi Tốc Đánh): 8 nòng đại bác xả đạn xuyên thấu bão lửa tốc độ ánh sáng!',
+    awakenBombsTitle: '🌟 BOM HẠT NHÂN TẬN THẾ',
+    awakenBombsDesc: 'THỨC TỈNH (Thả Bom Lv5 + Lõi Bán Kính): Mỗi mìn nổ phân tách thành 4 đầu đạn hạt nhân nổ chùm dây chuyền!',
+    awakenDroneTitle: '🌟 HẠM ĐỘI MOTHERSHIP',
+    awakenDroneDesc: 'THỨC TỈNH (Drone Lv5 + Lõi Triệu Hồi): Drone trang bị súng máy liên thanh 4 nòng, tên lửa tự dẫn, tồn tại vĩnh cửu!',
+    awakenLaserTitle: '🌟 ORBITAL DEATH RAY',
+    awakenLaserDesc: 'THỨC TỈNH (Laze Lv5 + Lõi Tầm Xa): 2 chùm tia laser quỹ đạo xoay 360 độ xé toạc toàn màn hình!',
+    awakenShieldTitle: '🌟 AEGIS OF ETERNITY',
+    awakenShieldDesc: 'THỨC TỈNH (Tàu Khiên + Lõi Khiên): Khiên vỡ tạo sóng xung kích kép và giải phóng bão sét tĩnh điện!',
+    awakenRammerTitle: '🌟 DREADNOUGHT LEVIATHAN',
+    awakenRammerDesc: 'THỨC TỈNH (Tàu Đâm + Lõi Giáp): Sát thương va chạm x2.5, nhận 1.5s bất tử mỗi khi tông chết quái!',
+    awakenSerpentTitle: '🌟 OUROBOROS GOD DRAGON',
+    awakenSerpentDesc: 'THỨC TỈNH (Tàu Rắn + Lõi Đốt): Đốt thân rồng biến thành vảy vàng rực lửa, phóng sét giật lan khi quẹt quái!',
+
+    // Quái Tinh Anh & Chiến Thắng
+    eliteAlert: '⚠️ CẢNH BÁO: QUÁI TINH ANH KHÔNG GIAN XUẤT HIỆN! ⚠️',
+    victoryTitle: '🏆 CHIẾN THẮNG SINH TỒN 10 PHÚT! 🏆',
+    victorySubtitle: 'Bạn đã sống sót qua 10 phút ác mộng và quét sạch vũ trụ! Thưởng vàng gấp đôi!',
 
     // Game Over
     gameOverTitle: 'HỆ THỐNG THẤT THỦ',

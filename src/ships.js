@@ -139,7 +139,7 @@ export const SHIP_ROSTER = {
       shieldMaxHp: 160,
       shieldRechargeTime: 3.5,
       novaRadius: 160,
-      novaDamage: 320,
+      novaDamage: 160,
       noGuns: true
     },
     startingWeapon: null,
@@ -147,14 +147,14 @@ export const SHIP_ROSTER = {
     specs: {
       vi: [
         { label: 'Khiên bảo vệ độc lập', val: '160 HP hấp thụ mọi sát thương' },
-        { label: 'Sóng nổ Nova', val: 'Bán kính 160px • 320 dmg khi vỡ' },
+        { label: 'Sóng nổ Nova', val: 'Bán kính 160px • 160 dmg khi vỡ' },
         { label: 'Tự sạc lại khiên', val: '3.5 giây sau lần trúng đòn cuối' },
         { label: 'Hỏa lực', val: 'Không có súng thường • Bom khiên áp sát' },
         { label: 'Kỹ năng Nộ (Space / EMP)', val: 'Super Mega Nova Blast (Bán kính x2.2)' }
       ],
       en: [
         { label: 'Energy Barrier', val: '160 HP independent damage absorption' },
-        { label: 'Nova Shockwave', val: '160px radius • 320 dmg on rupture' },
+        { label: 'Nova Shockwave', val: '160px radius • 160 dmg on rupture' },
         { label: 'Recharge Delay', val: '3.5s after last damage taken' },
         { label: 'Firepower', val: 'No conventional guns • Close-range blast' },
         { label: 'Ultimate (Space / EMP)', val: 'Super Mega Nova Blast (Radius x2.2)' }
