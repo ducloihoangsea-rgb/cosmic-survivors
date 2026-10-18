@@ -142,134 +142,6 @@ export class UpgradeSystem {
       label: i18n.t(`rarity${rarityKey}`)
     });
 
-    // 1. Weapon upgrades (Category: Offense)
-    if (wm.weapons.blaster.level < wm.weapons.blaster.maxLevel) {
-      const isUnlock = wm.weapons.blaster.level === 0;
-      const isEvo = wm.weapons.blaster.level === 4;
-      const curLvl = wm.weapons.blaster.level;
-      const r = isEvo ? getRarity('Legendary') : (wm.weapons.blaster.level >= 2 ? getRarity('Rare') : getRarity('Common'));
-      pool.push({
-        id: 'blaster',
-        categoryKey: 'offense',
-        category: i18n.t('categoryOffense'),
-        title: isUnlock ? i18n.t('blasterUnlock') : `${i18n.t('blasterTitle')} Lv.${curLvl + 1}`,
-        desc: isEvo ? i18n.t('blasterEvo') : i18n.t('blasterDesc'),
-        rarityKey: r.key,
-        rarity: r.label,
-        icon: '⚡',
-        currentLevel: curLvl,
-        nextLevel: curLvl + 1,
-        maxLevel: wm.weapons.blaster.maxLevel,
-        apply: () => { wm.weapons.blaster.level++; }
-      });
-    }
-
-    if (wm.weapons.orbs.level < wm.weapons.orbs.maxLevel) {
-      const isUnlock = wm.weapons.orbs.level === 0;
-      const isEvo = wm.weapons.orbs.level === 4;
-      const curLvl = wm.weapons.orbs.level;
-      const r = isEvo ? getRarity('Legendary') : (wm.weapons.orbs.level >= 2 ? getRarity('Epic') : getRarity('Rare'));
-      pool.push({
-        id: 'orbs',
-        categoryKey: 'offense',
-        category: i18n.t('categoryOffense'),
-        title: isUnlock ? i18n.t('orbsUnlock') : `${i18n.t('orbsTitle')} Lv.${curLvl + 1}`,
-        desc: isEvo ? i18n.t('orbsEvo') : i18n.t('orbsDesc'),
-        rarityKey: r.key,
-        rarity: r.label,
-        icon: '🪐',
-        currentLevel: curLvl,
-        nextLevel: curLvl + 1,
-        maxLevel: wm.weapons.orbs.maxLevel,
-        apply: () => { wm.weapons.orbs.level++; }
-      });
-    }
-
-    if (wm.weapons.lightning.level < wm.weapons.lightning.maxLevel) {
-      const isUnlock = wm.weapons.lightning.level === 0;
-      const isEvo = wm.weapons.lightning.level === 4;
-      const curLvl = wm.weapons.lightning.level;
-      const r = isEvo ? getRarity('Legendary') : getRarity('Epic');
-      pool.push({
-        id: 'lightning',
-        categoryKey: 'offense',
-        category: i18n.t('categoryOffense'),
-        title: isUnlock ? i18n.t('lightningUnlock') : `${i18n.t('lightningTitle')} Lv.${curLvl + 1}`,
-        desc: isEvo ? i18n.t('lightningEvo') : i18n.t('lightningDesc'),
-        rarityKey: r.key,
-        rarity: r.label,
-        icon: '🌩️',
-        currentLevel: curLvl,
-        nextLevel: curLvl + 1,
-        maxLevel: wm.weapons.lightning.maxLevel,
-        apply: () => { wm.weapons.lightning.level++; }
-      });
-    }
-
-    if (wm.weapons.glaive.level < wm.weapons.glaive.maxLevel) {
-      const isUnlock = wm.weapons.glaive.level === 0;
-      const isEvo = wm.weapons.glaive.level === 4;
-      const curLvl = wm.weapons.glaive.level;
-      const r = isEvo ? getRarity('Legendary') : (wm.weapons.glaive.level >= 2 ? getRarity('Epic') : getRarity('Rare'));
-      pool.push({
-        id: 'glaive',
-        categoryKey: 'offense',
-        category: i18n.t('categoryOffense'),
-        title: isUnlock ? i18n.t('glaiveUnlock') : `${i18n.t('glaiveTitle')} Lv.${curLvl + 1}`,
-        desc: i18n.t('glaiveDesc'),
-        rarityKey: r.key,
-        rarity: r.label,
-        icon: '🌀',
-        currentLevel: curLvl,
-        nextLevel: curLvl + 1,
-        maxLevel: wm.weapons.glaive.maxLevel,
-        apply: () => { wm.weapons.glaive.level++; }
-      });
-    }
-
-    if (wm.weapons.missiles.level < wm.weapons.missiles.maxLevel) {
-      const isUnlock = wm.weapons.missiles.level === 0;
-      const isEvo = wm.weapons.missiles.level === 4;
-      const curLvl = wm.weapons.missiles.level;
-      const r = isEvo ? getRarity('Legendary') : getRarity('Epic');
-      pool.push({
-        id: 'missiles',
-        categoryKey: 'offense',
-        category: i18n.t('categoryOffense'),
-        title: isUnlock ? i18n.t('missilesUnlock') : `${i18n.t('missilesTitle')} Lv.${curLvl + 1}`,
-        desc: isEvo ? i18n.t('missilesEvo') : i18n.t('missilesDesc'),
-        rarityKey: r.key,
-        rarity: r.label,
-        icon: '🚀',
-        currentLevel: curLvl,
-        nextLevel: curLvl + 1,
-        maxLevel: wm.weapons.missiles.maxLevel,
-        apply: () => { wm.weapons.missiles.level++; }
-      });
-    }
-
-    if (wm.weapons.wingmen.level < wm.weapons.wingmen.maxLevel) {
-      const isUnlock = wm.weapons.wingmen.level === 0;
-      const isEvo = wm.weapons.wingmen.level === 4;
-      const curLvl = wm.weapons.wingmen.level;
-      const r = isEvo ? getRarity('Legendary') : getRarity('Epic');
-      pool.push({
-        id: 'wingmen',
-        categoryKey: 'offense',
-        category: i18n.t('categoryOffense'),
-        title: isUnlock ? i18n.t('wingmenUnlock') : `${i18n.t('wingmenTitle')} Lv.${curLvl + 1}`,
-        desc: isEvo ? i18n.t('wingmenEvo') : i18n.t('wingmenDesc'),
-        rarityKey: r.key,
-        rarity: r.label,
-        icon: '🛸',
-        currentLevel: curLvl,
-        nextLevel: curLvl + 1,
-        maxLevel: wm.weapons.wingmen.maxLevel,
-        apply: () => { wm.weapons.wingmen.level++; }
-      });
-    }
-
-    // 2. Stat Buffs (Category: Support)
     const rCommon = getRarity('Common');
     const rRare = getRarity('Rare');
     const rEpic = getRarity('Epic');
@@ -277,137 +149,140 @@ export class UpgradeSystem {
 
     const getBuffLvl = (id) => player.buffLevels?.[id] || 0;
 
-    if (getBuffLvl('overclock') < 5) {
-      pool.push({
-        id: 'overclock',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('overclockTitle'),
-        desc: i18n.t('overclockDesc'),
-        rarityKey: rCommon.key,
-        rarity: rCommon.label,
-        icon: '⏱️',
-        currentLevel: getBuffLvl('overclock'),
-        nextLevel: getBuffLvl('overclock') + 1,
-        maxLevel: 5,
-        apply: () => {
-          player.stats.fireRateMult += 0.25;
-          if (player.buffLevels) player.buffLevels.overclock = (player.buffLevels.overclock || 0) + 1;
-        }
-      });
-    }
+    // ==========================================
+    // NHÓM 1: NÂNG CẤP CHỈ SỐ (Phổ thông)
+    // ==========================================
 
-    if (getBuffLvl('hypercharge') < 5) {
+    // 1. Gia Tốc (Thrust): Tốc độ bay +25%, tốc độ xoay tàu +15%
+    if (getBuffLvl('thrust') < 5) {
       pool.push({
-        id: 'hypercharge',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('hyperchargeTitle'),
-        desc: i18n.t('hyperchargeDesc'),
-        rarityKey: rRare.key,
-        rarity: rRare.label,
-        icon: '💥',
-        currentLevel: getBuffLvl('hypercharge'),
-        nextLevel: getBuffLvl('hypercharge') + 1,
-        maxLevel: 5,
-        apply: () => {
-          player.stats.damageMult += 0.25;
-          if (player.buffLevels) player.buffLevels.hypercharge = (player.buffLevels.hypercharge || 0) + 1;
-        }
-      });
-    }
-
-    if (getBuffLvl('gravitywell') < 5) {
-      pool.push({
-        id: 'gravitywell',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('gravitywellTitle'),
-        desc: i18n.t('gravitywellDesc'),
-        rarityKey: rCommon.key,
-        rarity: rCommon.label,
-        icon: '🧲',
-        currentLevel: getBuffLvl('gravitywell'),
-        nextLevel: getBuffLvl('gravitywell') + 1,
-        maxLevel: 5,
-        apply: () => {
-          player.stats.magnetRadius = Math.round(player.stats.magnetRadius * 1.5);
-          if (player.buffLevels) player.buffLevels.gravitywell = (player.buffLevels.gravitywell || 0) + 1;
-        }
-      });
-    }
-
-    if (getBuffLvl('warpengine') < 5) {
-      pool.push({
-        id: 'warpengine',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('warpengineTitle'),
-        desc: i18n.t('warpengineDesc'),
+        id: 'thrust',
+        categoryKey: 'stat',
+        category: i18n.t('categoryStat'),
+        title: `${i18n.t('thrustTitle')} Lv.${getBuffLvl('thrust') + 1}`,
+        desc: i18n.t('thrustDesc'),
         rarityKey: rCommon.key,
         rarity: rCommon.label,
         icon: '🚀',
-        currentLevel: getBuffLvl('warpengine'),
-        nextLevel: getBuffLvl('warpengine') + 1,
+        currentLevel: getBuffLvl('thrust'),
+        nextLevel: getBuffLvl('thrust') + 1,
         maxLevel: 5,
         apply: () => {
-          player.stats.speedMult += 0.20;
-          if (player.buffLevels) player.buffLevels.warpengine = (player.buffLevels.warpengine || 0) + 1;
+          player.stats.speedMult += 0.25;
+          player.turnSpeedMult = (player.turnSpeedMult || 1.0) + 0.15;
+          if (player.buffLevels) player.buffLevels.thrust = (player.buffLevels.thrust || 0) + 1;
         }
       });
     }
 
-    if (getBuffLvl('eaglesight') < 3) {
+    // 2. Khuếch Đại (Juggernaut): Tăng 40% kích thước & khối lượng tàu, tăng 30% máu, giảm 15% tốc độ xoay
+    if (getBuffLvl('juggernaut') < 3) {
       pool.push({
-        id: 'eaglesight',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('eaglesightTitle'),
-        desc: i18n.t('eaglesightDesc'),
+        id: 'juggernaut',
+        categoryKey: 'stat',
+        category: i18n.t('categoryStat'),
+        title: `${i18n.t('juggernautTitle')} Lv.${getBuffLvl('juggernaut') + 1}`,
+        desc: i18n.t('juggernautDesc'),
         rarityKey: rRare.key,
         rarity: rRare.label,
-        icon: '👁️',
-        currentLevel: getBuffLvl('eaglesight'),
-        nextLevel: getBuffLvl('eaglesight') + 1,
+        icon: '🛡️',
+        currentLevel: getBuffLvl('juggernaut'),
+        nextLevel: getBuffLvl('juggernaut') + 1,
         maxLevel: 3,
         apply: () => {
-          this.game.cameraZoom = Math.max(0.65, (this.game.cameraZoom || 1.0) * 0.82);
-          player.stats.visionBonus = (player.stats.visionBonus || 0) + 0.35;
-          if (player.buffLevels) player.buffLevels.eaglesight = (player.buffLevels.eaglesight || 0) + 1;
+          player.radius = Math.round(player.radius * 1.4);
+          player.stats.mass = (player.stats.mass || 1.0) * 1.4;
+          player.maxHp = Math.round(player.maxHp * 1.3);
+          player.hp = Math.min(player.maxHp, Math.round(player.hp * 1.3));
+          player.turnSpeedMult = Math.max(0.35, (player.turnSpeedMult || 1.0) - 0.15);
+          if (player.buffLevels) player.buffLevels.juggernaut = (player.buffLevels.juggernaut || 0) + 1;
         }
       });
     }
 
-    if (getBuffLvl('criticalsurge') < 5) {
+    // 3. Thu Nhỏ (Micro-Craft): Giảm 30% kích thước hitbox, tốc độ bay +35% (né đạn siêu dễ)
+    if (getBuffLvl('microcraft') < 3) {
       pool.push({
-        id: 'criticalsurge',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('criticalsurgeTitle'),
-        desc: i18n.t('criticalsurgeDesc'),
-        rarityKey: rEpic.key,
-        rarity: rEpic.label,
-        icon: '🎯',
-        currentLevel: getBuffLvl('criticalsurge'),
-        nextLevel: getBuffLvl('criticalsurge') + 1,
-        maxLevel: 5,
+        id: 'microcraft',
+        categoryKey: 'stat',
+        category: i18n.t('categoryStat'),
+        title: `${i18n.t('microcraftTitle')} Lv.${getBuffLvl('microcraft') + 1}`,
+        desc: i18n.t('microcraftDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🛸',
+        currentLevel: getBuffLvl('microcraft'),
+        nextLevel: getBuffLvl('microcraft') + 1,
+        maxLevel: 3,
         apply: () => {
-          player.stats.critChance = Math.min(0.85, player.stats.critChance + 0.15);
-          player.stats.critMult += 0.4;
-          if (player.buffLevels) player.buffLevels.criticalsurge = (player.buffLevels.criticalsurge || 0) + 1;
+          player.radius = Math.max(8, Math.round(player.radius * 0.7));
+          player.stats.speedMult += 0.35;
+          if (player.buffLevels) player.buffLevels.microcraft = (player.buffLevels.microcraft || 0) + 1;
         }
       });
     }
 
+    // 4. Lõi Năng Lượng (Energy Core): Tốc độ hồi khiên +40%, giảm thời gian kích nổ khiên
+    if (getBuffLvl('energycore') < 3) {
+      pool.push({
+        id: 'energycore',
+        categoryKey: 'stat',
+        category: i18n.t('categoryStat'),
+        title: `${i18n.t('energycoreTitle')} Lv.${getBuffLvl('energycore') + 1}`,
+        desc: i18n.t('energycoreDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🔋',
+        currentLevel: getBuffLvl('energycore'),
+        nextLevel: getBuffLvl('energycore') + 1,
+        maxLevel: 3,
+        apply: () => {
+          player.shieldRechargeSpeed = (player.shieldRechargeSpeed || 1.0) + 0.40;
+          player.shieldBurstDelayMult = Math.max(0.4, (player.shieldBurstDelayMult || 1.0) * 0.75);
+          if (player.isShieldNova) {
+            player.shieldEnergy = player.maxShieldEnergy || 100;
+          }
+          if (player.buffLevels) player.buffLevels.energycore = (player.buffLevels.energycore || 0) + 1;
+        }
+      });
+    }
+
+    // 5. Mọc Đốt (Grow Segments): Thêm 2 đốt thân phía sau (Tàu Rắn) hoặc kéo dài vệt lửa phản lực gây cháy (Tàu khác)
+    if (getBuffLvl('growsegments') < 3) {
+      pool.push({
+        id: 'growsegments',
+        categoryKey: 'stat',
+        category: i18n.t('categoryStat'),
+        title: `${i18n.t('growsegmentsTitle')} Lv.${getBuffLvl('growsegments') + 1}`,
+        desc: i18n.t('growsegmentsDesc'),
+        rarityKey: rRare.key,
+        rarity: rRare.label,
+        icon: '🐉',
+        currentLevel: getBuffLvl('growsegments'),
+        nextLevel: getBuffLvl('growsegments') + 1,
+        maxLevel: 3,
+        apply: () => {
+          if (player.isSerpent || player.shipId === 'ship_serpent') {
+            player.stats.bonusSegments = (player.stats.bonusSegments || 0) + 2;
+          } else {
+            player.hasFlameTrail = true;
+            player.flameTrailLevel = (player.flameTrailLevel || 0) + 1;
+          }
+          if (player.buffLevels) player.buffLevels.growsegments = (player.buffLevels.growsegments || 0) + 1;
+        }
+      });
+    }
+
+    // 6. Sửa Chữa Khẩn Cấp (Nanorepair)
     if (getBuffLvl('nanorepair') < 5) {
       pool.push({
         id: 'nanorepair',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('nanorepairTitle'),
+        categoryKey: 'stat',
+        category: i18n.t('categoryStat'),
+        title: `${i18n.t('nanorepairTitle')} Lv.${getBuffLvl('nanorepair') + 1}`,
         desc: i18n.t('nanorepairDesc'),
-        rarityKey: rRare.key,
-        rarity: rRare.label,
+        rarityKey: rCommon.key,
+        rarity: rCommon.label,
         icon: '💉',
         currentLevel: getBuffLvl('nanorepair'),
         nextLevel: getBuffLvl('nanorepair') + 1,
@@ -420,74 +295,101 @@ export class UpgradeSystem {
       });
     }
 
-    // 3. Synergy Upgrades (Mass, Segments, Barrier Radius, Thorns)
-    if (getBuffLvl('hullmass') < 3) {
+    // ==========================================
+    // NHÓM 2: ĐỘT BIẾN LỐI CHƠI (Biến đổi cơ chế)
+    // ==========================================
+
+    // 7. Đâm Xuyên (Drill): Khi húc quái chết, tàu không bị khựng lại mà lao thẳng qua tiếp
+    if (!player.hasDrill) {
       pool.push({
-        id: 'hullmass',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('hullMassTitle'),
-        desc: i18n.t('hullMassDesc'),
+        id: 'drill',
+        categoryKey: 'mutation',
+        category: i18n.t('categoryMutation'),
+        title: i18n.t('drillTitle'),
+        desc: i18n.t('drillDesc'),
         rarityKey: rEpic.key,
         rarity: rEpic.label,
-        icon: '🪨',
-        currentLevel: getBuffLvl('hullmass'),
-        nextLevel: getBuffLvl('hullmass') + 1,
-        maxLevel: 3,
+        icon: '🌪️',
+        currentLevel: 0,
+        nextLevel: 1,
+        maxLevel: 1,
         apply: () => {
-          player.stats.mass = (player.stats.mass || 1.0) * 1.4;
-          player.radius = Math.round(player.radius * 1.15);
-          if (player.buffLevels) player.buffLevels.hullmass = (player.buffLevels.hullmass || 0) + 1;
+          player.hasDrill = true;
+          if (player.buffLevels) player.buffLevels.drill = 1;
         }
       });
     }
 
-    if (getBuffLvl('serpentsegments') < 3) {
+    // 8. Khiên Lửa (Burn Field): Khiên liên tục gây sát thương thiêu đốt toàn bộ quái trong bán kính xung quanh
+    if (!player.hasBurnField) {
       pool.push({
-        id: 'serpentsegments',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('serpentSegmentsTitle'),
-        desc: i18n.t('serpentSegmentsDesc'),
-        rarityKey: rRare.key,
-        rarity: rRare.label,
-        icon: '🐉',
-        currentLevel: getBuffLvl('serpentsegments'),
-        nextLevel: getBuffLvl('serpentsegments') + 1,
-        maxLevel: 3,
+        id: 'burnfield',
+        categoryKey: 'mutation',
+        category: i18n.t('categoryMutation'),
+        title: i18n.t('burnfieldTitle'),
+        desc: i18n.t('burnfieldDesc'),
+        rarityKey: rEpic.key,
+        rarity: rEpic.label,
+        icon: '🔥',
+        currentLevel: 0,
+        nextLevel: 1,
+        maxLevel: 1,
         apply: () => {
-          player.stats.bonusSegments = (player.stats.bonusSegments || 0) + 2;
-          if (player.buffLevels) player.buffLevels.serpentsegments = (player.buffLevels.serpentsegments || 0) + 1;
+          player.hasBurnField = true;
+          if (player.buffLevels) player.buffLevels.burnfield = 1;
         }
       });
     }
 
-    if (getBuffLvl('barrierradius') < 3) {
+    // 9. Đạn Nảy (Ricochet): Đạn hoặc mảnh vỡ khi va chạm nảy sang mục tiêu lân cận
+    if (!player.hasRicochet) {
       pool.push({
-        id: 'barrierradius',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('barrierRadiusTitle'),
-        desc: i18n.t('barrierRadiusDesc'),
-        rarityKey: rRare.key,
-        rarity: rRare.label,
-        icon: '🛡️',
-        currentLevel: getBuffLvl('barrierradius'),
-        nextLevel: getBuffLvl('barrierradius') + 1,
-        maxLevel: 3,
+        id: 'ricochet',
+        categoryKey: 'mutation',
+        category: i18n.t('categoryMutation'),
+        title: i18n.t('ricochetTitle'),
+        desc: i18n.t('ricochetDesc'),
+        rarityKey: rEpic.key,
+        rarity: rEpic.label,
+        icon: '💫',
+        currentLevel: 0,
+        nextLevel: 1,
+        maxLevel: 1,
         apply: () => {
-          player.stats.shieldRadiusMult = (player.stats.shieldRadiusMult || 1.0) * 1.35;
-          if (player.buffLevels) player.buffLevels.barrierradius = (player.buffLevels.barrierradius || 0) + 1;
+          player.hasRicochet = true;
+          if (player.buffLevels) player.buffLevels.ricochet = 1;
         }
       });
     }
 
+    // 10. Khí Độc Đuôi (Toxic Exhaust): Đuôi tàu (hoặc các đốt rắn) xả khói làm chậm và rút máu quái đi vào
+    if (!player.hasToxicExhaust) {
+      pool.push({
+        id: 'toxicexhaust',
+        categoryKey: 'mutation',
+        category: i18n.t('categoryMutation'),
+        title: i18n.t('toxicexhaustTitle'),
+        desc: i18n.t('toxicexhaustDesc'),
+        rarityKey: rEpic.key,
+        rarity: rEpic.label,
+        icon: '☣️',
+        currentLevel: 0,
+        nextLevel: 1,
+        maxLevel: 1,
+        apply: () => {
+          player.hasToxicExhaust = true;
+          if (player.buffLevels) player.buffLevels.toxicexhaust = 1;
+        }
+      });
+    }
+
+    // 11. Gai Phản Đòn (Spiked Thorns): Phản lại 100% sát thương va chạm
     if (getBuffLvl('spikedthorns') < 3) {
       pool.push({
         id: 'spikedthorns',
-        categoryKey: 'support',
-        category: i18n.t('categorySupport'),
-        title: i18n.t('spikedThornsTitle'),
+        categoryKey: 'mutation',
+        category: i18n.t('categoryMutation'),
+        title: `${i18n.t('spikedThornsTitle')} Lv.${getBuffLvl('spikedthorns') + 1}`,
         desc: i18n.t('spikedThornsDesc'),
         rarityKey: rRare.key,
         rarity: rRare.label,
@@ -502,27 +404,137 @@ export class UpgradeSystem {
       });
     }
 
-    // Legendary Instant Nuke
-    pool.push({
-      id: 'tacticalnuke',
-      categoryKey: 'offense',
-      category: i18n.t('categoryOffense'),
-      title: i18n.t('tacticalnukeTitle'),
-      desc: i18n.t('tacticalnukeDesc'),
-      rarityKey: rLegendary.key,
-      rarity: rLegendary.label,
-      icon: '☢️',
-      apply: () => { this.game.triggerNuke(); }
-    });
+    // ==========================================
+    // NHÓM 3: SIÊU NÂNG CẤP (Fusion Mods - Cấp 10+)
+    // ==========================================
+    if (player.level >= 10) {
+      // 12. Bom Quán Tính (Crash Nova): Mỗi khi húc trúng mục tiêu, lập tức kích nổ một đợt sóng khiên
+      if (!player.hasCrashNova) {
+        pool.push({
+          id: 'crashnova',
+          categoryKey: 'fusion',
+          category: i18n.t('categoryFusion'),
+          title: i18n.t('crashnovaTitle'),
+          desc: i18n.t('crashnovaDesc'),
+          rarityKey: rLegendary.key,
+          rarity: rLegendary.label,
+          icon: '💥',
+          currentLevel: 0,
+          nextLevel: 1,
+          maxLevel: 1,
+          apply: () => {
+            player.hasCrashNova = true;
+            if (player.buffLevels) player.buffLevels.crashnova = 1;
+          }
+        });
+      }
+
+      // 13. Mãng Xà Bọc Thép (Iron Dragon): Các đốt thân rắn nhận giáp & gai, quái chạm vào đốt thân bị bật ngược ra xa
+      if (!player.hasIronDragon) {
+        pool.push({
+          id: 'irondragon',
+          categoryKey: 'fusion',
+          category: i18n.t('categoryFusion'),
+          title: i18n.t('irondragonTitle'),
+          desc: i18n.t('irondragonDesc'),
+          rarityKey: rLegendary.key,
+          rarity: rLegendary.label,
+          icon: '🐲',
+          currentLevel: 0,
+          nextLevel: 1,
+          maxLevel: 1,
+          apply: () => {
+            player.hasIronDragon = true;
+            if (player.buffLevels) player.buffLevels.irondragon = 1;
+          }
+        });
+      }
+
+      // 14. Bất Tử Hóa (Immortality): Toàn bộ máu quy đổi thành khiên, sát thương nổ khiên tăng gấp 3
+      if (!player.hasImmortality) {
+        pool.push({
+          id: 'immortality',
+          categoryKey: 'fusion',
+          category: i18n.t('categoryFusion'),
+          title: i18n.t('immortalityTitle'),
+          desc: i18n.t('immortalityDesc'),
+          rarityKey: rLegendary.key,
+          rarity: rLegendary.label,
+          icon: '⚚',
+          currentLevel: 0,
+          nextLevel: 1,
+          maxLevel: 1,
+          apply: () => {
+            player.hasImmortality = true;
+            player.shieldEnergy = player.maxShieldEnergy || 120;
+            player.hp = 1;
+            if (player.buffLevels) player.buffLevels.immortality = 1;
+          }
+        });
+      }
+
+      // 15. Bom Hạt Nhân (Tactical Nuke)
+      pool.push({
+        id: 'tacticalnuke',
+        categoryKey: 'fusion',
+        category: i18n.t('categoryFusion'),
+        title: i18n.t('tacticalnukeTitle'),
+        desc: i18n.t('tacticalnukeDesc'),
+        rarityKey: rLegendary.key,
+        rarity: rLegendary.label,
+        icon: '☢️',
+        apply: () => { this.game.triggerNuke(); }
+      });
+    }
+
+    // ==========================================
+    // VŨ KHÍ HIỆN CÓ CỦA TÀU (Chỉ nâng cấp nếu tàu đang sở hữu)
+    // ==========================================
+    const weaponKeys = ['blaster', 'orbs', 'lightning', 'glaive', 'missiles', 'wingmen'];
+    const weaponIcons = { blaster: '⚡', orbs: '🪐', lightning: '🌩️', glaive: '🌀', missiles: '🚀', wingmen: '🛸' };
+
+    for (const wKey of weaponKeys) {
+      const weapon = wm.weapons[wKey];
+      if (weapon && weapon.level > 0 && weapon.level < weapon.maxLevel) {
+        const curLvl = weapon.level;
+        const isEvo = curLvl === 4;
+        const r = isEvo ? rLegendary : (curLvl >= 2 ? rRare : rCommon);
+        pool.push({
+          id: wKey,
+          categoryKey: 'offense',
+          category: i18n.t('categoryOffense'),
+          title: `${i18n.t(`${wKey}Title`)} Lv.${curLvl + 1}`,
+          desc: isEvo ? (i18n.t(`${wKey}Evo`) || i18n.t(`${wKey}Desc`)) : i18n.t(`${wKey}Desc`),
+          rarityKey: r.key,
+          rarity: r.label,
+          icon: weaponIcons[wKey] || '⚡',
+          currentLevel: curLvl,
+          nextLevel: curLvl + 1,
+          maxLevel: weapon.maxLevel,
+          apply: () => { weapon.level++; }
+        });
+      }
+    }
 
     // Red Mythic Pool (1-2% drop rate)
     const mythics = this.getMythicCards();
 
-    // Pick 3 unique cards respecting rarity rolls
+    // Pick exactly 3 unique cards
     const selected = [];
     const usedIds = new Set();
 
-    for (let slot = 0; slot < 3; slot++) {
+    // If level >= 10, guarantee at least 1 Fusion Mod slot if available (60% chance)
+    if (player.level >= 10 && Math.random() < 0.6) {
+      const fusions = pool.filter(c => c.categoryKey === 'fusion' && !usedIds.has(c.id));
+      if (fusions.length > 0) {
+        const picked = fusions[Math.floor(Math.random() * fusions.length)];
+        usedIds.add(picked.id);
+        selected.push(picked);
+      }
+    }
+
+    // Fill remaining slots respecting rarity rolls
+    while (selected.length < 3) {
       const rolledRarity = this.rollRarity();
       let candidates = [];
 
@@ -534,7 +546,7 @@ export class UpgradeSystem {
         candidates = pool.filter(c => c.rarityKey === rolledRarity && !usedIds.has(c.id));
       }
 
-      // Fallback if no matching card in rolled rarity
+      // Fallback to any remaining card in pool
       if (candidates.length === 0) {
         candidates = pool.filter(c => !usedIds.has(c.id));
       }
@@ -543,18 +555,8 @@ export class UpgradeSystem {
         const picked = candidates[Math.floor(Math.random() * candidates.length)];
         usedIds.add(picked.id);
         selected.push(picked);
-      }
-    }
-
-    // Safety fallback
-    if (selected.length < 3) {
-      const remaining = pool.filter(c => !usedIds.has(c.id));
-      while (selected.length < 3 && remaining.length > 0) {
-        const p = remaining.pop();
-        if (!usedIds.has(p.id)) {
-          usedIds.add(p.id);
-          selected.push(p);
-        }
+      } else {
+        break; // Pool exhausted
       }
     }
 

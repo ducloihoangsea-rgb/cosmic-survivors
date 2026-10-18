@@ -34,6 +34,9 @@ export const translations = {
     // Categories
     categoryOffense: '⚔️ OFFENSE',
     categorySupport: '🛡️ SUPPORT',
+    categoryStat: '⚡ STATS',
+    categoryMutation: '🧬 MUTATION',
+    categoryFusion: '🔥 FUSION MOD',
     categoryMythic: '👑 GOD-TIER',
 
     // Starship Roster (3 Unique Gameplay Classes)
@@ -107,6 +110,37 @@ export const translations = {
     wingmenUnlock: 'Wingmen Drones Unlock',
     wingmenDesc: '2 companion drones fly alongside ship, firing assist lasers.',
     wingmenEvo: '🔥 EVOLUTION: 4 autonomous fighter drones forming an impenetrable fleet!',
+
+    // Bể Nâng Cấp Tinh Gọn (Curated 15 Upgrades)
+    // Group 1: Stat Upgrades
+    thrustTitle: 'Thrust Accelerator',
+    thrustDesc: '+25% Flight Speed, +15% Ship Turn Rate.',
+    juggernautTitle: 'Juggernaut Hull',
+    juggernautDesc: '+40% Ship Size & Mass, +30% Max HP, -15% Turn Rate.',
+    microcraftTitle: 'Micro-Craft',
+    microcraftDesc: '-30% Hitbox Size, +35% Flight Speed (dodge bullets easily).',
+    energycoreTitle: 'Energy Core',
+    energycoreDesc: '+40% Shield Recharge Rate, faster shield detonation cooldown.',
+    growsegmentsTitle: 'Segment Sprout',
+    growsegmentsDesc: '+2 Segments (Serpent) or extended fiery jet flame trail (Other ships).',
+
+    // Group 2: Gameplay Mutations (Mechanical Alterations)
+    drillTitle: 'Drill Momentum',
+    drillDesc: 'When ramming kills a monster, ship does not stutter and pierces right through!',
+    burnfieldTitle: 'Burn Field',
+    burnfieldDesc: 'Energy field continuously scorches all enemies within surrounding radius!',
+    ricochetTitle: 'Ricochet Shards',
+    ricochetDesc: 'Projectiles and fragments bounce to nearby targets on impact.',
+    toxicexhaustTitle: 'Toxic Exhaust',
+    toxicexhaustDesc: 'Engine exhaust or segments release toxic smoke that slows and decays swarms.',
+
+    // Group 3: Fusion Mods (Unlocked at Lv.10+)
+    crashnovaTitle: '💥 Crash Nova',
+    crashnovaDesc: 'FUSION MOD (Lv.10+): Ramming a target immediately detonates a shield shockwave!',
+    irondragonTitle: '🐉 Iron Dragon',
+    irondragonDesc: 'FUSION MOD (Lv.10+): Segments gain heavy armor & thorns, violently repelling enemies!',
+    immortalityTitle: '👑 Absolute Immortality',
+    immortalityDesc: 'FUSION MOD (Lv.10+): HP converted into pure recharging barrier. Barrier blast damage x3!',
 
     // Stat Buffs
     overclockTitle: 'Adrenaline Overclock',
@@ -235,6 +269,9 @@ export const translations = {
     // Categories
     categoryOffense: '⚔️ TẤN CÔNG',
     categorySupport: '🛡️ PHỤ TRỢ',
+    categoryStat: '⚡ CHỈ SỐ',
+    categoryMutation: '🧬 ĐỘT BIẾN',
+    categoryFusion: '🔥 SIÊU NÂNG CẤP',
     categoryMythic: '👑 THẦN CẤP',
 
     // Starship Roster (3 Thân Tàu Khởi Đầu)
@@ -308,6 +345,37 @@ export const translations = {
     wingmenUnlock: 'Triệu Hồi Drone',
     wingmenDesc: '2 máy bay tiêm kích mini bay kè sát phi thuyền phụ xả laser.',
     wingmenEvo: '🔥 TIẾN HÓA: 4 drone tự hành trang bị chùm tia hỏa lực áp đảo!',
+
+    // Bể Nâng Cấp Tinh Gọn (Chọn 1 trong 3)
+    // Nhóm 1: Nhóm Nâng Cấp Chỉ Số (Phổ thông)
+    thrustTitle: 'Gia Tốc (Thrust)',
+    thrustDesc: 'Tốc độ bay +25%, tốc độ xoay tàu +15%.',
+    juggernautTitle: 'Khuếch Đại (Juggernaut)',
+    juggernautDesc: 'Tăng 40% kích thước và khối lượng tàu, tăng 30% máu, giảm 15% tốc độ xoay.',
+    microcraftTitle: 'Thu Nhỏ (Micro-Craft)',
+    microcraftDesc: 'Giảm 30% kích thước hitbox, tốc độ bay +35% (né đạn siêu dễ).',
+    energycoreTitle: 'Lõi Năng Lượng (Energy Core)',
+    energycoreDesc: 'Tốc độ hồi khiên +40%, giảm thời gian kích nổ khiên.',
+    growsegmentsTitle: 'Mọc Đốt (Grow Segments)',
+    growsegmentsDesc: 'Thêm 2 đốt thân phía sau (Tàu Rắn) hoặc kéo dài vệt lửa phản lực gây cháy (Tàu khác).',
+
+    // Nhóm 2: Nhóm Đột Biến Lối Chơi (Biến đổi cơ chế)
+    drillTitle: 'Đâm Xuyên (Drill)',
+    drillDesc: 'Khi húc quái chết, tàu không bị khựng lại mà lao thẳng qua tiếp.',
+    burnfieldTitle: 'Khiên Lửa (Burn Field)',
+    burnfieldDesc: 'Khiên liên tục gây sát thương thiêu đốt toàn bộ quái trong bán kính xung quanh.',
+    ricochetTitle: 'Đạn Nảy (Ricochet)',
+    ricochetDesc: 'Đạn hoặc mảnh vỡ khi va chạm nảy sang mục tiêu lân cận.',
+    toxicexhaustTitle: 'Khí Độc Đuôi (Toxic Exhaust)',
+    toxicexhaustDesc: 'Đuôi tàu (hoặc các đốt rắn) xả khói làm chậm và rút máu quái đi vào.',
+
+    // Nhóm 3: Nhóm Siêu Nâng Cấp (Fusion Mods - Xuất hiện khi đạt cấp 10+)
+    crashnovaTitle: '💥 Bom Quán Tính (Crash Nova)',
+    crashnovaDesc: 'SIÊU NÂNG CẤP (Cấp 10+): Mỗi khi húc trúng mục tiêu, lập tức kích nổ một đợt sóng khiên (Tàu Húc & Tàu Khiên)!',
+    irondragonTitle: '🐉 Mãng Xà Bọc Thép (Iron Dragon)',
+    irondragonDesc: 'SIÊU NÂNG CẤP (Cấp 10+): Các đốt thân rắn nhận toàn bộ giáp và gai nhọn, quái chạm vào đốt thân bị bật ngược ra xa!',
+    immortalityTitle: '👑 Bất Tử Hóa (Immortality)',
+    immortalityDesc: 'SIÊU NÂNG CẤP (Cấp 10+): Tàu không còn bình máu xanh, toàn bộ quy đổi thành 1 lớp khiên duy nhất; bù lại sát thương nổ khiên tăng gấp 3 lần!',
 
     // Stat Buffs
     overclockTitle: 'Ép Xung Adrenaline',

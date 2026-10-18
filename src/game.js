@@ -69,6 +69,7 @@ export class Game {
     this.chests = [];
     this.particles = [];
     this.floatingTexts = [];
+    this.toxicPuddles = [];
     this.activeBoss = null;
 
     // UI callbacks
@@ -414,6 +415,15 @@ export class Game {
       }
     }
 
+    // 3.5. Update Toxic Puddles (Khí Độc Đuôi)
+    for (let i = this.toxicPuddles.length - 1; i >= 0; i--) {
+      const tp = this.toxicPuddles[i];
+      tp.update(dt, this.enemies, this);
+      if (tp.isDead) {
+        this.toxicPuddles.splice(i, 1);
+      }
+    }
+
     // 4. Update Enemies
     for (let i = this.enemies.length - 1; i >= 0; i--) {
       const e = this.enemies[i];
@@ -511,6 +521,11 @@ export class Game {
       c.draw(ctx, this.gameTime);
     }
 
+    // Draw Toxic Puddles (Khí Độc)
+    for (const tp of this.toxicPuddles) {
+      tp.draw(ctx);
+    }
+
     // Draw Gems
     for (const g of this.gems) {
       g.draw(ctx, this.gameTime);
@@ -584,6 +599,7 @@ export class Game {
     this.chests = [];
     this.particles = [];
     this.floatingTexts = [];
+    this.toxicPuddles = [];
     this.initShipLoadout();
     this.waveSpawner = new WaveSpawner(this);
   }
@@ -635,6 +651,22 @@ class Player {
     this.hasChronosFreeze = false;
     this.chronosTimer = 0;
 
+    // Curated Upgrades Flags (3 Nhóm Nâng Cấp Tinh Gọn)
+    this.turnSpeedMult = 1.0;
+    this.hasDrill = false;
+    this.hasBurnField = false;
+    this.burnFieldTimer = 0;
+    this.hasRicochet = false;
+    this.hasToxicExhaust = false;
+    this.toxicExhaustTimer = 0;
+    this.hasFlameTrail = false;
+    this.flameTrailLength = 0;
+    this.hasCrashNova = false;
+    this.crashNovaCooldown = 0;
+    this.hasIronDragon = false;
+    this.hasImmortality = false;
+    this.shieldRechargeSpeed = 1.0;
+
     this.stats = {
       damageMult: shipDef.baseStats.damageMult,
       fireRateMult: shipDef.baseStats.fireRateMult,
@@ -650,17 +682,29 @@ class Player {
 
     // Track levels of passive stat augments
     this.buffLevels = {
+      thrust: 0,
+      juggernaut: 0,
+      microcraft: 0,
+      energycore: 0,
+      growsegments: 0,
+      drill: 0,
+      burnfield: 0,
+      ricochet: 0,
+      toxicexhaust: 0,
+      crashnova: 0,
+      irondragon: 0,
+      immortality: 0,
+      nanorepair: 0,
+      spikedthorns: 0,
       overclock: 0,
       hypercharge: 0,
       gravitywell: 0,
       warpengine: 0,
       eaglesight: 0,
       criticalsurge: 0,
-      nanorepair: 0,
       hullmass: 0,
       serpentsegments: 0,
-      barrierradius: 0,
-      spikedthorns: 0
+      barrierradius: 0
     };
 
     this.invulnerableTimer = 0;
@@ -677,13 +721,26 @@ class Player {
     if (this.invulnerableTimer > 0) {
       this.invulnerableTimer -= dt;
     }
+    if (this.crashNovaCooldown > 0) {
+      this.crashNovaCooldown -= dt;
+    }
 
     const currentSpeed = this.baseSpeed * this.stats.speedMult * (this.game.isFrenzy ? 1.45 : 1.0);
     this.x += moveVector.x * currentSpeed * dt;
     this.y += moveVector.y * currentSpeed * dt;
 
     if (moveVector.x !== 0 || moveVector.y !== 0) {
-      this.facingAngle = Math.atan2(moveVector.y, moveVector.x);
+      const targetAngle = Math.atan2(moveVector.y, moveVector.x);
+      const turnRate = 14 * (this.turnSpeedMult || 1.0);
+      let diff = targetAngle - this.facingAngle;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      const step = turnRate * dt;
+      if (Math.abs(diff) <= step) {
+        this.facingAngle = targetAngle;
+      } else {
+        this.facingAngle += Math.sign(diff) * step;
+      }
     }
 
     // Always maintain trail history buffer for Serpent and plasma trails
@@ -702,12 +759,64 @@ class Player {
       }
     }
 
-    // Nova Shield Recharge logic
-    if (this.isNovaShield) {
+    // Burn Field logic (Khiên Lửa)
+    if (this.hasBurnField) {
+      this.burnFieldTimer = (this.burnFieldTimer || 0) + dt;
+      if (this.burnFieldTimer >= 0.2) {
+        this.burnFieldTimer = 0;
+        const burnRadius = Math.max(70, this.radius * 2.8) * (this.stats.shieldRadiusMult || 1.0);
+        for (const enemy of this.game.enemies) {
+          const d = Math.hypot(enemy.x - this.x, enemy.y - this.y);
+          if (d < burnRadius + enemy.radius) {
+            this.game.damageEnemy(enemy, 40 * this.stats.damageMult, false, 'burnfield');
+            if (Math.random() < 0.25) {
+              this.game.particles.push(new Particle(enemy.x, enemy.y, '#f97316', 3.5, 3));
+            }
+          }
+        }
+      }
+    }
+
+    // Toxic Exhaust logic (Khí Độc Đuôi)
+    if (this.hasToxicExhaust) {
+      this.toxicExhaustTimer = (this.toxicExhaustTimer || 0) + dt;
+      if (this.toxicExhaustTimer >= 0.15) {
+        this.toxicExhaustTimer = 0;
+        let exX = this.x - Math.cos(this.facingAngle) * (this.radius + 8);
+        let exY = this.y - Math.sin(this.facingAngle) * (this.radius + 8);
+        if (this.isSerpent && this.segmentPositions && this.segmentPositions.length > 0) {
+          const lastSeg = this.segmentPositions[this.segmentPositions.length - 1];
+          exX = lastSeg.x;
+          exY = lastSeg.y;
+        }
+        this.game.toxicPuddles.push(new ToxicPuddle(exX, exY, 34, this.stats.damageMult));
+      }
+    }
+
+    // Flame Trail logic (Mọc Đốt khi không phải Tàu Rắn)
+    if (this.hasFlameTrail && this.trailBuffer.length > 5) {
+      const len = Math.min(this.trailBuffer.length, (this.flameTrailLength || 1) * 12);
+      for (let i = 2; i < len; i += 3) {
+        const pt = this.trailBuffer[i];
+        if (!pt) continue;
+        if (Math.random() < 0.12) {
+          this.game.particles.push(new Particle(pt.x + (Math.random() - 0.5) * 8, pt.y + (Math.random() - 0.5) * 8, '#f97316', 3, 3, 0.4));
+        }
+        for (const enemy of this.game.enemies) {
+          const d = Math.hypot(enemy.x - pt.x, enemy.y - pt.y);
+          if (d < 18 + enemy.radius) {
+            this.game.damageEnemy(enemy, 28 * this.stats.damageMult * dt * 3, false, 'flame');
+          }
+        }
+      }
+    }
+
+    // Nova Shield or Absolute Immortality Recharge logic
+    if (this.isNovaShield || this.hasImmortality) {
       if (this.shieldRechargeTimer > 0) {
-        this.shieldRechargeTimer -= dt;
+        this.shieldRechargeTimer -= dt * (this.shieldRechargeSpeed || 1.0);
       } else if (this.shieldHp < this.shieldMaxHp) {
-        this.shieldHp = Math.min(this.shieldMaxHp, this.shieldHp + dt * 45);
+        this.shieldHp = Math.min(this.shieldMaxHp, this.shieldHp + dt * 45 * (this.shieldRechargeSpeed || 1.0));
       }
     }
 
@@ -730,14 +839,18 @@ class Player {
           const dy = enemy.y - seg.y;
           const d = Math.hypot(dx, dy);
           if (d < seg.radius + enemy.radius) {
-            const segDmg = (this.baseStats?.segmentDamage || 85) * this.stats.damageMult * (1 + (this.stats.thorns || 0)) * dt * 4;
+            let segDmg = (this.baseStats?.segmentDamage || 85) * this.stats.damageMult * (1 + (this.stats.thorns || 0)) * dt * 4;
+            if (this.hasIronDragon) {
+              segDmg *= 2.5; // Iron Dragon gives immense swipe damage
+            }
             this.game.damageEnemy(enemy, Math.max(1, segDmg), false, 'serpent');
             if (d > 0.001) {
-              enemy.x += (dx / d) * 15 * dt * 60;
-              enemy.y += (dy / d) * 15 * dt * 60;
+              const knockback = this.hasIronDragon ? 120 : 15;
+              enemy.x += (dx / d) * knockback * dt * 60;
+              enemy.y += (dy / d) * knockback * dt * 60;
             }
             if (Math.random() < 0.2) {
-              this.game.particles.push(new Particle(enemy.x, enemy.y, '#34d399', 3, 2.5));
+              this.game.particles.push(new Particle(enemy.x, enemy.y, this.hasIronDragon ? '#fbbf24' : '#34d399', 3, 2.5));
             }
           }
         }
@@ -746,10 +859,11 @@ class Player {
   }
 
   triggerNovaBlast(isSuper = false) {
+    const mult = this.hasImmortality ? 3.0 : 1.0;
     const baseRadius = (this.baseStats?.novaRadius || 160) * (this.stats.shieldRadiusMult || 1.0) * (this.stats.mass || 1.0);
     const radius = isSuper ? baseRadius * 1.6 : baseRadius;
     const baseDmg = (this.baseStats?.novaDamage || 320) * this.stats.damageMult * (this.stats.mass || 1.0);
-    const dmg = isSuper ? baseDmg * 2.0 : baseDmg;
+    const dmg = (isSuper ? baseDmg * 2.0 : baseDmg) * mult;
 
     sound.playExplosion();
     this.game.addScreenShake(isSuper ? 16 : 10);
@@ -760,13 +874,13 @@ class Player {
       const spd = (radius / 18);
       const px = this.x + Math.cos(angle) * 15;
       const py = this.y + Math.sin(angle) * 15;
-      const p = new Particle(px, py, isSuper ? '#facc15' : '#00f2fe', 6, 4.5, 0.9);
+      const p = new Particle(px, py, isSuper ? '#facc15' : (this.hasImmortality ? '#fbbf24' : '#00f2fe'), 6, 4.5, 0.9);
       p.vx = Math.cos(angle) * spd;
       p.vy = Math.sin(angle) * spd;
       this.game.particles.push(p);
     }
 
-    this.game.floatingTexts.push(new FloatingText(this.x, this.y - 45, isSuper ? '⚡ MEGA NOVA! ⚡' : '💥 NOVA BLAST! 💥', '#00f2fe', 22, true));
+    this.game.floatingTexts.push(new FloatingText(this.x, this.y - 45, isSuper ? '⚡ MEGA NOVA! ⚡' : (this.hasImmortality ? '👑 IMMORTAL NOVA! 👑' : '💥 NOVA BLAST! 💥'), '#00f2fe', 22, true));
 
     // Damage & knock back all enemies in radius
     for (const enemy of this.game.enemies) {
@@ -784,18 +898,21 @@ class Player {
   takeDamage(amount) {
     if (this.invulnerableTimer > 0) return;
 
-    // Nova Shield barrier absorbs damage first
-    if (this.isNovaShield && this.shieldHp > 0) {
+    // Nova Shield barrier or Absolute Immortality absorbs damage first
+    if (this.hasImmortality || (this.isNovaShield && this.shieldHp > 0)) {
       this.shieldHp -= amount;
       this.invulnerableTimer = 0.15;
       sound.playHit();
       for (let i = 0; i < 4; i++) {
-        this.game.particles.push(new Particle(this.x, this.y, '#00f2fe', 3, 3));
+        this.game.particles.push(new Particle(this.x, this.y, this.hasImmortality ? '#fbbf24' : '#00f2fe', 3, 3));
       }
       if (this.shieldHp <= 0) {
         this.shieldHp = 0;
         this.shieldRechargeTimer = (this.baseStats?.shieldRechargeTime || 3.5);
-        this.triggerNovaBlast(false);
+        this.triggerNovaBlast(this.hasImmortality);
+        if (this.hasImmortality) {
+          this.invulnerableTimer = 2.0; // Grace period to retreat while shield recharges!
+        }
       }
       return;
     }
@@ -844,5 +961,46 @@ class Player {
 
   draw(ctx) {
     art.drawPlayer(ctx, this, this.game.gameTime);
+  }
+}
+
+export class ToxicPuddle {
+  constructor(x, y, radius, dmgMult) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.dmgMult = dmgMult;
+    this.life = 2.5;
+    this.maxLife = 2.5;
+    this.isDead = false;
+  }
+
+  update(dt, enemies, game) {
+    this.life -= dt;
+    if (this.life <= 0) {
+      this.isDead = true;
+      return;
+    }
+    for (const e of enemies) {
+      const d = Math.hypot(e.x - this.x, e.y - this.y);
+      if (d < this.radius + e.radius) {
+        // Slow monster by 40%
+        e.x -= (e.x - this.x) * 0.4 * dt;
+        e.y -= (e.y - this.y) * 0.4 * dt;
+        game.damageEnemy(e, 25 * this.dmgMult * dt, false, 'toxic');
+      }
+    }
+  }
+
+  draw(ctx) {
+    const alpha = Math.max(0, this.life / this.maxLife) * 0.4;
+    ctx.save();
+    ctx.fillStyle = `rgba(168, 85, 247, ${alpha})`;
+    ctx.shadowColor = '#a855f7';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
 }

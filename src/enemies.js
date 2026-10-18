@@ -71,15 +71,23 @@ export class Enemy {
 
     // Touch player damage / Ramming Collision
     if (dist < this.radius + player.radius) {
-      if (player.isRammer) {
-        // ☄️ Rammer Meteor Impact: Base * Mass * Speed * DamageMult
-        const ramDmg = (player.baseStats?.ramDamage || 180) * (player.stats.mass || 1.0) * player.stats.speedMult * player.stats.damageMult;
+      // 💥 Crash Nova Fusion Mod: Ramming / collision triggers shield blast
+      if (player.hasCrashNova && (player.crashNovaCooldown || 0) <= 0) {
+        player.crashNovaCooldown = 0.35;
+        player.triggerNovaBlast(false);
+      }
+
+      if (player.isRammer || player.hasDrill || (player.stats.mass || 1.0) >= 1.4) {
+        // ☄️ Meteor / Drill Impact: Base * Mass * Speed * DamageMult
+        const baseRam = player.baseStats?.ramDamage || 160;
+        const ramDmg = baseRam * (player.stats.mass || 1.0) * player.stats.speedMult * player.stats.damageMult * (player.hasDrill ? 1.4 : 1.0);
         player.game.damageEnemy(this, ramDmg, true, 'ram');
 
-        // Knockback enemy away violently
+        // Knockback enemy away violently (even further if hasDrill)
         if (dist > 0.001) {
-          this.x -= (dx / dist) * 80;
-          this.y -= (dy / dist) * 80;
+          const kb = player.hasDrill ? 120 : 80;
+          this.x -= (dx / dist) * kb;
+          this.y -= (dy / dist) * kb;
         }
 
         // Magma sparks & fiery debris
@@ -93,8 +101,9 @@ export class Enemy {
           player.game.floatingTexts.push(new FloatingText(player.x, player.y - 30, '+2 HP', '#22c55e', 16, false));
         }
 
-        // Player takes 70% reduced collision damage (receives only 30%)
-        player.takeDamage(this.damage * dt * 0.30);
+        // Player takes 70% reduced collision damage (receives only 30%, or 15% if hasDrill)
+        const dmgReduct = player.hasDrill ? 0.15 : 0.30;
+        player.takeDamage(this.damage * dt * dmgReduct);
       } else {
         player.takeDamage(this.damage * dt);
       }

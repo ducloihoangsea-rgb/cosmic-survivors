@@ -52,8 +52,8 @@ export const SHIP_ROSTER = {
       ]
     },
     synergies: {
-      vi: ['Khối Lượng Thân Tàu (+Mass, +Hitbox)', 'Gai Gai Phản Đòn (Phản sát thương)', 'Động Cơ Tên Lửa (+Tốc độ húc)'],
-      en: ['Titan Hull Mass (+Mass, +Hitbox)', 'Spiked Retaliation (Reflect Damage)', 'Thruster Overdrive (+Ram Speed)']
+      vi: ['Gia Tốc (Tốc độ & Xoay)', 'Khuếch Đại (Kích thước & Khối lượng)', 'Đâm Xuyên (Drill)', 'Bom Quán Tính (Crash Nova)'],
+      en: ['Thrust (+Speed & Turn)', 'Juggernaut (+Size & Mass)', 'Drill (Lethal Pass-through)', 'Crash Nova (Impact Blast)']
     }
   },
   serpent: {
@@ -106,8 +106,8 @@ export const SHIP_ROSTER = {
       ]
     },
     synergies: {
-      vi: ['Đốt Thân Xà Vương (+2 Đốt thân)', 'Khuếch Đại Khiên & Thân (+Bán kính)', 'Gai Gai Phản Đòn (Phản đòn)'],
-      en: ['Dragon Segments (+2 Segments)', 'Barrier Expansion (+Body Radius)', 'Spiked Retaliation (Reflect Dmg)']
+      vi: ['Mọc Đốt (+2 Đốt thân)', 'Khí Độc Đuôi (Làm chậm & Rút máu)', 'Mãng Xà Bọc Thép (Gai quẹt văng)'],
+      en: ['Grow Segments (+2 Segments)', 'Toxic Exhaust (Slow & Poison)', 'Iron Dragon (Spiked Knockback)']
     }
   },
   novashield: {
@@ -161,8 +161,8 @@ export const SHIP_ROSTER = {
       ]
     },
     synergies: {
-      vi: ['Khuếch Đại Khiên (+Bán kính nổ)', 'Khối Lượng Thân Tàu (+Diện tích)', 'Lò Phản Ứng Siêu Cấp (+25% Sát thương)'],
-      en: ['Barrier Expansion (+Nova Radius)', 'Titan Hull Mass (+Blast Area)', 'Hyper Reactor (+25% Damage)']
+      vi: ['Lõi Năng Lượng (Tăng tốc sạc khiên)', 'Khiên Lửa (Burn Field)', 'Bất Tử Hóa (Nổ khiên x3)'],
+      en: ['Energy Core (+Recharge Speed)', 'Burn Field (Aura Damage)', 'Immortality (Single Barrier x3 Nova)']
     }
   }
 };

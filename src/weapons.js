@@ -433,6 +433,33 @@ class BlasterBullet {
         game.damageEnemy(e, this.damage, false, this.source);
         this.pierce--;
         if (this.pierce <= 0) {
+          // 🪃 Ricochet Shards Mutation
+          if (game.player?.hasRicochet && !this.hasRicocheted) {
+            this.hasRicocheted = true;
+            this.pierce = 1;
+            this.damage *= 0.75;
+            let next = null;
+            let minDist = 240;
+            for (const other of enemies) {
+              if (other !== e && !other.isDead) {
+                const d = Math.hypot(other.x - this.x, other.y - this.y);
+                if (d < minDist) {
+                  minDist = d;
+                  next = other;
+                }
+              }
+            }
+            if (next) {
+              const a = Math.atan2(next.y - this.y, next.x - this.x);
+              this.vx = Math.cos(a) * 550;
+              this.vy = Math.sin(a) * 550;
+              this.angle = a;
+              this.life = 0.8;
+              this.isDead = false;
+              game.particles.push(new Particle(this.x, this.y, '#38bdf8', 3, 2));
+              break;
+            }
+          }
           this.isDead = true;
           break;
         }
