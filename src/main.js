@@ -199,11 +199,11 @@ window.addEventListener('DOMContentLoaded', () => {
     // Settings Modal translations
     if (startSettingsBtn) startSettingsBtn.textContent = '⚙️ ' + i18n.t('hudSettingsBtn');
     if (hudSettingsBtn) hudSettingsBtn.title = i18n.t('hudSettingsBtn');
-    if (settingsTitle) settingsTitle.textContent = '⚙️ ' + i18n.t('settingsTitle');
+    if (settingsTitle) settingsTitle.textContent = i18n.t('settingsTitle');
     if (settingsSub) settingsSub.textContent = i18n.t('settingsSub');
-    if (settingOpacityLabel) settingOpacityLabel.textContent = '🪟 ' + i18n.t('settingOpacity');
+    if (settingOpacityLabel) settingOpacityLabel.textContent = i18n.t('settingOpacity');
     if (settingOpacityTip) settingOpacityTip.textContent = i18n.t('settingOpacityTip');
-    if (settingSoundLabel) settingSoundLabel.textContent = '🔊 ' + i18n.t('settingSound');
+    if (settingSoundLabel) settingSoundLabel.textContent = i18n.t('settingSound');
     if (settingSoundTip) settingSoundTip.textContent = i18n.t('settingSoundTip');
     if (settingsCloseBtn) settingsCloseBtn.textContent = '✕ ' + i18n.t('closeBtn');
     updateSoundBtnUI();
@@ -349,7 +349,13 @@ window.addEventListener('DOMContentLoaded', () => {
   // Dock Panel Opacity Controller (Điều chỉnh độ mờ của bảng hiển thị DPS và chỉ số)
   function applyDockOpacity(val) {
     const num = Math.min(100, Math.max(15, parseInt(val, 10) || 45));
-    document.documentElement.style.setProperty('--dock-panel-opacity', (num / 100).toFixed(2));
+    const alpha = (num / 100).toFixed(2);
+    document.documentElement.style.setProperty('--dock-panel-opacity', alpha);
+    if (num >= 98) {
+      document.body.classList.add('dock-opaque-solid');
+    } else {
+      document.body.classList.remove('dock-opaque-solid');
+    }
     if (opacityValBadge) opacityValBadge.textContent = `${num}%`;
     if (panelOpacitySlider && String(panelOpacitySlider.value) !== String(num)) {
       panelOpacitySlider.value = num;

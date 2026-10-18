@@ -98,6 +98,7 @@ export const translations = {
     settingOpacity: '🪟 DPS & Stats Panel Opacity',
     settingOpacityTip: 'Drag slider to adjust transparency of real-time side panels.',
     settingSound: '🔊 Sound & Audio Effects',
+    settingSoundTip: 'Toggle all sound effects, weapon audio, and gem pickup chimes.',
     soundOn: 'ON',
     soundOff: 'MUTED',
 
@@ -355,6 +356,7 @@ export const translations = {
     settingOpacity: '🪟 Độ Mờ Bảng DPS & Chỉ Số',
     settingOpacityTip: 'Kéo thanh trượt để chỉnh độ mờ kính của 2 bảng bên trái.',
     settingSound: '🔊 Âm Thanh & Nhạc Game',
+    settingSoundTip: 'Bật hoặc tắt toàn bộ hiệu ứng âm thanh, tiếng súng và tiếng nhặt ngọc.',
     soundOn: 'BẬT',
     soundOff: 'TẮT',
 
