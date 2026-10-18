@@ -801,7 +801,7 @@ body.in-modal #horde-alert {
   box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
 }
 
-.btn-primary {
+.start-btn-group .btn-primary, .gameover-btn-group .btn-primary {
   flex: 1;
   margin-top: 0 !important;
 }
@@ -987,10 +987,62 @@ body.in-modal #horde-alert {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 60vh;
+  max-height: 68vh;
   overflow-y: auto;
   padding-right: 6px;
   -webkit-overflow-scrolling: touch;
+}
+
+#hangar-close-btn {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  min-width: 130px;
+  max-width: 180px;
+  align-self: center;
+  padding: 8px 22px !important;
+  font-size: 13px !important;
+  font-weight: 800;
+  margin-top: 10px !important;
+  border-radius: 999px;
+  background: rgba(30, 41, 59, 0.85);
+  color: #94a3b8;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+#hangar-close-btn:hover {
+  background: rgba(51, 65, 85, 0.95);
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+}
+
+.modal-close-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+  padding: 0;
+}
+
+.modal-close-icon-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #f87171;
+  border-color: #ef4444;
+  transform: scale(1.08);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
 }
 
 .hangar-ship-card {

@@ -497,11 +497,16 @@ window.addEventListener('DOMContentLoaded', () => {
 
   startHangarBtn.addEventListener('click', openHangar);
   overHangarBtn.addEventListener('click', openHangar);
-  hangarCloseBtn.addEventListener('click', () => {
+  const hangarHeaderCloseBtn = document.getElementById('hangar-header-close-btn');
+  const closeHangar = () => {
     sound.playCardSelect();
     hangarModal.classList.remove('active');
     updateModalState();
-  });
+  };
+  hangarCloseBtn.addEventListener('click', closeHangar);
+  if (hangarHeaderCloseBtn) {
+    hangarHeaderCloseBtn.addEventListener('click', closeHangar);
+  }
 
   // Theme Toggle Engine (Dark / Light)
   let currentTheme = localStorage.getItem('dopamine_theme') || 'dark';
