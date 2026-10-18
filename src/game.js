@@ -17,7 +17,8 @@ export class Game {
     this.waveSpawner = new WaveSpawner(this);
 
     // Selected Starship Archetype
-    this.selectedShipId = localStorage.getItem('dopamine_ship') || 'juggernaut';
+    const savedShip = localStorage.getItem('dopamine_ship');
+    this.selectedShipId = (savedShip === 'rammer' || savedShip === 'serpent' || savedShip === 'novashield') ? savedShip : 'rammer';
 
     // Game State
     this.state = 'start'; // 'start', 'playing', 'levelup', 'chest', 'gameover'

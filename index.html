@@ -10,7 +10,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>CHIẾN HẠM VÔ CỰC - Cosmic Survivors</title>
-  <link rel="stylesheet" href="./src/style.css?v=2.3">
+  <link rel="stylesheet" href="./src/style.css?v=2.5">
 </head>
 <body>
   <div id="app-container">
@@ -159,6 +159,7 @@
         <div class="start-btn-group">
           <button id="start-btn" class="btn-primary">BẮT ĐẦU SĂN</button>
           <button id="start-hangar-btn" class="btn-secondary">⚙️ XƯỞNG PHI THUYỀN</button>
+          <button id="start-codex-btn" class="btn-secondary codex-direct-btn">📚 KHO VŨ KHÍ & NÂNG CẤP</button>
         </div>
 
         <div class="control-tips">
@@ -208,6 +209,14 @@
 
         <!-- TAB 3: WEAPONS & UPGRADES CODEX VAULT -->
         <div id="hangar-codex-view" class="hangar-tab-content hidden">
+          <div class="codex-filters-bar">
+            <button class="codex-filter-btn active" data-filter="all">TẤT CẢ</button>
+            <button class="codex-filter-btn" data-filter="stat">🚀 CHỈ SỐ</button>
+            <button class="codex-filter-btn" data-filter="mutation">🌪️ ĐỘT BIẾN</button>
+            <button class="codex-filter-btn" data-filter="fusion">💥 FUSION</button>
+            <button class="codex-filter-btn" data-filter="mythic">⚡ THẦN THOẠI</button>
+            <button class="codex-filter-btn" data-filter="weapon">🔫 VŨ KHÍ</button>
+          </div>
           <div id="hangar-codex-list" class="hangar-codex-grid">
             <!-- Rendered dynamically with full upgrade card details -->
           </div>
@@ -282,6 +291,6 @@
     </div>
   </div>
 
-  <script type="module" src="./src/main.js?v=2.4"></script>
+  <script type="module" src="./src/main.js?v=2.5"></script>
 </body>
 </html>

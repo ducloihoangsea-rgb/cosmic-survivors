@@ -519,20 +519,20 @@ export class UpgradeSystem {
     // Red Mythic Pool (1-2% drop rate)
     const mythics = this.getMythicCards();
 
-    // Ship Archetype Synergy Priority (Tăng 3.5x tỉ lệ ra nâng cấp theo hệ tàu)
+    // Ship Archetype Synergy Priority (Tăng 6x tỉ lệ ra nâng cấp theo hệ tàu + bảo đảm thẻ hợp hệ)
     const shipSynergyMap = {
-      rammer: new Set(['thrust', 'juggernaut', 'drill', 'spikedthorns', 'crashnova', 'orbs']),
-      serpent: new Set(['growsegments', 'toxicexhaust', 'spikedthorns', 'irondragon', 'glaive']),
-      novashield: new Set(['energycore', 'burnfield', 'immortality', 'nanorepair'])
+      rammer: new Set(['juggernaut', 'nanorepair', 'spikedthorns', 'thrust', 'drill', 'crashnova', 'bloodfrenzy', 'orbs']),
+      serpent: new Set(['growsegments', 'toxicexhaust', 'irondragon', 'spikedthorns', 'microcraft', 'glaive', 'lightning']),
+      novashield: new Set(['energycore', 'burnfield', 'immortality', 'tacticalnuke', 'chronos', 'nanorepair', 'missiles'])
     };
     const preferredSynergies = shipSynergyMap[player.shipId] || new Set();
 
-    // Weighted picker prioritizing ship synergies
+    // Weighted picker prioritizing ship synergies (Trọng số 6.0x cho thẻ hợp hệ)
     const pickWeighted = (list) => {
       if (!list || list.length === 0) return null;
       let totalWeight = 0;
       const weights = list.map(c => {
-        const w = preferredSynergies.has(c.id) ? 3.5 : 1.0;
+        const w = preferredSynergies.has(c.id) ? 6.0 : 1.0;
         totalWeight += w;
         return totalWeight;
       });
@@ -547,8 +547,18 @@ export class UpgradeSystem {
     const selected = [];
     const usedIds = new Set();
 
-    // If level >= 10, guarantee at least 1 Fusion Mod slot if available (60% chance)
-    if (player.level >= 10 && Math.random() < 0.6) {
+    // Slot 1: ĐẢM BẢO luôn ưu tiên rút 1 thẻ hợp hệ (Phòng thủ cho Tank, Đốt cho Rắn, Khiên cho Nova)
+    const synergyCards = pool.filter(c => preferredSynergies.has(c.id) && !usedIds.has(c.id));
+    if (synergyCards.length > 0 && Math.random() < 0.90) {
+      const pickedSynergy = synergyCards[Math.floor(Math.random() * synergyCards.length)];
+      if (pickedSynergy) {
+        usedIds.add(pickedSynergy.id);
+        selected.push(pickedSynergy);
+      }
+    }
+
+    // If level >= 10, guarantee at least 1 Fusion Mod slot if available (65% chance)
+    if (player.level >= 10 && Math.random() < 0.65) {
       const fusions = pool.filter(c => c.categoryKey === 'fusion' && !usedIds.has(c.id));
       if (fusions.length > 0) {
         const picked = pickWeighted(fusions);
@@ -559,7 +569,7 @@ export class UpgradeSystem {
       }
     }
 
-    // Fill remaining slots respecting rarity rolls and synergy bias
+    // Fill remaining slots respecting rarity rolls and high synergy bias (6x weight)
     while (selected.length < 3) {
       const rolledRarity = this.rollRarity();
       let candidates = [];

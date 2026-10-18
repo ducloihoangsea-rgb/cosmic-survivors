@@ -62,6 +62,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const startThemeBtn = document.getElementById('start-theme-btn');
   const startHangarBtn = document.getElementById('start-hangar-btn');
   const overHangarBtn = document.getElementById('over-hangar-btn');
+  const startCodexBtn = document.getElementById('start-codex-btn');
   const hangarCloseBtn = document.getElementById('hangar-close-btn');
   const chestClaimBtn = document.getElementById('chest-claim-btn');
   const btnUltimate = document.getElementById('btn-ultimate');
@@ -140,6 +141,7 @@ window.addEventListener('DOMContentLoaded', () => {
     startBtn.textContent = i18n.t('startBtn');
     startHangarBtn.textContent = i18n.t('hangarBtn');
     overHangarBtn.textContent = i18n.t('hangarBtn');
+    if (startCodexBtn) startCodexBtn.textContent = lang === 'vi' ? '📚 KHO VŨ KHÍ & NÂNG CẤP' : '📚 UPGRADES & WEAPONS';
     tipMobile.textContent = i18n.t('tipMobile');
     tipPc.textContent = i18n.t('tipPc');
 
@@ -439,72 +441,301 @@ window.addEventListener('DOMContentLoaded', () => {
   if (hangarTabTechBtn) hangarTabTechBtn.addEventListener('click', () => switchHangarTab('tech'));
   if (hangarTabCodexBtn) hangarTabCodexBtn.addEventListener('click', () => switchHangarTab('codex'));
 
-  // Render Hangar Upgrades & Weapons Codex Vault
-  function renderHangarCodex() {
+  // Filtered Render for Hangar Upgrades & Weapons Codex Vault
+  let currentCodexFilter = 'all';
+  function setupCodexFilters() {
+    const filterBtns = document.querySelectorAll('.codex-filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        sound.playCardSelect();
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCodexFilter = btn.dataset.filter || 'all';
+        renderHangarCodex(currentCodexFilter);
+      });
+    });
+  }
+
+  function renderHangarCodex(activeFilter = currentCodexFilter) {
     if (!hangarCodexList) return;
     hangarCodexList.innerHTML = '';
     const isVi = i18n.current === 'vi';
 
     const groups = [
       {
+        id: 'stat',
         title: isVi ? '1. NHÓM NÂNG CẤP CHỈ SỐ (PHỔ THÔNG)' : '1. STAT UPGRADES (COMMON / RARE)',
         color: '#38bdf8',
         items: [
-          { icon: '🚀', name: isVi ? 'Gia Tốc (Thrust)' : 'Thrust Accelerator', rarity: isVi ? 'Phổ thông' : 'Common', rarityClass: 'common', desc: isVi ? 'Tốc độ bay +25%, tốc độ xoay tàu +15%.' : '+25% Flight Speed, +15% Ship Turn Rate.' },
-          { icon: '🛡️', name: isVi ? 'Khuếch Đại (Juggernaut)' : 'Juggernaut Hull', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Tăng 40% kích thước & khối lượng tàu, tăng 30% máu, giảm 15% tốc độ xoay.' : '+40% Ship Size & Mass, +30% Max HP, -15% Turn Rate.' },
-          { icon: '🛸', name: isVi ? 'Thu Nhỏ (Micro-Craft)' : 'Micro-Craft', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Giảm 30% kích thước hitbox, tốc độ bay +35% (né đạn siêu dễ).' : '-30% Hitbox Size, +35% Flight Speed (dodge bullets easily).' },
-          { icon: '🔋', name: isVi ? 'Lõi Năng Lượng (Energy Core)' : 'Energy Core', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Tốc độ hồi khiên +40%, giảm thời gian kích nổ khiên.' : '+40% Shield Recharge Rate, faster shield detonation cooldown.' },
-          { icon: '🐉', name: isVi ? 'Mọc Đốt (Grow Segments)' : 'Segment Sprout', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Thêm 2 đốt thân phía sau (Tàu Rắn) hoặc kéo dài vệt lửa phản lực gây cháy (Tàu khác).' : '+2 Segments (Serpent) or extended fiery jet flame trail (Other ships).' },
-          { icon: '💉', name: isVi ? 'Sửa Chữa Khẩn Cấp (Nanorepair)' : 'Nanorepair System', rarity: isVi ? 'Phổ thông' : 'Common', rarityClass: 'common', desc: isVi ? 'Tăng 25 Max HP và lập tức hồi 60 HP.' : '+25 Max HP and instantly restores 60 HP.' }
+          {
+            icon: '🚀',
+            name: isVi ? 'Gia Tốc (Thrust)' : 'Thrust Accelerator',
+            rarity: isVi ? 'Phổ thông' : 'Common',
+            rarityClass: 'common',
+            borderClass: 'card-border-common',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tông Húc (Tăng tốc & Xoay đầm)' : '☄️ Best: Rammer (Speed & Agility)' },
+            desc: isVi ? 'Tốc độ bay +25%, tốc độ xoay tàu +15%. Giúp phi thuyền cơ động lướt húc mục tiêu chính xác.' : '+25% Flight Speed, +15% Ship Turn Rate. Enhances evasion and ramming accuracy.'
+          },
+          {
+            icon: '🛡️',
+            name: isVi ? 'Khuếch Đại (Juggernaut)' : 'Juggernaut Hull',
+            rarity: isVi ? 'Hiếm' : 'Rare',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tank / Tông Húc (Phòng thủ & Khối lượng)' : '☄️ Best: Rammer (Mass & Defense)' },
+            desc: isVi ? 'Tăng 40% kích thước & khối lượng tàu, tăng 30% máu tối đa, giảm 15% tốc độ xoay. Đâm quái cực mạnh!' : '+40% Size & Mass, +30% Max HP, -15% Turn Rate. Massive collision impact.'
+          },
+          {
+            icon: '🛸',
+            name: isVi ? 'Thu Nhỏ (Micro-Craft)' : 'Micro-Craft',
+            rarity: isVi ? 'Hiếm' : 'Rare',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'serpent', label: isVi ? '🐉 Tối ưu: Tàu Rồng Xà (Né đạn & Luồn lách)' : '🐉 Best: Serpent (Agile Dodging)' },
+            desc: isVi ? 'Giảm 30% kích thước hitbox nhận đòn, tốc độ bay +35%. Luồn lách né biển đạn dễ như chơi.' : '-30% Hitbox Size, +35% Flight Speed. Easily weave through bullet hell.'
+          },
+          {
+            icon: '🔋',
+            name: isVi ? 'Lõi Năng Lượng (Energy Core)' : 'Energy Core',
+            rarity: isVi ? 'Hiếm' : 'Rare',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'novashield', label: isVi ? '🛡️ Tối ưu: Tàu Khiên Nổ (Sạc khiên siêu tốc)' : '🛡️ Best: Nova Shield (Fast Barrier Recharge)' },
+            desc: isVi ? 'Tốc độ hồi khiên +40%, giảm thời gian kích nổ khiên. Tái tạo lá chắn liên tục sau mỗi đòn đánh.' : '+40% Shield Recharge Rate, faster burst delay. Essential for Nova barrier cycles.'
+          },
+          {
+            icon: '🐉',
+            name: isVi ? 'Mọc Đốt (Grow Segments)' : 'Segment Sprout',
+            rarity: isVi ? 'Hiếm' : 'Rare',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'serpent', label: isVi ? '🐉 Tối ưu: Tàu Rồng Xà (Mọc thêm 2 đốt thân)' : '🐉 Best: Serpent (+2 Body Segments)' },
+            desc: isVi ? 'Thêm 2 đốt thân bọc thép chặn đạn (Tàu Rắn) hoặc kéo dài vệt lửa phản lực gây cháy (Tàu khác).' : '+2 Armored Segments (Serpent) or extended burning flame trail (Other ships).'
+          },
+          {
+            icon: '💉',
+            name: isVi ? 'Sửa Chữa Khẩn Cấp (Nanorepair)' : 'Nanorepair System',
+            rarity: isVi ? 'Phổ thông' : 'Common',
+            rarityClass: 'common',
+            borderClass: 'card-border-common',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tank (Hồi phục & Gia tăng HP)' : '☄️ Best: Rammer (Hull Sustain)' },
+            desc: isVi ? 'Tăng 25 Max HP và lập tức phục hồi 60 HP. Giữ vững sinh mệnh khi bị quái vật cắn ép góc.' : '+25 Max HP and instantly restores 60 HP. Reliable survival sustain.'
+          }
         ]
       },
       {
+        id: 'mutation',
         title: isVi ? '2. NHÓM ĐỘT BIẾN LỐI CHƠI (BIẾN ĐỔI CƠ CHẾ)' : '2. GAMEPLAY MUTATIONS (MECHANICAL ALTERATIONS)',
         color: '#c084fc',
         items: [
-          { icon: '🌪️', name: isVi ? 'Đâm Xuyên (Drill)' : 'Drill Momentum', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Khi húc quái chết, tàu không bị khựng lại mà lao thẳng qua tiếp!' : 'When ramming kills a monster, ship does not stutter and pierces right through!' },
-          { icon: '🔥', name: isVi ? 'Khiên Lửa (Burn Field)' : 'Burn Field', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Khiên liên tục gây sát thương thiêu đốt toàn bộ quái trong bán kính xung quanh.' : 'Shield continuously burns all nearby enemies in range.' },
-          { icon: '💫', name: isVi ? 'Đạn Nảy (Ricochet)' : 'Ricochet Kinetic', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Đạn hoặc mảnh vỡ khi va chạm nảy sang mục tiêu lân cận.' : 'Projectiles and shrapnel ricochet toward nearby targets.' },
-          { icon: '☣️', name: isVi ? 'Khí Độc Đuôi (Toxic Exhaust)' : 'Toxic Exhaust Trail', rarity: isVi ? 'Sử thi' : 'Epic', rarityClass: 'epic', desc: isVi ? 'Đuôi tàu (hoặc các đốt rắn) xả khói làm chậm và rút máu quái đi vào.' : 'Ship engine or serpent segments vent toxic smoke that slows & damages enemies.' },
-          { icon: '🌵', name: isVi ? 'Gai Phản Đòn (Spiked Thorns)' : 'Spiked Thorns', rarity: isVi ? 'Hiếm' : 'Rare', rarityClass: 'rare', desc: isVi ? 'Phản lại 100% sát thương va chạm khi quái vật chạm vào thân tàu.' : 'Reflects 100% ram/collision damage back to attackers.' }
+          {
+            icon: '🌪️',
+            name: isVi ? 'Đâm Xuyên (Drill)' : 'Drill Momentum',
+            rarity: isVi ? 'Sử thi' : 'Epic',
+            rarityClass: 'epic',
+            borderClass: 'card-border-epic',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tông Húc (Càn quét xuyên bầy)' : '☄️ Best: Rammer (Unstoppable Ramming)' },
+            desc: isVi ? 'Khi húc chết quái, tàu không bị khựng lại mà giữ nguyên vận tốc lao thẳng xuyên qua tiếp!' : 'When ramming kills an enemy, ship maintains velocity and continues piercing through!'
+          },
+          {
+            icon: '🔥',
+            name: isVi ? 'Khiên Lửa (Burn Field)' : 'Burn Field',
+            rarity: isVi ? 'Sử thi' : 'Epic',
+            rarityClass: 'epic',
+            borderClass: 'card-border-epic',
+            synergy: { class: 'novashield', label: isVi ? '🛡️ Tối ưu: Tàu Khiên Nổ (Thiêu đốt diện rộng)' : '🛡️ Best: Nova Shield (Aura Damage)' },
+            desc: isVi ? 'Khiên liên tục gây sát thương thiêu đốt toàn bộ quái trong bán kính xung quanh tàu.' : 'Shield constantly emits intense heat, incinerating all enemies in close proximity.'
+          },
+          {
+            icon: '💫',
+            name: isVi ? 'Đạn Nảy (Ricochet)' : 'Ricochet Kinetic',
+            rarity: isVi ? 'Sử thi' : 'Epic',
+            rarityClass: 'epic',
+            borderClass: 'card-border-epic',
+            synergy: { class: 'general', label: isVi ? '✨ Phù hợp: Mọi hỏa lực tầm xa' : '✨ Universal: Ranged Projectiles' },
+            desc: isVi ? 'Đạn hoặc mảnh vỡ khi va chạm lập tức dội nảy sang các mục tiêu lân cận.' : 'Projectiles ricochet upon impact toward nearby targets for cascading carnage.'
+          },
+          {
+            icon: '☣️',
+            name: isVi ? 'Khí Độc Đuôi (Toxic Exhaust)' : 'Toxic Exhaust Trail',
+            rarity: isVi ? 'Sử thi' : 'Epic',
+            rarityClass: 'epic',
+            borderClass: 'card-border-epic',
+            synergy: { class: 'serpent', label: isVi ? '🐉 Tối ưu: Tàu Rồng Xà (Bo quái xả độc)' : '🐉 Best: Serpent (Poison Encirclement)' },
+            desc: isVi ? 'Đuôi tàu hoặc các đốt rắn xả màn khói độc cực đặc làm chậm và rút cạn máu quái đi vào.' : 'Engine exhaust and body segments emit dense toxic fumes that slow & melt enemies.'
+          },
+          {
+            icon: '🌵',
+            name: isVi ? 'Gai Phản Đòn (Spiked Thorns)' : 'Spiked Thorns',
+            rarity: isVi ? 'Hiếm' : 'Rare',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tank & Rắn (Phản 100% sát thương)' : '☄️ Best: Rammer / Serpent (100% Thorn Defense)' },
+            desc: isVi ? 'Phản lại 100% sát thương va chạm cho bất kỳ con quái nào dám đụng vào thân tàu hoặc đốt thân.' : 'Reflects 100% collision damage back to attackers on contact.'
+          }
         ]
       },
       {
+        id: 'fusion',
         title: isVi ? '3. SIÊU NÂNG CẤP FUSION MODS (CẤP 10+)' : '3. FUSION MODS (LEVEL 10+ REQUIRED)',
         color: '#facc15',
         items: [
-          { icon: '💥', name: isVi ? 'Bom Quán Tính (Crash Nova)' : 'Crash Nova Shockwave', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Mỗi khi húc trúng mục tiêu, lập tức kích nổ một đợt sóng xung kích quét sạch xung quanh.' : 'Ramming targets triggers an instant explosive kinetic shockwave!' },
-          { icon: '🐲', name: isVi ? 'Mãng Xà Bọc Thép (Iron Dragon)' : 'Iron Dragon Armor', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Các đốt thân rắn nhận giáp & gai, quái chạm vào đốt thân bị đánh bật ngược ra xa.' : 'Serpent segments gain heavy plating & spikes, knocking monsters violently backward.' },
-          { icon: '⚚', name: isVi ? 'Bất Tử Hóa (Immortality)' : 'Overload Immortality', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Toàn bộ máu quy đổi thành khiên, sát thương nổ sóng khiên tăng gấp 3 lần!' : 'All health converted into energy shields; shield burst damage tripled!' },
-          { icon: '☢️', name: isVi ? 'Bom Hạt Nhân (Tactical Nuke)' : 'Tactical Nuke Bomb', rarity: isVi ? 'Huyền thoại' : 'Legendary', rarityClass: 'legendary', desc: isVi ? 'Kích nổ hạt nhân quét sạch 100% quái vật hiện diện trên màn hình!' : 'Detonates an ultra-weapon clearing 100% enemies on screen!' }
+          {
+            icon: '💥',
+            name: isVi ? 'Bom Quán Tính (Crash Nova)' : 'Crash Nova Shockwave',
+            rarity: isVi ? 'Huyền thoại' : 'Legendary',
+            rarityClass: 'legendary',
+            borderClass: 'card-border-legendary',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Độc quyền: Tàu Tông Húc (Nổ sóng xung kích)' : '☄️ Exclusive: Rammer Impact Nova' },
+            desc: isVi ? 'Mỗi khi húc trúng mục tiêu, lập tức phát nổ một luồng sóng xung kích nghiền nát bầy quái xung quanh!' : 'Every ramming hit detonates a kinetic shockwave blasting nearby clusters.'
+          },
+          {
+            icon: '🐲',
+            name: isVi ? 'Mãng Xà Bọc Thép (Iron Dragon)' : 'Iron Dragon Armor',
+            rarity: isVi ? 'Huyền thoại' : 'Legendary',
+            rarityClass: 'legendary',
+            borderClass: 'card-border-legendary',
+            synergy: { class: 'serpent', label: isVi ? '🐉 Độc quyền: Tàu Rồng Xà (Hất văng quái)' : '🐉 Exclusive: Serpent Heavy Spikes' },
+            desc: isVi ? 'Các đốt thân rắn nhận giáp & gai, quái chạm vào đốt thân bị đánh bật ngược ra xa và choáng váng.' : 'Serpent segments gain heavy armor & spikes, knocking monsters violently backward.'
+          },
+          {
+            icon: '⚚',
+            name: isVi ? 'Bất Tử Hóa (Immortality)' : 'Overload Immortality',
+            rarity: isVi ? 'Huyền thoại' : 'Legendary',
+            rarityClass: 'legendary',
+            borderClass: 'card-border-legendary',
+            synergy: { class: 'novashield', label: isVi ? '🛡️ Độc quyền: Tàu Khiên Nổ (x3 Sát thương nổ khiên)' : '🛡️ Exclusive: Nova Shield Overload' },
+            desc: isVi ? 'Toàn bộ thanh máu quy đổi thành khiên năng lượng, sát thương nổ sóng khiên tăng vọt gấp 3 lần!' : 'Converts all health into dynamic energy shields; shield rupture damage tripled!'
+          },
+          {
+            icon: '☢️',
+            name: isVi ? 'Bom Hạt Nhân (Tactical Nuke)' : 'Tactical Nuke Bomb',
+            rarity: isVi ? 'Huyền thoại' : 'Legendary',
+            rarityClass: 'legendary',
+            borderClass: 'card-border-legendary',
+            synergy: { class: 'general', label: isVi ? '✨ Phù hợp: Cứu nguy khẩn cấp mọi tàu' : '✨ Universal: Screen Wipe Emergency' },
+            desc: isVi ? 'Kích nổ vũ khí hạt nhân quét sạch 100% quái vật hiện diện trên toàn bộ bản đồ!' : 'Detonates a tactical nuclear device clearing all non-boss enemies instantly.'
+          }
         ]
       },
       {
+        id: 'mythic',
         title: isVi ? '4. THẦN THOẠI ĐỎ CỰC HIẾM (MYTHIC - TỈ LỆ 1.5%)' : '4. MYTHIC RED CARDS (1.5% DROP RATE)',
         color: '#ef4444',
         items: [
-          { icon: '⚡', name: isVi ? 'Khế Ước Thần Mệnh (Destiny Pact)' : 'Divine Destiny Pact', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Lần nâng cấp tiếp theo chỉ ra đúng 1 lựa chọn duy nhất nhưng là kỹ năng hiếm cực mạnh!' : 'Next level up forces a single guaranteed ultra-rare God-Tier card!' },
-          { icon: '🕳️', name: isVi ? 'Kỳ Điểm Vũ Trụ (Singularity)' : 'Cosmic Singularity', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Tạo hố đen mini kéo hút và nghiền nát toàn bộ kẻ địch mỗi 6 giây.' : 'Spawns gravitational singularities pulling & crushing swarms every 6s.' },
-          { icon: '🩸', name: isVi ? 'Huyết Ma Cuồng Nộ (Blood God)' : 'Blood God Rampage', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Tăng gấp đôi toàn bộ sát thương (+100%), hạ gục quái lập tức hồi phục máu.' : 'Doubles all damage (+100%) and regenerates HP on kills.' },
-          { icon: '💀', name: isVi ? 'Lưỡi Hái Tử Thần (Reaper)' : 'Reaper Execution', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Lập tức trảm sát quái vật có lượng máu dưới 25% (kể cả Boss).' : 'Instantly executes any monster below 25% HP (including Bosses).' },
-          { icon: '⏳', name: isVi ? 'Ngưng Đọng Thời Không (Chronos)' : 'Chronos Stasis', rarity: isVi ? 'Thần thoại' : 'Mythic', rarityClass: 'mythic', desc: isVi ? 'Đóng băng thời gian toàn bộ quái vật trong 5 giây, tăng 60% sát thương.' : 'Freezes all enemies for 5 seconds and grants +60% damage boost.' }
+          {
+            icon: '⚡',
+            name: isVi ? 'Khế Ước Thần Mệnh (Destiny Pact)' : 'Divine Destiny Pact',
+            rarity: isVi ? 'Thần thoại' : 'Mythic',
+            rarityClass: 'mythic',
+            borderClass: 'card-border-mythic',
+            synergy: { class: 'general', label: isVi ? '✨ Kích hoạt kỹ năng tối thượng' : '✨ Ultra God-Tier Empowerment' },
+            desc: isVi ? 'Lần lên cấp tiếp theo ép xuất hiện duy nhất 1 thẻ nhưng BẢO ĐẢM là Thần Thoại Đỏ cực mạnh!' : 'Forces your next level up to offer a guaranteed single God-Tier Mythic card!'
+          },
+          {
+            icon: '🕳️',
+            name: isVi ? 'Kỳ Điểm Vũ Trụ (Singularity)' : 'Cosmic Singularity',
+            rarity: isVi ? 'Thần thoại' : 'Mythic',
+            rarityClass: 'mythic',
+            borderClass: 'card-border-mythic',
+            synergy: { class: 'general', label: isVi ? '✨ Hố đen gom quái diện rộng' : '✨ Swarm Black Hole Trap' },
+            desc: isVi ? 'Tạo hố đen mini kéo hút và nghiền nát toàn bộ kẻ địch mỗi 6 giây.' : 'Spawns gravitational singularities pulling & crushing swarms every 6s.'
+          },
+          {
+            icon: '🩸',
+            name: isVi ? 'Huyết Ma Cuồng Nộ (Blood God)' : 'Blood God Rampage',
+            rarity: isVi ? 'Thần thoại' : 'Mythic',
+            rarityClass: 'mythic',
+            borderClass: 'card-border-mythic',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tank (Tăng 100% công & Hồi máu)' : '☄️ Best: Rammer (+100% Dmg & Lifesteal)' },
+            desc: isVi ? 'Tăng gấp đôi toàn bộ sát thương (+100%), hạ gục quái lập tức phục hồi lượng máu dồi dào.' : 'Doubles all damage (+100%) and constantly regenerates health on monster kills.'
+          },
+          {
+            icon: '💀',
+            name: isVi ? 'Lưỡi Hái Tử Thần (Reaper)' : 'Reaper Execution',
+            rarity: isVi ? 'Thần thoại' : 'Mythic',
+            rarityClass: 'mythic',
+            borderClass: 'card-border-mythic',
+            synergy: { class: 'general', label: isVi ? '✨ Trảm sát Boss < 25% HP' : '✨ Instant Execute < 25% HP' },
+            desc: isVi ? 'Lập tức trảm sát bất kỳ quái vật hoặc Boss nào có lượng máu tụt xuống dưới 25%.' : 'Instantly executes any monster or boss with health under 25%.'
+          },
+          {
+            icon: '⏳',
+            name: isVi ? 'Ngưng Đọng Thời Không (Chronos)' : 'Chronos Stasis',
+            rarity: isVi ? 'Thần thoại' : 'Mythic',
+            rarityClass: 'mythic',
+            borderClass: 'card-border-mythic',
+            synergy: { class: 'novashield', label: isVi ? '🛡️ Tối ưu: Tàu Khiên (Đóng băng 5s & +60% dmg)' : '🛡️ Best: Nova Shield (Freeze & Burst)' },
+            desc: isVi ? 'Đóng băng thời gian toàn bộ quái vật trong 5 giây, tăng thêm 60% sát thương toàn thể.' : 'Freezes all enemies for 5 seconds and grants a +60% damage boost.'
+          }
         ]
       },
       {
+        id: 'weapon',
         title: isVi ? '5. KHO VŨ KHÍ HẠM ĐỘI (FLEET ARSENAL)' : '5. FLEET WEAPON ARSENAL',
         color: '#10b981',
         items: [
-          { icon: '⚡', name: isVi ? 'Pháo Plasma Kép' : 'Plasma Blaster', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'common', desc: isVi ? 'Bắn loạt tia năng lượng phía trước. Tiến hóa: Bắn 5 siêu tia xuyên thấu liên thanh.' : 'Frontal laser cannons. Evolution: 5 piercing hyper-lasers with rapid fire.' },
-          { icon: '🪐', name: isVi ? 'Quả Cầu Hộ Thể' : 'Orbiting Orbs', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'common', desc: isVi ? 'Vòng xoay cầu plasma càn quét quái áp sát. Tiến hóa: 6 quả cầu tạo lá chắn bất tử.' : 'Rotating spheres shredding close swarms. Evolution: 6 impenetrable barrier spheres.' },
-          { icon: '🌩️', name: isVi ? 'Sét Chuỗi Lan' : 'Chain Lightning', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'common', desc: isVi ? 'Phóng sét gián đoạn chuỗi địch. Tiến hóa: Sấm sét hủy diệt 12 mục tiêu cùng lúc.' : 'Zaps clusters of enemies. Evolution: Thunderbolts strike 12 targets simultaneously.' },
-          { icon: '🌀', name: isVi ? 'Phi Tiêu Nảy' : 'Bouncing Glaive', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'rare', desc: isVi ? 'Phi đao năng lượng tốc độ cao dội nảy liên tục qua nhiều tầng quái vật.' : 'High-velocity energy disc bouncing across multiple enemies.' },
-          { icon: '🚀', name: isVi ? 'Tên Lửa Tầm Nhiệt' : 'Heat-Seeking Missiles', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'rare', desc: isVi ? 'Tên lửa tự tìm và nổ diện rộng. Tiến hóa: Chùm 10 đầu đạn hủy diệt.' : 'Homing missiles with blast radius. Evolution: 10 cluster warheads.' },
-          { icon: '🛸', name: isVi ? 'Drone Đồng Minh' : 'Wingmen Drones', rarity: isVi ? 'Vũ khí' : 'Weapon', rarityClass: 'rare', desc: isVi ? '2 máy bay phụ trợ bám sát phi thuyền. Tiến hóa: Đội hình 4 drone tự hành cực mạnh.' : 'Escort companion drones. Evolution: 4 autonomous heavy support gunships.' }
+          {
+            icon: '⚡',
+            name: isVi ? 'Pháo Plasma Kép' : 'Plasma Blaster',
+            rarity: isVi ? 'Vũ khí' : 'Weapon',
+            rarityClass: 'common',
+            borderClass: 'card-border-common',
+            synergy: { class: 'general', label: isVi ? '✨ Vũ khí tầm xa cơ bản' : '✨ Primary Ranged Laser' },
+            desc: isVi ? 'Bắn loạt tia năng lượng phía trước. Tiến hóa: Bắn 5 siêu tia xuyên thấu liên thanh.' : 'Frontal laser cannons. Evolution: 5 piercing hyper-lasers with rapid fire.'
+          },
+          {
+            icon: '🪐',
+            name: isVi ? 'Quả Cầu Hộ Thể' : 'Orbiting Orbs',
+            rarity: isVi ? 'Vũ khí' : 'Weapon',
+            rarityClass: 'common',
+            borderClass: 'card-border-common',
+            synergy: { class: 'rammer', label: isVi ? '☄️ Tối ưu: Tàu Tank (Nghiền nát quái áp sát)' : '☄️ Best: Rammer (Close Defense)' },
+            desc: isVi ? 'Vòng xoay cầu plasma càn quét quái áp sát. Tiến hóa: 6 quả cầu tạo lá chắn bất tử.' : 'Rotating spheres shredding close swarms. Evolution: 6 impenetrable barrier spheres.'
+          },
+          {
+            icon: '🌩️',
+            name: isVi ? 'Sét Chuỗi Lan' : 'Chain Lightning',
+            rarity: isVi ? 'Vũ khí' : 'Weapon',
+            rarityClass: 'common',
+            borderClass: 'card-border-common',
+            synergy: { class: 'serpent', label: isVi ? '🐉 Tối ưu: Tàu Rồng Xà (Giật lan chuỗi)' : '🐉 Best: Serpent (Chain Arc Stun)' },
+            desc: isVi ? 'Phóng sét gián đoạn chuỗi địch. Tiến hóa: Sấm sét hủy diệt 12 mục tiêu cùng lúc.' : 'Zaps clusters of enemies. Evolution: Thunderbolts strike 12 targets simultaneously.'
+          },
+          {
+            icon: '🌀',
+            name: isVi ? 'Phi Tiêu Nảy' : 'Bouncing Glaive',
+            rarity: isVi ? 'Vũ khí' : 'Weapon',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'serpent', label: isVi ? '🐉 Khởi đầu: Tàu Rồng Xà (Dội nảy liên hoàn)' : '🐉 Starter: Serpent (Ricochets)' },
+            desc: isVi ? 'Phi đao năng lượng tốc độ cao dội nảy liên tục qua nhiều tầng quái vật.' : 'High-velocity energy disc bouncing across multiple enemies.'
+          },
+          {
+            icon: '🚀',
+            name: isVi ? 'Tên Lửa Tầm Nhiệt' : 'Heat-Seeking Missiles',
+            rarity: isVi ? 'Vũ khí' : 'Weapon',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'novashield', label: isVi ? '🛡️ Tối ưu: Tàu Khiên Nổ (Tự tìm quái nổ to)' : '🛡️ Best: Nova Shield (Homing Blast)' },
+            desc: isVi ? 'Tên lửa tự tìm và nổ diện rộng. Tiến hóa: Chùm 10 đầu đạn hủy diệt.' : 'Homing missiles with blast radius. Evolution: 10 cluster warheads.'
+          },
+          {
+            icon: '🛸',
+            name: isVi ? 'Drone Đồng Minh' : 'Wingmen Drones',
+            rarity: isVi ? 'Vũ khí' : 'Weapon',
+            rarityClass: 'rare',
+            borderClass: 'card-border-rare',
+            synergy: { class: 'general', label: isVi ? '✨ Phi đội máy bay hộ tống' : '✨ Escort Gunship Fleet' },
+            desc: isVi ? '2 máy bay phụ trợ bám sát phi thuyền. Tiến hóa: Đội hình 4 drone tự hành cực mạnh.' : 'Escort companion drones. Evolution: 4 autonomous heavy support gunships.'
+          }
         ]
       }
     ];
 
-    groups.forEach(g => {
+    const filteredGroups = activeFilter === 'all' ? groups : groups.filter(g => g.id === activeFilter);
+
+    filteredGroups.forEach(g => {
       const gTitle = document.createElement('div');
       gTitle.className = 'codex-group-title';
       gTitle.style.color = g.color;
@@ -513,7 +744,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       g.items.forEach(item => {
         const card = document.createElement('div');
-        card.className = 'codex-card';
+        card.className = `codex-card ${item.borderClass || ''}`;
         card.innerHTML = `
           <div class="codex-icon">${item.icon}</div>
           <div class="codex-info">
@@ -522,6 +753,7 @@ window.addEventListener('DOMContentLoaded', () => {
               <span class="card-rarity-pill ${item.rarityClass}">${item.rarity}</span>
             </div>
             <div class="codex-desc">${item.desc}</div>
+            ${item.synergy ? `<div class="codex-synergy-tag ${item.synergy.class}">${item.synergy.label}</div>` : ''}
           </div>
         `;
         hangarCodexList.appendChild(card);
@@ -601,6 +833,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
   startHangarBtn.addEventListener('click', openHangar);
   overHangarBtn.addEventListener('click', openHangar);
+  if (startCodexBtn) {
+    startCodexBtn.addEventListener('click', () => {
+      openHangar();
+      switchHangarTab('codex');
+    });
+  }
+  setupCodexFilters();
   const hangarHeaderCloseBtn = document.getElementById('hangar-header-close-btn');
   const closeHangar = () => {
     sound.playCardSelect();
