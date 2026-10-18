@@ -507,6 +507,18 @@ window.addEventListener('DOMContentLoaded', () => {
   if (hangarHeaderCloseBtn) {
     hangarHeaderCloseBtn.addEventListener('click', closeHangar);
   }
+  // Click outside modal box to close
+  hangarModal.addEventListener('click', (e) => {
+    if (e.target === hangarModal) {
+      closeHangar();
+    }
+  });
+  // Press Escape to close modal
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && hangarModal.classList.contains('active')) {
+      closeHangar();
+    }
+  });
 
   // Theme Toggle Engine (Dark / Light)
   let currentTheme = localStorage.getItem('dopamine_theme') || 'dark';

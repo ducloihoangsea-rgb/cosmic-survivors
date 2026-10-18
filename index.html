@@ -6,8 +6,11 @@
   <meta name="theme-color" content="#030712">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>CHIẾN HẠM VÔ CỰC - Cosmic Survivors</title>
-  <link rel="stylesheet" href="./src/style.css">
+  <link rel="stylesheet" href="./src/style.css?v=2.3">
 </head>
 <body>
   <div id="app-container">
@@ -178,7 +181,7 @@
               <span class="gold-icon">🪙</span>
               <span id="hangar-gold-val">0</span>
             </div>
-            <button id="hangar-header-close-btn" class="modal-close-icon-btn" title="Đóng">✕</button>
+            <button id="hangar-header-close-btn" class="modal-close-icon-btn" style="width: 34px !important; height: 34px !important; border-radius: 50% !important; background: rgba(239,68,68,0.2) !important; border: 1.5px solid #ef4444 !important; color: #fca5a5 !important; font-size: 15px !important; font-weight: 900 !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;" title="Đóng [ESC]">✕</button>
           </div>
         </div>
 
@@ -202,7 +205,9 @@
           </div>
         </div>
 
-        <button id="hangar-close-btn">ĐÓNG</button>
+        <div class="hangar-footer" style="display: flex; justify-content: center; margin-top: 8px; flex-shrink: 0;">
+          <button id="hangar-close-btn" class="hangar-mini-close" style="height: 28px !important; min-height: unset !important; max-height: 28px !important; width: auto !important; max-width: 140px !important; padding: 4px 18px !important; font-size: 11.5px !important; font-weight: 800 !important; margin: 0 auto !important; border-radius: 999px !important; flex: 0 0 auto !important; background: rgba(30,41,59,0.85) !important; color: #94a3b8 !important; border: 1px solid rgba(255,255,255,0.2) !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important;">✕ ĐÓNG</button>
+        </div>
       </div>
     </div>
 
@@ -269,6 +274,6 @@
     </div>
   </div>
 
-  <script type="module" src="./src/main.js"></script>
+  <script type="module" src="./src/main.js?v=2.4"></script>
 </body>
 </html>
