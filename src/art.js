@@ -618,23 +618,19 @@ export class ArtEngine {
     const endX = startX + width + gridSize * 2;
     const endY = startY + height + gridSize * 2;
 
-    // Ambient Cyber Grid Lines
+    // Ambient Cyber Grid Lines (Batched into 1 single stroke call for 60 FPS)
     ctx.strokeStyle = isLight ? 'rgba(14, 165, 233, 0.15)' : 'rgba(14, 165, 233, 0.055)';
     ctx.lineWidth = 1.2;
-
+    ctx.beginPath();
     for (let x = startX; x <= endX; x += gridSize) {
-      ctx.beginPath();
       ctx.moveTo(x, startY);
       ctx.lineTo(x, endY);
-      ctx.stroke();
     }
-
     for (let y = startY; y <= endY; y += gridSize) {
-      ctx.beginPath();
       ctx.moveTo(startX, y);
       ctx.lineTo(endX, y);
-      ctx.stroke();
     }
+    ctx.stroke();
 
     // Glowing Micro-Circuit Junction Points
     for (let x = startX; x <= endX; x += gridSize * 2) {

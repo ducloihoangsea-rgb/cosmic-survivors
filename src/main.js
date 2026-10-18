@@ -1292,6 +1292,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Main Animation Loop
   let lastTime = performance.now();
+  let lastDomPanelUpdate = 0;
   function gameLoop(currentTime) {
     const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
     lastTime = currentTime;
@@ -1357,103 +1358,108 @@ window.addEventListener('DOMContentLoaded', () => {
       btnUltimate.classList.remove('ready');
     }
 
-    // Real-Time Skill Damage Meter Update
-    if (!damageMeterPanel.classList.contains('hidden')) {
-      meterTotalVal.textContent = formatDmg(game.totalDamageDealt);
-      const total = Math.max(1, game.totalDamageDealt);
+    // Throttled Real-Time Panels DOM Update (Update every 220ms instead of 60fps to prevent DOM layout trashing)
+    if (currentTime - lastDomPanelUpdate > 220) {
+      lastDomPanelUpdate = currentTime;
 
-      const catalogMap = new Map(skillCatalog.map(s => [s.id, s]));
-      const activeSkills = [];
+      // Real-Time Skill Damage Meter Update
+      if (!damageMeterPanel.classList.contains('hidden')) {
+        meterTotalVal.textContent = formatDmg(game.totalDamageDealt);
+        const total = Math.max(1, game.totalDamageDealt);
 
-      // Thu thập toàn bộ các nguồn sát thương phát sinh trong trận đấu, không sót bất kỳ kỹ năng hay nội tại nào
-      for (const [sourceId, dmg] of Object.entries(game.damageStats || {})) {
-        if (dmg <= 0) continue;
-        const entry = catalogMap.get(sourceId) || {
-          id: sourceId,
-          key: `skill_${sourceId}`,
-          icon: '⚔️',
-          color: '#38bdf8'
-        };
-        const rawName = i18n.t(entry.key);
-        const name = (rawName && rawName !== entry.key) ? rawName : sourceId.toUpperCase();
-        activeSkills.push({
-          ...entry,
-          name,
-          damage: dmg
-        });
-      }
+        const catalogMap = new Map(skillCatalog.map(s => [s.id, s]));
+        const activeSkills = [];
 
-      activeSkills.sort((a, b) => b.damage - a.damage);
+        // Thu thập toàn bộ các nguồn sát thương phát sinh trong trận đấu, không sót bất kỳ kỹ năng hay nội tại nào
+        for (const [sourceId, dmg] of Object.entries(game.damageStats || {})) {
+          if (dmg <= 0) continue;
+          const entry = catalogMap.get(sourceId) || {
+            id: sourceId,
+            key: `skill_${sourceId}`,
+            icon: '⚔️',
+            color: '#38bdf8'
+          };
+          const rawName = i18n.t(entry.key);
+          const name = (rawName && rawName !== entry.key) ? rawName : sourceId.toUpperCase();
+          activeSkills.push({
+            ...entry,
+            name,
+            damage: dmg
+          });
+        }
 
-      if (activeSkills.length === 0) {
-        meterSkillsList.innerHTML = `<div style="text-align: center; color: #64748b; font-size: 12px; padding: 12px 0;">Chưa tạo sát thương / No damage yet</div>`;
-      } else {
-        meterSkillsList.innerHTML = activeSkills.map(s => {
-          const pct = ((s.damage / total) * 100).toFixed(1);
-          return `
-            <div class="meter-skill-item">
-              <div class="meter-skill-info-row">
-                <div class="meter-skill-name-group">
-                  <span class="meter-skill-icon">${s.icon}</span>
-                  <span class="meter-skill-name">${s.name}</span>
+        activeSkills.sort((a, b) => b.damage - a.damage);
+
+        if (activeSkills.length === 0) {
+          meterSkillsList.innerHTML = `<div style="text-align: center; color: #64748b; font-size: 12px; padding: 12px 0;">Chưa tạo sát thương / No damage yet</div>`;
+        } else {
+          meterSkillsList.innerHTML = activeSkills.map(s => {
+            const pct = ((s.damage / total) * 100).toFixed(1);
+            return `
+              <div class="meter-skill-item">
+                <div class="meter-skill-info-row">
+                  <div class="meter-skill-name-group">
+                    <span class="meter-skill-icon">${s.icon}</span>
+                    <span class="meter-skill-name">${s.name}</span>
+                  </div>
+                  <div class="meter-skill-stats-group">
+                    <span class="meter-skill-dmg">${formatDmg(s.damage)}</span>
+                    <span class="meter-skill-pct" style="color: ${s.color};">${pct}%</span>
+                  </div>
                 </div>
-                <div class="meter-skill-stats-group">
-                  <span class="meter-skill-dmg">${formatDmg(s.damage)}</span>
-                  <span class="meter-skill-pct" style="color: ${s.color};">${pct}%</span>
+                <div class="meter-progress-track">
+                  <div class="meter-progress-bar" style="width: ${pct}%; background: ${s.color}; box-shadow: 0 0 8px ${s.color};"></div>
                 </div>
               </div>
-              <div class="meter-progress-track">
-                <div class="meter-progress-bar" style="width: ${pct}%; background: ${s.color}; box-shadow: 0 0 8px ${s.color};"></div>
-              </div>
-            </div>
-          `;
-        }).join('');
+            `;
+          }).join('');
+        }
       }
-    }
 
-    // Real-Time Ship Attributes Panel Update
-    if (shipStatsPanel && !shipStatsPanel.classList.contains('hidden')) {
-      const sp = game.player;
-      const totalSpeed = Math.round(sp.baseSpeed * sp.stats.speedMult * (game.isFrenzy ? 1.45 : 1.0));
-      const dmgBonus = Math.round((sp.stats.damageMult - 1.0 + (sp.berserkerDmgBonus || 0)) * 100);
-      const atkSpdBonus = Math.round((sp.stats.fireRateMult - 1.0 + (sp.berserkerAtkSpdBonus || 0)) * 100);
-      const critChancePct = Math.round(sp.stats.critChance * 100);
-      const critDmgMult = (sp.stats.critMult).toFixed(1);
-      const magnetRange = Math.round(sp.magnetRadius);
-      const visionZoom = Math.round(100 / (game.cameraZoom || 1.0));
+      // Real-Time Ship Attributes Panel Update
+      if (shipStatsPanel && !shipStatsPanel.classList.contains('hidden')) {
+        const sp = game.player;
+        const totalSpeed = Math.round(sp.baseSpeed * sp.stats.speedMult * (game.isFrenzy ? 1.45 : 1.0));
+        const dmgBonus = Math.round((sp.stats.damageMult - 1.0 + (sp.berserkerDmgBonus || 0)) * 100);
+        const atkSpdBonus = Math.round((sp.stats.fireRateMult - 1.0 + (sp.berserkerAtkSpdBonus || 0)) * 100);
+        const critChancePct = Math.round(sp.stats.critChance * 100);
+        const critDmgMult = (sp.stats.critMult).toFixed(1);
+        const magnetRange = Math.round(sp.magnetRadius);
+        const visionZoom = Math.round(100 / (game.cameraZoom || 1.0));
 
-      shipStatsList.innerHTML = `
-        <div class="ship-stat-box">
-          <span class="stat-box-label">MÁU / GIÁP (HP)</span>
-          <span class="stat-box-val" style="color: #22c55e;">${Math.round(sp.hp)} / ${sp.maxHp}</span>
-          <span class="stat-box-sub">${sp.revivesLeft > 0 ? `💖 ${sp.revivesLeft} Tái sinh` : 'Chưa có bảo hiểm'}</span>
-        </div>
-        <div class="ship-stat-box">
-          <span class="stat-box-label">HỎA LỰC (DAMAGE)</span>
-          <span class="stat-box-val" style="color: #ef4444;">x${sp.stats.damageMult.toFixed(2)}</span>
-          <span class="stat-box-sub">${dmgBonus >= 0 ? `+${dmgBonus}% Buff` : `${dmgBonus}%`}</span>
-        </div>
-        <div class="ship-stat-box">
-          <span class="stat-box-label">TỐC ĐỘ DI CHUYỂN</span>
-          <span class="stat-box-val" style="color: #38bdf8;">${totalSpeed} px/s</span>
-          <span class="stat-box-sub">${game.isFrenzy ? '⚡ FRENZY BOOST' : 'Động cơ ổn định'}</span>
-        </div>
-        <div class="ship-stat-box">
-          <span class="stat-box-label">TỐC ĐỘ BẮN / XẢ ĐẠN</span>
-          <span class="stat-box-val" style="color: #facc15;">x${sp.stats.fireRateMult.toFixed(2)}</span>
-          <span class="stat-box-sub">${atkSpdBonus >= 0 ? `+${atkSpdBonus}% Tốc đánh` : ''}</span>
-        </div>
-        <div class="ship-stat-box">
-          <span class="stat-box-label">TỈ LỆ CHÍ MẠNG</span>
-          <span class="stat-box-val" style="color: #f43f5e;">${critChancePct}%</span>
-          <span class="stat-box-sub">Sát thương x${critDmgMult}</span>
-        </div>
-        <div class="ship-stat-box">
-          <span class="stat-box-label">TẦM HÚT NGỌC & TẦM NHÌN</span>
-          <span class="stat-box-val" style="color: #a855f7;">${magnetRange} px</span>
-          <span class="stat-box-sub">🔭 Tầm nhìn: ${visionZoom}%</span>
-        </div>
-      `;
+        shipStatsList.innerHTML = `
+          <div class="ship-stat-box">
+            <span class="stat-box-label">MÁU / GIÁP (HP)</span>
+            <span class="stat-box-val" style="color: #22c55e;">${Math.round(sp.hp)} / ${sp.maxHp}</span>
+            <span class="stat-box-sub">${sp.revivesLeft > 0 ? `💖 ${sp.revivesLeft} Tái sinh` : 'Chưa có bảo hiểm'}</span>
+          </div>
+          <div class="ship-stat-box">
+            <span class="stat-box-label">HỎA LỰC (DAMAGE)</span>
+            <span class="stat-box-val" style="color: #ef4444;">x${sp.stats.damageMult.toFixed(2)}</span>
+            <span class="stat-box-sub">${dmgBonus >= 0 ? `+${dmgBonus}% Buff` : `${dmgBonus}%`}</span>
+          </div>
+          <div class="ship-stat-box">
+            <span class="stat-box-label">TỐC ĐỘ DI CHUYỂN</span>
+            <span class="stat-box-val" style="color: #38bdf8;">${totalSpeed} px/s</span>
+            <span class="stat-box-sub">${game.isFrenzy ? '⚡ FRENZY BOOST' : 'Động cơ ổn định'}</span>
+          </div>
+          <div class="ship-stat-box">
+            <span class="stat-box-label">TỐC ĐỘ BẮN / XẢ ĐẠN</span>
+            <span class="stat-box-val" style="color: #facc15;">x${sp.stats.fireRateMult.toFixed(2)}</span>
+            <span class="stat-box-sub">${atkSpdBonus >= 0 ? `+${atkSpdBonus}% Tốc đánh` : ''}</span>
+          </div>
+          <div class="ship-stat-box">
+            <span class="stat-box-label">TỈ LỆ CHÍ MẠNG</span>
+            <span class="stat-box-val" style="color: #f43f5e;">${critChancePct}%</span>
+            <span class="stat-box-sub">Sát thương x${critDmgMult}</span>
+          </div>
+          <div class="ship-stat-box">
+            <span class="stat-box-label">TẦM HÚT NGỌC & TẦM NHÌN</span>
+            <span class="stat-box-val" style="color: #a855f7;">${magnetRange} px</span>
+            <span class="stat-box-sub">🔭 Tầm nhìn: ${visionZoom}%</span>
+          </div>
+        `;
+      }
     }
 
 

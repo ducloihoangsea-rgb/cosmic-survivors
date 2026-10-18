@@ -14,3 +14,7 @@ mỗi lần thay đổi vũ khí hay up skill là có 1 cái bảng hiện lên 
 =================================================================== 
 thêm loại tàu mới có kỹ năng nội tại là mỗi 5s thả 2 mini drone(mỗi drone có khả năng tồn tại 12s nếu không bị nhận sát thương cũng tự động bị tiêu hủy) có khả năng di chuyển, có thanh máu riêng , có thể nhận sát thương và bị tiêu hủy, có khả năng di chuyển độc lập tấn công mục tiêu.
 thêm kỹ năng nâng cấp drone chỉ xuất hiện khi chơi bằng tàu này, tăng cấp lên thì chỉ tăng sát thương và máu. mỗi lần lên cấp -0,2s cooldown. Tối đa 5 cấp là tiến hóa(khi tiến hóa mỗi lần thả 3 drone và thời gian tồn tại là 18s)
+=================================================================== 
+tôi đang chơi loại tràu triệu hồi drone tại sao sát thương nhiều vậy nhưng nó không hiển thị hết ra tất cả các những thứ đóng góp sát thương trong bảng dps đó phần lớn sát thương đã đi đâu mà trên bảng dps chỉ có vài % vậy?
+
+cho độ nhiều của quái lên từ level 1-10 nhiều hơn 100% số lượng hiện tại

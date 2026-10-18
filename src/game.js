@@ -516,6 +516,21 @@ export class Game {
       }
     }
 
+    // Auto consolidate excess gems to guarantee solid 60 FPS
+    if (this.gems.length > 140) {
+      const excess = this.gems.length - 110;
+      let extraXp = 0;
+      for (let j = 0; j < excess; j++) {
+        extraXp += this.gems[j].value;
+      }
+      this.gems.splice(0, excess);
+      if (this.gems.length > 0) {
+        this.gems[0].value += extraXp;
+        this.gems[0].color = '#a855f7';
+        this.gems[0].radius = Math.min(10, (this.gems[0].radius || 4) + 2);
+      }
+    }
+
     // 6. Update Lucky Chests
     for (let i = this.chests.length - 1; i >= 0; i--) {
       const c = this.chests[i];
@@ -527,6 +542,9 @@ export class Game {
     }
 
     // 7. Update Particles
+    if (this.particles.length > 110) {
+      this.particles.splice(0, this.particles.length - 110);
+    }
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
       p.update();
@@ -536,6 +554,9 @@ export class Game {
     }
 
     // 8. Update Floating Texts
+    if (this.floatingTexts.length > 24) {
+      this.floatingTexts.splice(0, this.floatingTexts.length - 24);
+    }
     for (let i = this.floatingTexts.length - 1; i >= 0; i--) {
       const ft = this.floatingTexts[i];
       ft.update();
@@ -587,40 +608,62 @@ export class Game {
     const isLight = document.body.classList.contains('theme-light');
     art.drawArena(ctx, this.camera, this.canvas.width / zoom, this.canvas.height / zoom, this.gameTime, isLight);
 
-    // Draw Lucky Chests
+    // Viewport Frustum Culling bounds
+    const halfW = (this.canvas.width / zoom) * 0.5 + 90;
+    const halfH = (this.canvas.height / zoom) * 0.5 + 90;
+    const camCenterX = this.camera.x + this.canvas.width / 2;
+    const camCenterY = this.camera.y + this.canvas.height / 2;
+    const vMinX = camCenterX - halfW;
+    const vMaxX = camCenterX + halfW;
+    const vMinY = camCenterY - halfH;
+    const vMaxY = camCenterY + halfH;
+
+    // Draw Lucky Chests (Culled)
     for (const c of this.chests) {
-      c.draw(ctx, this.gameTime);
+      if (c.x >= vMinX && c.x <= vMaxX && c.y >= vMinY && c.y <= vMaxY) {
+        c.draw(ctx, this.gameTime);
+      }
     }
 
-    // Draw Toxic Puddles (Khí Độc)
+    // Draw Toxic Puddles (Culled)
     for (const tp of this.toxicPuddles) {
-      tp.draw(ctx);
+      if (tp.x + tp.radius >= vMinX && tp.x - tp.radius <= vMaxX && tp.y + tp.radius >= vMinY && tp.y - tp.radius <= vMaxY) {
+        tp.draw(ctx);
+      }
     }
 
-    // Draw Gems
+    // Draw Gems (Culled - massive 60fps win)
     for (const g of this.gems) {
-      g.draw(ctx, this.gameTime);
+      if (g.x >= vMinX && g.x <= vMaxX && g.y >= vMinY && g.y <= vMaxY) {
+        g.draw(ctx, this.gameTime);
+      }
     }
 
-    // Draw Enemies
+    // Draw Enemies (Culled)
     for (const e of this.enemies) {
-      e.draw(ctx, this.gameTime);
+      if (e.x + e.radius >= vMinX && e.x - e.radius <= vMaxX && e.y + e.radius >= vMinY && e.y - e.radius <= vMaxY) {
+        e.draw(ctx, this.gameTime);
+      }
     }
 
     // Draw Weapons / Projectiles / Drones / Shockwaves
     this.weaponManager.draw(ctx, this.player);
 
-    // Draw Mini Drones
+    // Draw Mini Drones (Culled)
     for (const md of this.miniDrones) {
-      md.draw(ctx, this.gameTime);
+      if (md.x >= vMinX && md.x <= vMaxX && md.y >= vMinY && md.y <= vMaxY) {
+        md.draw(ctx, this.gameTime);
+      }
     }
 
     // Draw Player
     this.player.draw(ctx);
 
-    // Draw Particles
+    // Draw Particles (Culled)
     for (const p of this.particles) {
-      p.draw(ctx);
+      if (p.x >= vMinX && p.x <= vMaxX && p.y >= vMinY && p.y <= vMaxY) {
+        p.draw(ctx);
+      }
     }
 
     // Draw Floating Texts
@@ -856,7 +899,10 @@ class Player {
       if (this.burnFieldTimer >= 0.2) {
         this.burnFieldTimer = 0;
         const burnRadius = Math.max(70, this.radius * 2.8) * (this.stats.shieldRadiusMult || 1.0);
-        for (const enemy of this.game.enemies) {
+        const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(this.x, this.y, burnRadius + 30) : this.game.enemies;
+        for (let i = 0, len = candidates.length; i < len; i++) {
+          const enemy = candidates[i];
+          if (enemy.isDead) continue;
           const d = Math.hypot(enemy.x - this.x, enemy.y - this.y);
           if (d < burnRadius + enemy.radius) {
             this.game.damageEnemy(enemy, 40 * this.stats.damageMult, false, 'burnfield');
@@ -893,7 +939,10 @@ class Player {
         if (Math.random() < 0.12) {
           this.game.particles.push(new Particle(pt.x + (Math.random() - 0.5) * 8, pt.y + (Math.random() - 0.5) * 8, '#f97316', 3, 3, 0.4));
         }
-        for (const enemy of this.game.enemies) {
+        const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(pt.x, pt.y, 40) : this.game.enemies;
+        for (let j = 0, cLen = candidates.length; j < cLen; j++) {
+          const enemy = candidates[j];
+          if (enemy.isDead) continue;
           const d = Math.hypot(enemy.x - pt.x, enemy.y - pt.y);
           if (d < 18 + enemy.radius) {
             this.game.damageEnemy(enemy, 28 * this.stats.damageMult * dt * 3, false, 'flame');
@@ -924,8 +973,11 @@ class Player {
         const seg = { x: pt.x, y: pt.y, radius: segRadius, index: s };
         this.segmentPositions.push(seg);
 
-        // Segment collision with nearby enemies: swipe damage + knockback
-        for (const enemy of this.game.enemies) {
+        // Segment collision with nearby enemies: swipe damage + knockback (dùng Spatial Grid O(1))
+        const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(seg.x, seg.y, seg.radius + 35) : this.game.enemies;
+        for (let j = 0, cLen = candidates.length; j < cLen; j++) {
+          const enemy = candidates[j];
+          if (enemy.isDead) continue;
           const dx = enemy.x - seg.x;
           const dy = enemy.y - seg.y;
           const d = Math.hypot(dx, dy);
@@ -1015,7 +1067,9 @@ class Player {
 
     // Spiked Thorns reflection
     if (this.stats.thorns > 0) {
-      for (const e of this.game.enemies) {
+      const candidates = this.game.spatialGrid ? this.game.spatialGrid.query(this.x, this.y, this.radius + 50) : this.game.enemies;
+      for (const e of candidates) {
+        if (e.isDead) continue;
         const d = Math.hypot(e.x - this.x, e.y - this.y);
         if (d < this.radius + e.radius + 20) {
           this.game.damageEnemy(e, amount * this.stats.thorns * 2.0, false, 'thorns');
@@ -1072,7 +1126,9 @@ export class ToxicPuddle {
       this.isDead = true;
       return;
     }
-    for (const e of enemies) {
+    const candidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, this.radius + 30) : enemies;
+    for (const e of candidates) {
+      if (e.isDead) continue;
       const d = Math.hypot(e.x - this.x, e.y - this.y);
       if (d < this.radius + e.radius) {
         // Slow monster by 40%

@@ -178,16 +178,8 @@ export class WeaponManager {
 
   fireBlaster(player, enemies) {
     if (enemies.length === 0) return;
-    let target = enemies[0];
-    let minDistSq = (target.x - player.x) ** 2 + (target.y - player.y) ** 2;
-    for (let i = 1; i < enemies.length; i++) {
-      const e = enemies[i];
-      const distSq = (e.x - player.x) ** 2 + (e.y - player.y) ** 2;
-      if (distSq < minDistSq) {
-        minDistSq = distSq;
-        target = e;
-      }
-    }
+    const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(player.x, player.y, 750) : enemies[0];
+    if (!target) return;
     const angle = Math.atan2(target.y - player.y, target.x - player.x);
     const bLvl = this.weapons.blaster.level;
     const baseDamage = 18 + bLvl * 10;
@@ -244,7 +236,7 @@ export class WeaponManager {
     const chainCount = 2 + light.level * 2;
     const damage = (35 + light.level * 18) * player.stats.damageMult;
 
-    const nearby = enemies.filter(e => Math.hypot(e.x - player.x, e.y - player.y) < 450);
+    const nearby = this.game.spatialGrid ? this.game.spatialGrid.query(player.x, player.y, 450) : enemies.filter(e => Math.hypot(e.x - player.x, e.y - player.y) < 450);
     if (nearby.length === 0) return;
 
     sound.playShoot('lightning');
@@ -318,15 +310,7 @@ export class WeaponManager {
       const dy = player.y + Math.sin(a) * radius;
 
       // Find nearest enemy to drone
-      let target = null;
-      let minDist = 380;
-      for (const e of enemies) {
-        const d = Math.hypot(e.x - dx, e.y - dy);
-        if (d < minDist) {
-          minDist = d;
-          target = e;
-        }
-      }
+      const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(dx, dy, 380) : enemies[0];
 
       if (target) {
         const aimAngle = Math.atan2(target.y - dy, target.x - dx);
@@ -457,7 +441,8 @@ class BlasterBullet {
             this.damage *= 0.75;
             let next = null;
             let minDist = 240;
-            for (const other of enemies) {
+            const ricochetCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, 240) : enemies;
+            for (const other of ricochetCandidates) {
               if (other !== e && !other.isDead) {
                 const d = Math.hypot(other.x - this.x, other.y - this.y);
                 if (d < minDist) {
@@ -534,15 +519,7 @@ class HeatSeekingMissile {
     this.retargetTimer -= dt;
     if (this.retargetTimer <= 0 || !this.target || this.target.isDead) {
       this.retargetTimer = 0.2;
-      let minDist = 500;
-      this.target = null;
-      for (const e of enemies) {
-        const d = Math.hypot(e.x - this.x, e.y - this.y);
-        if (d < minDist) {
-          minDist = d;
-          this.target = e;
-        }
-      }
+      this.target = game.spatialGrid ? game.spatialGrid.getNearest(this.x, this.y, 500) : (enemies[0] || null);
     }
 
     if (this.target) {
@@ -564,7 +541,9 @@ class HeatSeekingMissile {
       game.particles.push(new Particle(this.x, this.y, this.evolved ? '#f59e0b' : '#94a3b8', 1.5, 2.5, 0.5));
     }
 
-    for (const e of enemies) {
+    const checkCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, 10 + 35) : enemies;
+    for (const e of checkCandidates) {
+      if (e.isDead) continue;
       const dist = Math.hypot(e.x - this.x, e.y - this.y);
       if (dist < 10 + e.radius) {
         this.explode(game, enemies);
@@ -578,8 +557,10 @@ class HeatSeekingMissile {
     sound.playExplosion();
 
     const splashRadius = this.evolved ? 90 : 55;
+    const splashCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, splashRadius + 30) : enemies;
 
-    for (const e of enemies) {
+    for (const e of splashCandidates) {
+      if (e.isDead) continue;
       const d = Math.hypot(e.x - this.x, e.y - this.y);
       if (d <= splashRadius) {
         game.damageEnemy(e, this.damage, false, 'missiles');
@@ -633,8 +614,9 @@ class EmpShockwave {
       return;
     }
 
-    for (const e of enemies) {
-      if (this.hitEnemies.has(e)) continue;
+    const shockCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, this.radius + 60) : enemies;
+    for (const e of shockCandidates) {
+      if (this.hitEnemies.has(e) || e.isDead) continue;
       const d = Math.hypot(e.x - this.x, e.y - this.y);
       if (Math.abs(d - this.radius) < 50) {
         this.hitEnemies.add(e);
@@ -648,8 +630,8 @@ class EmpShockwave {
         e.y += Math.sin(pushAngle) * 85;
 
         // Bắn tung các tia điện tích màu xanh neon trên quái
-        for (let p = 0; p < 5; p++) {
-          const sp = new Particle(e.x, e.y, Math.random() > 0.4 ? '#00f2fe' : '#ffffff', 4, 3, 0.45);
+        for (let p = 0; p < 4; p++) {
+          const sp = new Particle(e.x, e.y, Math.random() > 0.4 ? '#00f2fe' : '#ffffff', 3.5, 3, 0.4);
           sp.vx = (Math.random() - 0.5) * 160;
           sp.vy = (Math.random() - 0.5) * 160;
           game.particles.push(sp);
@@ -663,9 +645,12 @@ class EmpShockwave {
     const alpha = Math.max(0, 1.0 - progress);
     ctx.save();
 
-    // 1. Quầng hào quang phát sáng điện từ tỏa rộng
-    ctx.shadowColor = '#00f2fe';
-    ctx.shadowBlur = 24;
+    // Zero-CPU Glow Halo (no expensive shadowBlur)
+    ctx.strokeStyle = `rgba(0, 242, 254, ${alpha * 0.25})`;
+    ctx.lineWidth = 18;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.stroke();
 
     // 2. Vành sóng năng lượng tỏa dạng Gradient bán trong suốt
     const grad = ctx.createRadialGradient(
@@ -776,8 +761,9 @@ class BouncingGlaive {
     this.y += this.vy * dt;
     this.angle += 14 * dt;
 
-    for (const e of enemies) {
-      if (this.hitCooldown.has(e)) continue;
+    const glaiveHits = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, this.radius + 35) : enemies;
+    for (const e of glaiveHits) {
+      if (this.hitCooldown.has(e) || e.isDead) continue;
       const dist = Math.hypot(e.x - this.x, e.y - this.y);
       if (dist < this.radius + e.radius) {
         game.damageEnemy(e, this.damage, false, 'glaive');
@@ -789,10 +775,18 @@ class BouncingGlaive {
           return;
         }
 
-        const candidates = enemies.filter(target => !this.hitCooldown.has(target));
+        const candidates = (game.spatialGrid ? game.spatialGrid.query(this.x, this.y, 450) : enemies).filter(target => !this.hitCooldown.has(target) && !target.isDead);
         if (candidates.length > 0) {
-          candidates.sort((a, b) => Math.hypot(a.x - this.x, a.y - this.y) - Math.hypot(b.x - this.x, b.y - this.y));
-          const next = candidates[0];
+          let next = candidates[0];
+          let minDistSq = (next.x - this.x) ** 2 + (next.y - this.y) ** 2;
+          for (let k = 1; k < candidates.length; k++) {
+            const cur = candidates[k];
+            const dSq = (cur.x - this.x) ** 2 + (cur.y - this.y) ** 2;
+            if (dSq < minDistSq) {
+              minDistSq = dSq;
+              next = cur;
+            }
+          }
           const bounceAngle = Math.atan2(next.y - this.y, next.x - this.x);
           this.vx = Math.cos(bounceAngle) * this.speed;
           this.vy = Math.sin(bounceAngle) * this.speed;
@@ -844,25 +838,29 @@ export class BlackHole {
     this.life -= dt;
     this.angle += dt * 4.5;
 
+    const pullCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, this.pullRadius + 40) : enemies;
+
     if (this.life <= 0) {
       this.isDead = true;
       // Final Implosion / Collapse blast!
       const finalDmg = Math.round(320 * this.damageMult);
-      for (const e of enemies) {
+      for (const e of pullCandidates) {
+        if (e.isDead) continue;
         const dist = Math.hypot(e.x - this.x, e.y - this.y);
         if (dist < this.pullRadius) {
           game.damageEnemy(e, finalDmg, true, 'blackhole');
         }
       }
       sound.playExplosion();
-      for (let i = 0; i < 40; i++) {
-        game.particles.push(new Particle(this.x, this.y, Math.random() < 0.5 ? '#ef4444' : '#a855f7', 8, 5.5, 1.2));
+      for (let i = 0; i < 25; i++) {
+        game.particles.push(new Particle(this.x, this.y, Math.random() < 0.5 ? '#ef4444' : '#a855f7', 7, 5, 1.0));
       }
       return;
     }
 
     // Pull enemies towards vortex center
-    for (const e of enemies) {
+    for (const e of pullCandidates) {
+      if (e.isDead) continue;
       const dx = this.x - e.x;
       const dy = this.y - e.y;
       const dist = Math.hypot(dx, dy);
@@ -878,7 +876,9 @@ export class BlackHole {
     if (this.tickTimer <= 0) {
       this.tickTimer = this.tickInterval;
       const tickDmg = Math.round(48 * this.damageMult);
-      for (const e of enemies) {
+      const dmgCandidates = game.spatialGrid ? game.spatialGrid.query(this.x, this.y, this.damageRadius + 30) : pullCandidates;
+      for (const e of dmgCandidates) {
+        if (e.isDead) continue;
         const dist = Math.hypot(e.x - this.x, e.y - this.y);
         if (dist < this.damageRadius) {
           game.damageEnemy(e, tickDmg, false, 'blackhole');

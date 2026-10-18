@@ -30,20 +30,19 @@ export class FloatingText {
     if (this.life <= 0) return;
     ctx.save();
     ctx.globalAlpha = Math.max(0, this.life);
-    ctx.font = `900 ${Math.round(this.size * this.scale)}px 'Outfit', sans-serif`;
     ctx.textAlign = 'center';
 
     if (this.isCrit) {
+      ctx.font = `900 ${Math.round(this.size * this.scale)}px 'Outfit', sans-serif`;
       ctx.fillStyle = '#ffea00';
-      ctx.lineWidth = 4;
+      ctx.lineWidth = 3.5;
       ctx.strokeStyle = '#78350f';
       ctx.strokeText(this.text, this.x, this.y);
       ctx.fillText(this.text, this.x, this.y);
     } else {
+      ctx.font = `800 ${this.size}px 'Outfit', sans-serif`;
       ctx.fillStyle = this.color;
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = '#000000';
-      ctx.strokeText(this.text, this.x, this.y);
+      // Tránh strokeText trên sát thương thường để giữ 60 FPS mượt mà
       ctx.fillText(this.text, this.x, this.y);
     }
     ctx.restore();
@@ -77,13 +76,11 @@ export class Particle {
 
   draw(ctx) {
     if (this.life <= 0) return;
-    ctx.save();
     ctx.globalAlpha = Math.max(0, this.life);
     ctx.fillStyle = this.color;
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
   }
 }
 
