@@ -138,7 +138,13 @@ window.addEventListener('DOMContentLoaded', () => {
     { id: 'emp', key: 'skill_emp', icon: '⚡', color: '#facc15' },
     { id: 'nuke', key: 'skill_nuke', icon: '☢️', color: '#ef4444' },
     { id: 'blackhole', key: 'skill_blackhole', icon: '🕳️', color: '#ec4899' },
-    { id: 'ram', key: 'skill_ram', icon: '🛡️', color: '#10b981' }
+    { id: 'ram', key: 'skill_ram', icon: '🛡️', color: '#10b981' },
+    { id: 'novashield', key: 'skill_novashield', icon: '💥', color: '#eab308' },
+    { id: 'burnfield', key: 'skill_burnfield', icon: '🔥', color: '#f97316' },
+    { id: 'flame', key: 'skill_flame', icon: '☄️', color: '#ea580c' },
+    { id: 'serpent', key: 'skill_serpent', icon: '🐉', color: '#34d399' },
+    { id: 'thorns', key: 'skill_thorns', icon: '🌵', color: '#84cc16' },
+    { id: 'toxic', key: 'skill_toxic', icon: '☣️', color: '#22c55e' }
   ];
 
   function formatDmg(val) {
@@ -1323,10 +1329,28 @@ window.addEventListener('DOMContentLoaded', () => {
       meterTotalVal.textContent = formatDmg(game.totalDamageDealt);
       const total = Math.max(1, game.totalDamageDealt);
 
-      const activeSkills = skillCatalog
-        .map(s => ({ ...s, damage: game.damageStats[s.id] || 0 }))
-        .filter(s => s.damage > 0)
-        .sort((a, b) => b.damage - a.damage);
+      const catalogMap = new Map(skillCatalog.map(s => [s.id, s]));
+      const activeSkills = [];
+
+      // Thu thập toàn bộ các nguồn sát thương phát sinh trong trận đấu, không sót bất kỳ kỹ năng hay nội tại nào
+      for (const [sourceId, dmg] of Object.entries(game.damageStats || {})) {
+        if (dmg <= 0) continue;
+        const entry = catalogMap.get(sourceId) || {
+          id: sourceId,
+          key: `skill_${sourceId}`,
+          icon: '⚔️',
+          color: '#38bdf8'
+        };
+        const rawName = i18n.t(entry.key);
+        const name = (rawName && rawName !== entry.key) ? rawName : sourceId.toUpperCase();
+        activeSkills.push({
+          ...entry,
+          name,
+          damage: dmg
+        });
+      }
+
+      activeSkills.sort((a, b) => b.damage - a.damage);
 
       if (activeSkills.length === 0) {
         meterSkillsList.innerHTML = `<div style="text-align: center; color: #64748b; font-size: 12px; padding: 12px 0;">Chưa tạo sát thương / No damage yet</div>`;
@@ -1338,7 +1362,7 @@ window.addEventListener('DOMContentLoaded', () => {
               <div class="meter-skill-info-row">
                 <div class="meter-skill-name-group">
                   <span class="meter-skill-icon">${s.icon}</span>
-                  <span class="meter-skill-name">${i18n.t(s.key)}</span>
+                  <span class="meter-skill-name">${s.name}</span>
                 </div>
                 <div class="meter-skill-stats-group">
                   <span class="meter-skill-dmg">${formatDmg(s.damage)}</span>

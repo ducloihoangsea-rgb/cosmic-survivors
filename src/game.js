@@ -53,7 +53,13 @@ export class Game {
       emp: 0,
       nuke: 0,
       blackhole: 0,
-      ram: 0
+      ram: 0,
+      novashield: 0,
+      burnfield: 0,
+      flame: 0,
+      serpent: 0,
+      thorns: 0,
+      toxic: 0
     };
     this.totalDamageDealt = 0;
 
@@ -655,7 +661,13 @@ export class Game {
       emp: 0,
       nuke: 0,
       blackhole: 0,
-      ram: 0
+      ram: 0,
+      novashield: 0,
+      burnfield: 0,
+      flame: 0,
+      serpent: 0,
+      thorns: 0,
+      toxic: 0
     };
     this.totalDamageDealt = 0;
     this.enemies = [];
