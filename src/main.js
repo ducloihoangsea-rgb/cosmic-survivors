@@ -4,6 +4,8 @@ import { UpgradeSystem } from './upgrades.js';
 import { sound } from './audio.js';
 import { i18n } from './i18n.js';
 import { meta } from './meta.js';
+import { art } from './art.js';
+import { SHIP_ROSTER, SHIP_KEYS } from './ships.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('game-canvas');
@@ -18,6 +20,11 @@ window.addEventListener('DOMContentLoaded', () => {
   const hordeAlert = document.getElementById('horde-alert');
   const hangarModal = document.getElementById('hangar-modal');
   const chestModal = document.getElementById('chest-modal');
+
+  // Starship Selection Elements
+  const shipSelectorBox = document.getElementById('ship-selector-box');
+  const shipSelectTitle = document.getElementById('ship-select-title');
+  const shipSelectSub = document.getElementById('ship-select-sub');
 
   // Real-Time Damage Meter Elements
   const meterToggleBtn = document.getElementById('meter-toggle-btn');
@@ -95,7 +102,8 @@ window.addEventListener('DOMContentLoaded', () => {
     { id: 'wingmen', key: 'skill_wingmen', icon: '🛸', color: '#10b981' },
     { id: 'emp', key: 'skill_emp', icon: '⚡', color: '#facc15' },
     { id: 'nuke', key: 'skill_nuke', icon: '☢️', color: '#ef4444' },
-    { id: 'blackhole', key: 'skill_blackhole', icon: '🕳️', color: '#ec4899' }
+    { id: 'blackhole', key: 'skill_blackhole', icon: '🕳️', color: '#ec4899' },
+    { id: 'ram', key: 'skill_ram', icon: '🛡️', color: '#10b981' }
   ];
 
   function formatDmg(val) {
@@ -148,7 +156,75 @@ window.addEventListener('DOMContentLoaded', () => {
       hudLangBtn.textContent = '🇬🇧 EN';
     }
 
+    if (shipSelectTitle) shipSelectTitle.textContent = i18n.t('shipSelectTitle');
+    if (shipSelectSub) shipSelectSub.textContent = i18n.t('shipSelectSubtitle');
+
+    renderShipSelector();
     renderHangar();
+  }
+
+  // Starship Selection Card Generator
+  const shipPreviews = [];
+  function renderShipSelector() {
+    if (!shipSelectorBox) return;
+    shipPreviews.length = 0;
+    shipSelectorBox.innerHTML = '';
+
+    SHIP_KEYS.forEach(key => {
+      const ship = SHIP_ROSTER[key];
+      const isSelected = game.selectedShipId === key;
+
+      const card = document.createElement('div');
+      card.className = `ship-card ${isSelected ? 'active' : ''}`;
+      card.style.setProperty('--ship-color', ship.color);
+      card.style.setProperty('--ship-accent', ship.accentColor);
+      card.style.setProperty('--ship-glow', ship.glowColor);
+      card.dataset.shipId = key;
+
+      card.innerHTML = `
+        <span class="ship-card-selected-tag">${i18n.t('shipSelectedBadge')}</span>
+        <div class="ship-canvas-wrap">
+          <canvas width="54" height="54"></canvas>
+        </div>
+        <div class="ship-card-name">${i18n.t(ship.nameKey)}</div>
+        <div class="ship-card-role">${i18n.t(ship.roleKey)}</div>
+        <div class="ship-stat-bars">
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statHp')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.hp}%;"></div></div>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statDmg')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.dmg}%;"></div></div>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statSpd')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.spd}%;"></div></div>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statDiff')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.range}%;"></div></div>
+          </div>
+        </div>
+        <div class="ship-trait-pill">
+          <b>${i18n.t(ship.traitNameKey)}</b>
+          ${i18n.t(ship.traitDescKey)}
+        </div>
+      `;
+
+      card.addEventListener('click', () => {
+        sound.playCardSelect();
+        game.selectShip(key);
+        document.querySelectorAll('.ship-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+      });
+
+      shipSelectorBox.appendChild(card);
+      const cvs = card.querySelector('canvas');
+      if (cvs) {
+        shipPreviews.push({ canvas: cvs, shipId: key });
+      }
+    });
   }
 
   // Damage Meter Toggle Handlers
@@ -432,6 +508,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
     game.update(dt);
     game.draw();
+
+    // Render animated Starship preview models on Start Screen
+    if (startScreen.classList.contains('active')) {
+      for (const sp of shipPreviews) {
+        art.drawShipPreview(sp.canvas, sp.shipId, currentTime / 1000);
+      }
+    }
 
     // Update HUD
     const p = game.player;

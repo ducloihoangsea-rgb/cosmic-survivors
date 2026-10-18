@@ -1,5 +1,6 @@
 // Enemy Spawning and Swarm AI System
 import { art } from './art.js';
+import { FloatingText, Particle } from './particles.js';
 
 export class Enemy {
   constructor(x, y, type = 'crawler', waveMultiplier = 1.0) {
@@ -68,9 +69,35 @@ export class Enemy {
       this.hitFlash -= dt;
     }
 
-    // Touch player damage
+    // Touch player damage / Ramming Collision
     if (dist < this.radius + player.radius) {
-      player.takeDamage(this.damage * dt);
+      if (player.isRammer) {
+        // 🛡️ Juggernaut Battering Ram Impact!
+        const ramDmg = 140 * player.stats.damageMult * (1 + (player.berserkerDmgBonus || 0));
+        player.game.damageEnemy(this, ramDmg, true, 'ram');
+
+        // Knockback enemy away violently
+        if (dist > 0.001) {
+          this.x -= (dx / dist) * 70;
+          this.y -= (dy / dist) * 70;
+        }
+
+        // Sparks & debris
+        for (let i = 0; i < 4; i++) {
+          player.game.particles.push(new Particle(this.x, this.y, '#10b981', 4, 3.5));
+        }
+
+        // Tông chết quái hồi máu!
+        if (this.isDead && player.hp < player.maxHp) {
+          player.hp = Math.min(player.maxHp, player.hp + 2);
+          player.game.floatingTexts.push(new FloatingText(player.x, player.y - 30, '+2 HP', '#10b981', 16, false));
+        }
+
+        // Player takes 65% reduced collision damage
+        player.takeDamage(this.damage * dt * 0.35);
+      } else {
+        player.takeDamage(this.damage * dt);
+      }
     }
   }
 

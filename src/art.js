@@ -10,9 +10,30 @@ export class ArtEngine {
   drawPlayer(ctx, player, animTime) {
     const isFrenzy = player.game.isFrenzy;
     const invuln = player.invulnerableTimer > 0;
-    const mainColor = isFrenzy ? '#f43f5e' : '#00f2fe';
-    const accentColor = isFrenzy ? '#fbbf24' : '#38bdf8';
-    const glowColor = isFrenzy ? '#ec4899' : '#00f2fe';
+    const shipId = player.shipId || 'phantom';
+
+    // Ship Palette Selection
+    let shipMain = '#00f2fe';
+    let shipAccent = '#38bdf8';
+    let shipGlow = '#0284c7';
+
+    if (shipId === 'juggernaut') {
+      shipMain = '#10b981';
+      shipAccent = '#34d399';
+      shipGlow = '#059669';
+    } else if (shipId === 'berserker') {
+      shipMain = '#ef4444';
+      shipAccent = '#f87171';
+      shipGlow = '#dc2626';
+    } else if (shipId === 'carrier') {
+      shipMain = '#facc15';
+      shipAccent = '#fde047';
+      shipGlow = '#d97706';
+    }
+
+    const mainColor = isFrenzy ? '#f43f5e' : shipMain;
+    const accentColor = isFrenzy ? '#fbbf24' : shipAccent;
+    const glowColor = isFrenzy ? '#ec4899' : shipGlow;
 
     ctx.save();
     ctx.translate(player.x, player.y);
@@ -56,62 +77,178 @@ export class ArtEngine {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    // 4. Main Hull - Swept Wings Fighter
-    ctx.shadowColor = glowColor;
-    ctx.shadowBlur = invuln ? 25 : 14;
-
     // Wing Gradient
-    const hullGrad = ctx.createLinearGradient(-15, 0, 20, 0);
-    hullGrad.addColorStop(0, '#0f172a');
-    hullGrad.addColorStop(0.6, '#1e293b');
+    const hullGrad = ctx.createLinearGradient(-16, 0, 22, 0);
+    hullGrad.addColorStop(0, '#090d16');
+    hullGrad.addColorStop(0.5, '#1e293b');
     hullGrad.addColorStop(1, invuln ? '#ffffff' : '#334155');
 
     ctx.fillStyle = hullGrad;
     ctx.strokeStyle = mainColor;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 2.2;
+    ctx.shadowColor = glowColor;
+    ctx.shadowBlur = invuln ? 25 : 14;
 
-    ctx.beginPath();
-    ctx.moveTo(22, 0);               // Nose tip
-    ctx.lineTo(8, -8);                // Forward shoulder
-    ctx.lineTo(-6, -20);              // Left wing tip
-    ctx.lineTo(-10, -16);             // Left wing fin
-    ctx.lineTo(-8, -6);               // Left inner engine
-    ctx.lineTo(-14, 0);               // Rear center
-    ctx.lineTo(-8, 6);                // Right inner engine
-    ctx.lineTo(-10, 16);              // Right wing fin
-    ctx.lineTo(-6, 20);               // Right wing tip
-    ctx.lineTo(8, 8);                 // Right shoulder
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    if (shipId === 'juggernaut') {
+      // 🛡️ JUGGERNAUT: Heavy Armored Battering Ram with reinforced front wedge
+      ctx.beginPath();
+      ctx.moveTo(24, 0);          // Heavy front ram tip
+      ctx.lineTo(16, -12);        // Heavy angled ram plate
+      ctx.lineTo(4, -18);         // Left shoulder plate
+      ctx.lineTo(-12, -22);       // Left flank armor
+      ctx.lineTo(-16, -12);       // Left rear wing
+      ctx.lineTo(-12, 0);         // Rear thruster plate
+      ctx.lineTo(-16, 12);        // Right rear wing
+      ctx.lineTo(-12, 22);        // Right flank armor
+      ctx.lineTo(4, 18);          // Right shoulder plate
+      ctx.lineTo(16, 12);         // Right angled ram plate
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
 
-    // 5. Neon Edge Accents / Wing Panels
-    ctx.strokeStyle = accentColor;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.moveTo(-4, -16);
-    ctx.lineTo(4, -7);
-    ctx.moveTo(-4, 16);
-    ctx.lineTo(4, 7);
-    ctx.stroke();
+      // Front Ramming Spikes / Barricade
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(14, -8);
+      ctx.lineTo(26, -5);
+      ctx.moveTo(14, 8);
+      ctx.lineTo(26, 5);
+      ctx.stroke();
 
-    // 6. Cockpit / Cyber Core (Pulsing crystalline visor)
+      // Armor plating lines
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(6, -14);
+      ctx.lineTo(-8, -14);
+      ctx.moveTo(6, 14);
+      ctx.lineTo(-8, 14);
+      ctx.stroke();
+
+    } else if (shipId === 'berserker') {
+      // 🩸 BERSERKER: Aggressive forward-swept bloodfang blades
+      ctx.beginPath();
+      ctx.moveTo(26, 0);          // Needle nose
+      ctx.lineTo(10, -6);
+      ctx.lineTo(18, -22);        // Forward razor blade left
+      ctx.lineTo(4, -16);
+      ctx.lineTo(-12, -18);       // Rear swept tooth
+      ctx.lineTo(-14, 0);
+      ctx.lineTo(-12, 18);        // Rear swept tooth right
+      ctx.lineTo(4, 16);
+      ctx.lineTo(18, 22);         // Forward razor blade right
+      ctx.lineTo(10, 6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Blood Edge Accents
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(18, -22);
+      ctx.lineTo(8, -12);
+      ctx.moveTo(18, 22);
+      ctx.lineTo(8, 12);
+      ctx.stroke();
+
+    } else if (shipId === 'carrier') {
+      // 🛸 CARRIER: Command Carrier with Dual Lateral Drone Bays
+      ctx.beginPath();
+      ctx.moveTo(20, 0);          // Flat forward prow
+      ctx.lineTo(14, -10);
+      ctx.lineTo(6, -22);         // Left hangar bay
+      ctx.lineTo(-14, -22);       // Hangar rear
+      ctx.lineTo(-10, -10);
+      ctx.lineTo(-16, 0);         // Engine core
+      ctx.lineTo(-10, 10);
+      ctx.lineTo(-14, 22);        // Right hangar rear
+      ctx.lineTo(6, 22);          // Right hangar bay
+      ctx.lineTo(14, 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Dual Launch Bay Indicators
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(-2, -18, 6, 3);
+      ctx.fillRect(-2, 15, 6, 3);
+
+    } else {
+      // 🎯 PHANTOM: Sleek Swept Wing Hypersonic Stealth Fighter
+      ctx.beginPath();
+      ctx.moveTo(25, 0);          // Sharpened needle nose
+      ctx.lineTo(8, -7);
+      ctx.lineTo(-6, -22);        // High-aspect left wing
+      ctx.lineTo(-12, -17);
+      ctx.lineTo(-8, -6);
+      ctx.lineTo(-15, 0);
+      ctx.lineTo(-8, 6);
+      ctx.lineTo(-12, 17);
+      ctx.lineTo(-6, 22);         // High-aspect right wing
+      ctx.lineTo(8, 7);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Stealth Panel Lines
+      ctx.strokeStyle = accentColor;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(-2, -16);
+      ctx.lineTo(5, -6);
+      ctx.moveTo(-2, 16);
+      ctx.lineTo(5, 6);
+      ctx.stroke();
+    }
+
+    // Cockpit / Cyber Reactor Core
     const coreGrad = ctx.createRadialGradient(4, 0, 1, 4, 0, 7);
     coreGrad.addColorStop(0, '#ffffff');
     coreGrad.addColorStop(0.5, mainColor);
-    coreGrad.addColorStop(1, '#0284c7');
+    coreGrad.addColorStop(1, glowColor);
 
     ctx.fillStyle = coreGrad;
     ctx.beginPath();
-    ctx.ellipse(4, 0, 7, 3.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(3, 0, 7, 3.5, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Visor specular shine
     ctx.fillStyle = '#ffffff';
     ctx.beginPath();
-    ctx.arc(6, -1, 1.5, 0, Math.PI * 2);
+    ctx.arc(5, -1, 1.4, 0, Math.PI * 2);
     ctx.fill();
 
+    ctx.restore();
+  }
+
+  // Draw Animated Ship Preview for Selection Menu
+  drawShipPreview(canvas, shipId, animTime) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.save();
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+
+    // Subtle breathing hover motion
+    const hoverY = Math.sin(animTime * 3) * 3;
+    ctx.translate(0, hoverY);
+    ctx.rotate(-Math.PI / 2); // Point ship upwards on preview card
+
+    const mockPlayer = {
+      x: 0,
+      y: 0,
+      facingAngle: 0,
+      shipId: shipId,
+      magnetRadius: 28,
+      invulnerableTimer: 0,
+      game: { isFrenzy: false }
+    };
+
+    this.drawPlayer(ctx, mockPlayer, animTime);
     ctx.restore();
   }
 

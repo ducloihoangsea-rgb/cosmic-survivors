@@ -7,14 +7,17 @@ import { Controller } from './controls.js';
 import { art } from './art.js';
 import { i18n } from './i18n.js';
 import { meta } from './meta.js';
+import { SHIP_ROSTER } from './ships.js';
 
 export class Game {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.controller = new Controller(canvas);
-    this.weaponManager = new WeaponManager(this);
     this.waveSpawner = new WaveSpawner(this);
+
+    // Selected Starship Archetype
+    this.selectedShipId = localStorage.getItem('dopamine_ship') || 'juggernaut';
 
     // Game State
     this.state = 'playing'; // 'playing', 'levelup', 'chest', 'gameover'
@@ -46,7 +49,8 @@ export class Game {
       wingmen: 0,
       emp: 0,
       nuke: 0,
-      blackhole: 0
+      blackhole: 0,
+      ram: 0
     };
     this.totalDamageDealt = 0;
 
@@ -55,8 +59,10 @@ export class Game {
     this.screenShake = 0;
     this.freezeFrames = 0;
 
+    // Initialize Ship Loadout
+    this.initShipLoadout();
+
     // Entities
-    this.player = new Player(this);
     this.enemies = [];
     this.gems = [];
     this.chests = [];
@@ -78,6 +84,33 @@ export class Game {
     });
 
     this.lastTime = performance.now();
+  }
+
+  selectShip(shipId) {
+    if (SHIP_ROSTER[shipId]) {
+      this.selectedShipId = shipId;
+      localStorage.setItem('dopamine_ship', shipId);
+      this.initShipLoadout();
+    }
+  }
+
+  initShipLoadout() {
+    const shipDef = SHIP_ROSTER[this.selectedShipId] || SHIP_ROSTER.phantom;
+    this.player = new Player(this, this.selectedShipId);
+    this.weaponManager = new WeaponManager(this);
+
+    // Reset default weapons
+    for (const k in this.weaponManager.weapons) {
+      this.weaponManager.weapons[k].level = 0;
+    }
+
+    // Apply Starship's starting weapons
+    if (shipDef.startingWeapon && this.weaponManager.weapons[shipDef.startingWeapon]) {
+      this.weaponManager.weapons[shipDef.startingWeapon].level = 1;
+    }
+    if (shipDef.secondaryWeapon && this.weaponManager.weapons[shipDef.secondaryWeapon]) {
+      this.weaponManager.weapons[shipDef.secondaryWeapon].level = 1;
+    }
   }
 
   resize(w, h) {
@@ -131,8 +164,32 @@ export class Game {
       return;
     }
 
+    // Sniper distance bonus & Ghost focus
+    let distanceMult = 1.0;
+    if (this.player.isSniper) {
+      const dist = Math.hypot(enemy.x - this.player.x, enemy.y - this.player.y);
+      if (dist > 130) {
+        distanceMult += Math.min(0.85, ((dist - 130) / 350) * 0.85);
+      }
+      if (this.player.hasGhostFocus) {
+        forceCrit = true;
+        distanceMult *= 1.4;
+        this.player.hasGhostFocus = false;
+        this.player.noHitTimer = 0;
+      }
+    }
+
+    // Berserker rage damage multiplier
+    const berserkMult = 1 + (this.player.berserkerDmgBonus || 0);
+
     const isCrit = forceCrit || (Math.random() < this.player.stats.critChance);
-    const damage = isCrit ? Math.round(rawDamage * this.player.stats.critMult) : Math.round(rawDamage);
+    const critMult = isCrit ? this.player.stats.critMult : 1.0;
+    const damage = Math.max(1, Math.round(rawDamage * distanceMult * berserkMult * critMult));
+
+    // Berserker low-HP life leech
+    if (this.player.isBerserker && this.player.hp < this.player.maxHp * 0.35 && Math.random() < 0.12) {
+      this.player.hp = Math.min(this.player.maxHp, this.player.hp + 1);
+    }
 
     // Track real-time damage per skill
     if (this.damageStats[source] === undefined) this.damageStats[source] = 0;
@@ -501,7 +558,8 @@ export class Game {
       wingmen: 0,
       emp: 0,
       nuke: 0,
-      blackhole: 0
+      blackhole: 0,
+      ram: 0
     };
     this.totalDamageDealt = 0;
     this.enemies = [];
@@ -509,28 +567,46 @@ export class Game {
     this.chests = [];
     this.particles = [];
     this.floatingTexts = [];
-    this.player = new Player(this);
-    this.weaponManager = new WeaponManager(this);
+    this.initShipLoadout();
     this.waveSpawner = new WaveSpawner(this);
   }
 }
 
 class Player {
-  constructor(game) {
+  constructor(game, shipId = 'phantom') {
     this.game = game;
+    this.shipId = shipId;
+    const shipDef = SHIP_ROSTER[shipId] || SHIP_ROSTER.phantom;
+
     this.x = 0;
     this.y = 0;
     this.radius = 16;
     this.facingAngle = 0;
 
-    // Base Stats
-    this.maxHp = 100;
+    // Base Stats from Ship Archetype
+    this.maxHp = shipDef.baseStats.maxHp;
     this.hp = this.maxHp;
-    this.baseSpeed = 220;
+    this.baseSpeed = shipDef.baseStats.baseSpeed;
     this.level = 1;
     this.xp = 0;
     this.nextLevelXp = 15;
     this.revivesLeft = 0;
+
+    // Archetype Traits
+    this.isRammer = shipDef.trait === 'rammer';
+    this.isBerserker = shipDef.trait === 'berserker';
+    this.isSniper = shipDef.trait === 'sniper';
+    this.isCarrier = shipDef.trait === 'carrier';
+
+    // Berserker Passives
+    this.hasCheatDeath = this.isBerserker;
+    this.cheatDeathUsed = false;
+    this.berserkerDmgBonus = 0;
+    this.berserkerAtkSpdBonus = 0;
+
+    // Sniper Passives
+    this.noHitTimer = 0;
+    this.hasGhostFocus = false;
 
     // Red Mythic God-Tier Passives
     this.forceMythicSingleChoice = false;
@@ -542,12 +618,12 @@ class Player {
     this.chronosTimer = 0;
 
     this.stats = {
-      damageMult: 1.0,
-      fireRateMult: 1.0,
+      damageMult: shipDef.baseStats.damageMult,
+      fireRateMult: shipDef.baseStats.fireRateMult,
       speedMult: 1.0,
-      magnetRadius: 120,
-      critChance: 0.15,
-      critMult: 2.0
+      magnetRadius: shipDef.baseStats.magnetRadius,
+      critChance: shipDef.baseStats.critChance,
+      critMult: shipDef.baseStats.critMult
     };
 
     this.invulnerableTimer = 0;
@@ -565,6 +641,21 @@ class Player {
       this.invulnerableTimer -= dt;
     }
 
+    // Berserker dynamic scaling (máu càng thấp sát thương càng cao)
+    if (this.isBerserker) {
+      const missingRatio = Math.max(0, 1 - (this.hp / this.maxHp));
+      this.berserkerDmgBonus = missingRatio * 1.8;
+      this.berserkerAtkSpdBonus = missingRatio * 1.2;
+    }
+
+    // Sniper Ghost Focus charge (3s không dính đòn -> Chí Mạng tối thượng)
+    if (this.isSniper) {
+      this.noHitTimer += dt;
+      if (this.noHitTimer >= 3.0 && !this.hasGhostFocus) {
+        this.hasGhostFocus = true;
+      }
+    }
+
     const currentSpeed = this.baseSpeed * this.stats.speedMult * (this.game.isFrenzy ? 1.45 : 1.0);
     this.x += moveVector.x * currentSpeed * dt;
     this.y += moveVector.y * currentSpeed * dt;
@@ -574,13 +665,32 @@ class Player {
       if (Math.random() < 0.6) {
         const tx = this.x - Math.cos(this.facingAngle) * 16;
         const ty = this.y - Math.sin(this.facingAngle) * 16;
-        this.game.particles.push(new Particle(tx, ty, this.game.isFrenzy ? '#f43f5e' : '#38bdf8', 2, 3));
+        const particleColor = this.game.isFrenzy ? '#f43f5e' : (this.isBerserker ? '#ef4444' : (this.isRammer ? '#10b981' : '#38bdf8'));
+        this.game.particles.push(new Particle(tx, ty, particleColor, 2, 3));
       }
     }
   }
 
   takeDamage(amount) {
     if (this.invulnerableTimer > 0) return;
+
+    // Reset Sniper Focus
+    if (this.isSniper) {
+      this.noHitTimer = 0;
+      this.hasGhostFocus = false;
+    }
+
+    // Berserker Cheat Death Undying (chết đi sống lại bất tử 3s)
+    if (this.isBerserker && this.hasCheatDeath && !this.cheatDeathUsed && (this.hp - amount <= 0)) {
+      this.cheatDeathUsed = true;
+      this.hasCheatDeath = false;
+      this.hp = Math.round(this.maxHp * 0.25);
+      this.invulnerableTimer = 3.0;
+      sound.playJackpot();
+      this.game.floatingTexts.push(new FloatingText(this.x, this.y - 50, '🩸 BẤT TỬ CUỒNG NỘ! 🩸', '#ef4444', 24, true));
+      return;
+    }
+
     this.hp -= amount;
     this.invulnerableTimer = 0.2;
     this.game.addScreenShake(5);

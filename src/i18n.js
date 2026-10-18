@@ -34,6 +34,45 @@ export const translations = {
     categorySupport: '🛡️ SUPPORT',
     categoryMythic: '👑 GOD-TIER',
 
+    // Starship Roster
+    shipSelectTitle: 'CHOOSE YOUR STARSHIP',
+    shipSelectSubtitle: 'Each chassis features unique combat physics, passive traits & loadouts',
+    shipSelectedBadge: 'READY FOR LAUNCH',
+    shipSelectBtn: 'SELECT SHIP',
+
+    // Juggernaut
+    shipJuggernautName: 'TITAN JUGGERNAUT',
+    shipJuggernautRole: '🛡️ TANK / RAMMING FORTRESS',
+    shipJuggernautDesc: 'Super heavy armor. Obliterates enemy swarms by ramming into them directly.',
+    shipJuggernautTrait: '⚡ Battering Ram',
+    shipJuggernautTraitDesc: 'Ramming enemies deals 140 damage and knocks them back. Kills from ramming heal +2 HP! Takes 65% reduced collision damage.',
+
+    // Berserker
+    shipBerserkerName: 'BLOOD BERSERKER',
+    shipBerserkerRole: '🩸 MELEE / LOW-HP RAMPAGE',
+    shipBerserkerDesc: 'The lower your HP drops, the more catastrophic your damage and attack speed become.',
+    shipBerserkerTrait: '🔥 Adrenaline Bloodlust',
+    shipBerserkerTraitDesc: 'Gains up to +180% Damage & +120% Attack Speed at low HP! 12% chance to leech +1 HP. Survived lethal hit with 3s invulnerability once.',
+
+    // Phantom
+    shipPhantomName: 'PHANTOM SNIPER',
+    shipPhantomRole: '🎯 LONG-RANGE ARTILLERY',
+    shipPhantomDesc: 'Ultra-fast stealth interceptor. Shreds targets from screen edge with penetrating lasers.',
+    shipPhantomTrait: '👁️ Long-Range Focus',
+    shipPhantomTraitDesc: 'Deals up to +85% extra damage at long distance. When unhurt for 3s, next hit is a GUARANTEED 300% CRIT! Projectiles gain +2 pierce.',
+
+    // Carrier
+    shipCarrierName: 'CARRIER SUMMONER',
+    shipCarrierRole: '🛸 DRONE FLEET COMMANDER',
+    shipCarrierDesc: 'Command an autonomous swarm of wingmen drones and homing missiles while collecting gems.',
+    shipCarrierTrait: '👑 Fleet Synergy',
+    shipCarrierTraitDesc: 'Starts with Wingmen Drones AND Heat-Seeking Missiles! Drones fire +35% faster with massive vacuum radius.',
+
+    statHp: 'HULL',
+    statDmg: 'DAMAGE',
+    statSpd: 'SPEED',
+    statDiff: 'RANGE',
+
     // Weapons
     blasterTitle: 'Plasma Blaster',
     blasterUnlock: 'Plasma Blaster Unlock',
@@ -134,6 +173,7 @@ export const translations = {
     skill_emp: 'EMP Shockwave',
     skill_nuke: 'Orbital Nuke',
     skill_blackhole: 'Cosmic Singularity',
+    skill_ram: 'Battering Ram',
     executeFloat: '💀 EXECUTED! 💀',
     destinyPactActivated: '⚡ DESTINY PACT SEALED! ⚡',
 
@@ -179,6 +219,45 @@ export const translations = {
     categoryOffense: '⚔️ TẤN CÔNG',
     categorySupport: '🛡️ PHỤ TRỢ',
     categoryMythic: '👑 THẦN CẤP',
+
+    // Starship Roster
+    shipSelectTitle: 'CHỌN PHI THUYỀN XUẤT TRẬN',
+    shipSelectSubtitle: 'Mỗi loại tàu sở hữu phong cách chiến đấu, nội tại và vũ khí riêng biệt',
+    shipSelectedBadge: 'SẴN SÀNG XUẤT KÍCH',
+    shipSelectBtn: 'CHỌN TÀU NÀY',
+
+    // Juggernaut
+    shipJuggernautName: 'THIẾT GIÁP JUGGERNAUT',
+    shipJuggernautRole: '🛡️ TĂNG THỦ / TÔNG HÚC',
+    shipJuggernautDesc: 'Pháo đài bọc thép siêu trâu. Lấy thân tàu làm vũ khí tông thẳng nghiền nát bầy quái.',
+    shipJuggernautTrait: '⚡ Thiết Giáp Tông Quái',
+    shipJuggernautTraitDesc: 'Tông thẳng vào quái gây 140 sát thương và hất văng quái. Tông chết quái hồi ngay +2 HP! Giảm 65% sát thương va chạm.',
+
+    // Berserker
+    shipBerserkerName: 'HUYẾT ĐAO BERSERKER',
+    shipBerserkerRole: '🩸 CẬN CHIẾN / CUỒNG BẠO',
+    shipBerserkerDesc: 'Máu càng tụt hỏa lực càng điên cuồng. Càng đứng bên bờ vực chết chóc sức mạnh càng bộc phát cực hạn.',
+    shipBerserkerTrait: '🔥 Huyết Nộ Tuyệt Mạng',
+    shipBerserkerTraitDesc: 'Mất máu tăng tối đa +180% Sát thương & +120% Tốc đánh! 12% tỉ lệ hút +1 Máu khi đánh. Bất tử 3 giây khi nhận đòn chí tử.',
+
+    // Phantom
+    shipPhantomName: 'XẠ THỦ PHANTOM',
+    shipPhantomRole: '🎯 XẠ THỦ TẦM XA',
+    shipPhantomDesc: 'Tiêm kích tàng hình siêu cơ động. Thả diều bắn tỉa xuyên táo cả bầy quái từ rìa màn hình.',
+    shipPhantomTrait: '👁️ Kính Ngắm Viễn Thấu',
+    shipPhantomTraitDesc: 'Bắn quái ở càng xa tăng tối đa +85% sát thương. Né đòn 3s đòn tiếp theo CHẮC CHẮN CHÍ MẠNG x300%! Đạn mặc định +2 lần xuyên quái.',
+
+    // Carrier
+    shipCarrierName: 'HẠM TRƯỞNG CARRIER',
+    shipCarrierRole: '🛸 HẠM ĐỘI DRONE',
+    shipCarrierDesc: 'Chỉ huy đàn drone chiến đấu tự động và tên lửa tầm nhiệt, tàu mẹ chỉ việc bay gom ngọc.',
+    shipCarrierTrait: '👑 Hạm Đội Thần Tốc',
+    shipCarrierTraitDesc: 'Khởi đầu sở hữu NGAY CẢ HAI: Drone Đồng Minh và Tên Lửa Tầm Nhiệt! Drone xả đạn nhanh hơn +35%, phễu hút ngọc cực rộng.',
+
+    statHp: 'GIÁP',
+    statDmg: 'CÔNG',
+    statSpd: 'TỐC ĐỘ',
+    statDiff: 'TẦM BẮN',
 
     // Weapons
     blasterTitle: 'Súng Phóng Plasma',
@@ -280,6 +359,7 @@ export const translations = {
     skill_emp: 'Sóng Chấn Động EMP',
     skill_nuke: 'Bom Hạt Nhân',
     skill_blackhole: 'Hố Đen Kỳ Dị',
+    skill_ram: 'Thiết Giáp Tông Quái',
     executeFloat: '💀 KẾT LIỄU! 💀',
     destinyPactActivated: '⚡ KHẾ ƯỚC ĐỊNH MỆNH ĐÃ THIẾT LẬP! ⚡',
 

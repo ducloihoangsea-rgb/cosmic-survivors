@@ -67,7 +67,7 @@ export class WeaponManager {
   }
 
   update(dt, player, enemies) {
-    const fireMult = player.stats.fireRateMult;
+    const fireMult = player.stats.fireRateMult * (1 + (player.berserkerAtkSpdBonus || 0)) * (player.isCarrier ? 1.15 : 1.0);
 
     // 1. Blaster logic
     const b = this.weapons.blaster;
@@ -184,9 +184,9 @@ export class WeaponManager {
         player.y,
         angle + spread,
         baseDamage * player.stats.damageMult,
-        bLvl >= 4 ? 2 : 1,
+        (bLvl >= 4 ? 2 : 1) + (player.isSniper ? 2 : 0),
         bLvl >= 5,
-        null,
+        player.isSniper ? '#38bdf8' : null,
         'blaster'
       ));
     }
