@@ -40,6 +40,7 @@
           <!-- Mid-game quick language, theme, and exit to menu switchers -->
           <div class="hud-lang-toggle">
             <button id="hud-home-btn" class="hud-lang-badge" title="Thoát ra Menu chính / Quit to Menu">🏠</button>
+            <button id="hud-settings-btn" class="hud-lang-badge" title="Cài đặt / Settings">⚙️</button>
             <button id="hud-theme-btn" class="hud-lang-badge" title="Đổi giao diện Sáng / Tối">🌙</button>
             <button id="hud-lang-btn" class="hud-lang-badge" title="Đổi ngôn ngữ / Change Language">🇻🇳 VI</button>
           </div>
@@ -62,53 +63,53 @@
       </div>
     </div>
 
-    <!-- REAL-TIME BUTTONS ROW (DPS + SHIP STATS) -->
-    <div class="side-meters-group">
-      <!-- REAL-TIME DAMAGE METER (COLLAPSED BUTTON) -->
+    <!-- REAL-TIME LEFT DOCK: BUTTONS + DUAL STACKED PANELS -->
+    <div id="left-dock-container" class="left-dock-container">
+      <!-- 1. DPS COLLAPSED BUTTON -->
       <div id="meter-toggle-btn" class="meter-toggle-btn" title="Xem sát thương chi tiết / Damage Breakdown">
         <span class="meter-btn-icon">📊</span>
         <span class="meter-btn-label">DPS</span>
       </div>
 
-      <!-- REAL-TIME SHIP ATTRIBUTES (COLLAPSED BUTTON) -->
+      <!-- 2. REAL-TIME DAMAGE METER (EXPANDED PANEL - ON TOP) -->
+      <div id="damage-meter-panel" class="damage-meter-panel hidden">
+        <div class="meter-header">
+          <div class="meter-header-left">
+            <span class="meter-header-icon">📊</span>
+            <span id="meter-title" class="meter-header-title">BẢNG SÁT THƯƠNG KỸ NĂNG</span>
+          </div>
+          <button id="meter-close-btn" class="meter-close-btn" title="Thu gọn / Collapse">✕</button>
+        </div>
+
+        <div class="meter-total-row">
+          <span id="meter-total-label">Tổng Sát Thương</span>
+          <span id="meter-total-val" class="meter-total-val">0</span>
+        </div>
+
+        <div id="meter-skills-list" class="meter-skills-list">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- 3. SHIP STATS COLLAPSED BUTTON -->
       <div id="stats-toggle-btn" class="meter-toggle-btn stats-btn" title="Xem chỉ số phi thuyền Real-time">
         <span class="meter-btn-icon">🚀</span>
         <span id="stats-btn-label" class="meter-btn-label">CHỈ SỐ</span>
       </div>
-    </div>
 
-    <!-- REAL-TIME SHIP STATS (EXPANDED PANEL) -->
-    <div id="ship-stats-panel" class="damage-meter-panel hidden">
-      <div class="meter-header">
-        <div class="meter-header-left">
-          <span class="meter-header-icon">🚀</span>
-          <span id="ship-stats-title" class="meter-header-title">CHỈ SỐ PHI THUYỀN REAL-TIME</span>
+      <!-- 4. REAL-TIME SHIP STATS (EXPANDED PANEL - UNDER DPS) -->
+      <div id="ship-stats-panel" class="damage-meter-panel hidden">
+        <div class="meter-header">
+          <div class="meter-header-left">
+            <span class="meter-header-icon">🚀</span>
+            <span id="ship-stats-title" class="meter-header-title">CHỈ SỐ PHI THUYỀN REAL-TIME</span>
+          </div>
+          <button id="stats-close-btn" class="meter-close-btn" title="Thu gọn / Collapse">✕</button>
         </div>
-        <button id="stats-close-btn" class="meter-close-btn" title="Thu gọn / Collapse">✕</button>
-      </div>
 
-      <div id="ship-stats-list" class="ship-stats-grid">
-        <!-- Rendered dynamically with real-time stats -->
-      </div>
-    </div>
-
-    <!-- REAL-TIME DAMAGE METER (EXPANDED PANEL) -->
-    <div id="damage-meter-panel" class="damage-meter-panel hidden">
-      <div class="meter-header">
-        <div class="meter-header-left">
-          <span class="meter-header-icon">📊</span>
-          <span id="meter-title" class="meter-header-title">BẢNG SÁT THƯƠNG KỸ NĂNG</span>
+        <div id="ship-stats-list" class="ship-stats-grid">
+          <!-- Rendered dynamically with real-time stats -->
         </div>
-        <button id="meter-close-btn" class="meter-close-btn" title="Thu gọn / Collapse">✕</button>
-      </div>
-
-      <div class="meter-total-row">
-        <span id="meter-total-label">Tổng Sát Thương</span>
-        <span id="meter-total-val" class="meter-total-val">0</span>
-      </div>
-
-      <div id="meter-skills-list" class="meter-skills-list">
-        <!-- Rendered dynamically -->
       </div>
     </div>
 
@@ -133,6 +134,7 @@
     <div id="start-screen" class="modal-overlay active">
       <div class="start-header-section">
         <div class="lang-selector-bar">
+          <button id="start-settings-btn" class="lang-pill" title="Cài đặt / Settings">⚙️ CÀI ĐẶT</button>
           <button id="start-theme-btn" class="lang-pill" title="Chuyển chế độ Sáng / Tối">🌙 TỐI</button>
           <button id="lang-btn-vi" class="lang-pill active">🇻🇳 Tiếng Việt</button>
           <button id="lang-btn-en" class="lang-pill">🇬🇧 English</button>
@@ -288,8 +290,48 @@
         <button id="over-hangar-btn" class="btn-secondary">⚙️ XƯỞNG NÂNG CẤP</button>
       </div>
     </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-modal" class="modal-overlay">
+      <div class="settings-card-box">
+        <div class="settings-header">
+          <div class="settings-title-group">
+            <h2 id="settings-title" class="modal-title" style="margin: 0; text-align: left;">⚙️ CÀI ĐẶT TRÒ CHƠI</h2>
+            <div id="settings-sub" class="modal-subtitle" style="margin: 0; text-align: left;">Tùy chỉnh giao diện & âm thanh</div>
+          </div>
+          <button id="settings-header-close-btn" class="modal-close-icon-btn" style="width: 34px !important; height: 34px !important; border-radius: 50% !important; background: rgba(239,68,68,0.2) !important; border: 1.5px solid #ef4444 !important; color: #fca5a5 !important; font-size: 15px !important; font-weight: 900 !important; cursor: pointer !important; display: flex !important; align-items: center !important; justify-content: center !important;" title="Đóng [ESC]">✕</button>
+        </div>
+
+        <div class="settings-content-body">
+          <!-- Setting 1: Panel Opacity -->
+          <div class="setting-item">
+            <div class="setting-item-top">
+              <span id="setting-opacity-label" class="setting-item-label">🪟 Độ Mờ Bảng DPS & Chỉ Số</span>
+              <span id="opacity-val-badge" class="setting-val-badge">45%</span>
+            </div>
+            <div class="setting-slider-wrap">
+              <input type="range" id="panel-opacity-slider" min="15" max="100" step="5" value="45" class="setting-range-slider">
+            </div>
+            <div id="setting-opacity-tip" class="setting-tip">Kéo sang trái để kính trong suốt hơn, kéo sang phải để đậm rõ hơn.</div>
+          </div>
+
+          <!-- Setting 2: Sound Toggle -->
+          <div class="setting-item">
+            <div class="setting-item-top">
+              <span id="setting-sound-label" class="setting-item-label">🔊 Âm Thanh & Nhạc Game</span>
+              <button id="sound-toggle-btn" class="setting-toggle-btn active">BẬT</button>
+            </div>
+            <div id="setting-sound-tip" class="setting-tip">Bật hoặc tắt toàn bộ hiệu ứng âm thanh và tiếng nhặt ngọc.</div>
+          </div>
+        </div>
+
+        <div class="settings-footer">
+          <button id="settings-close-btn" class="hangar-mini-close" style="height: 28px !important; min-height: unset !important; max-height: 28px !important; width: auto !important; max-width: 140px !important; padding: 4px 18px !important; font-size: 11.5px !important; font-weight: 800 !important; margin: 0 auto !important; border-radius: 999px !important; flex: 0 0 auto !important; background: rgba(30,41,59,0.85) !important; color: #94a3b8 !important; border: 1px solid rgba(255,255,255,0.2) !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important;">✕ ĐÓNG</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <script type="module" src="./src/main.js?v=2.6"></script>
+  <script type="module" src="./src/main.js?v=2.7"></script>
 </body>
 </html>

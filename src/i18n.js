@@ -78,9 +78,17 @@ export const translations = {
     hangarSelectShipBtn: 'DEPLOY THIS SHIP',
 
     hudHomeBtn: '🏠 MENU',
+    hudSettingsBtn: '⚙️ SETTINGS',
     confirmQuit: 'Quit to Main Menu? Current run progress will be converted to gold.',
     shipStatsBtn: 'STATS',
     shipStatsTitle: 'SHIP REAL-TIME ATTRIBUTES',
+    settingsTitle: '⚙️ GAME SETTINGS',
+    settingsSub: 'Customize UI opacity & game audio',
+    settingOpacity: '🪟 DPS & Stats Panel Opacity',
+    settingOpacityTip: 'Drag slider to adjust transparency of real-time side panels.',
+    settingSound: '🔊 Sound & Audio Effects',
+    soundOn: 'ON',
+    soundOff: 'MUTED',
 
     // Weapons
     blasterTitle: 'Plasma Blaster',
@@ -316,9 +324,17 @@ export const translations = {
     hangarSelectShipBtn: 'CHỌN XUẤT TRẬN',
 
     hudHomeBtn: '🏠 MENU',
+    hudSettingsBtn: '⚙️ CÀI ĐẶT',
     confirmQuit: 'Bạn có chắc chắn muốn thoát về Menu chính? Điểm số hiện tại sẽ được quy đổi thành Vàng.',
     shipStatsBtn: 'CHỈ SỐ',
     shipStatsTitle: 'CHỈ SỐ PHI THUYỀN REAL-TIME',
+    settingsTitle: '⚙️ CÀI ĐẶT TRÒ CHƠI',
+    settingsSub: 'Tùy chỉnh độ mờ giao diện & âm thanh',
+    settingOpacity: '🪟 Độ Mờ Bảng DPS & Chỉ Số',
+    settingOpacityTip: 'Kéo thanh trượt để chỉnh độ mờ kính của 2 bảng bên trái.',
+    settingSound: '🔊 Âm Thanh & Nhạc Game',
+    soundOn: 'BẬT',
+    soundOff: 'TẮT',
 
     // Weapons
     blasterTitle: 'Súng Phóng Plasma',

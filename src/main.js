@@ -67,6 +67,22 @@ window.addEventListener('DOMContentLoaded', () => {
   const btnUltimate = document.getElementById('btn-ultimate');
   const ultProgressCircle = document.getElementById('ult-progress-circle');
 
+  // Settings Modal & Controls Elements
+  const hudSettingsBtn = document.getElementById('hud-settings-btn');
+  const startSettingsBtn = document.getElementById('start-settings-btn');
+  const settingsModal = document.getElementById('settings-modal');
+  const settingsHeaderCloseBtn = document.getElementById('settings-header-close-btn');
+  const settingsCloseBtn = document.getElementById('settings-close-btn');
+  const panelOpacitySlider = document.getElementById('panel-opacity-slider');
+  const opacityValBadge = document.getElementById('opacity-val-badge');
+  const soundToggleBtn = document.getElementById('sound-toggle-btn');
+  const settingsTitle = document.getElementById('settings-title');
+  const settingsSub = document.getElementById('settings-sub');
+  const settingOpacityLabel = document.getElementById('setting-opacity-label');
+  const settingOpacityTip = document.getElementById('setting-opacity-tip');
+  const settingSoundLabel = document.getElementById('setting-sound-label');
+  const settingSoundTip = document.getElementById('setting-sound-tip');
+
   // Translatable Labels
   const startTitle = document.getElementById('start-title');
   const startSub = document.getElementById('start-sub');
@@ -180,8 +196,32 @@ window.addEventListener('DOMContentLoaded', () => {
     if (shipSelectTitle) shipSelectTitle.textContent = i18n.t('shipSelectTitle');
     if (shipSelectSub) shipSelectSub.textContent = i18n.t('shipSelectSubtitle');
 
+    // Settings Modal translations
+    if (startSettingsBtn) startSettingsBtn.textContent = '⚙️ ' + i18n.t('hudSettingsBtn');
+    if (hudSettingsBtn) hudSettingsBtn.title = i18n.t('hudSettingsBtn');
+    if (settingsTitle) settingsTitle.textContent = '⚙️ ' + i18n.t('settingsTitle');
+    if (settingsSub) settingsSub.textContent = i18n.t('settingsSub');
+    if (settingOpacityLabel) settingOpacityLabel.textContent = '🪟 ' + i18n.t('settingOpacity');
+    if (settingOpacityTip) settingOpacityTip.textContent = i18n.t('settingOpacityTip');
+    if (settingSoundLabel) settingSoundLabel.textContent = '🔊 ' + i18n.t('settingSound');
+    if (settingSoundTip) settingSoundTip.textContent = i18n.t('settingSoundTip');
+    if (settingsCloseBtn) settingsCloseBtn.textContent = '✕ ' + i18n.t('closeBtn');
+    updateSoundBtnUI();
+
     renderShipSelector();
     renderHangar();
+  }
+
+  // Sound toggle button UI updater
+  function updateSoundBtnUI() {
+    if (!soundToggleBtn) return;
+    if (sound.enabled) {
+      soundToggleBtn.textContent = i18n.t('soundOn');
+      soundToggleBtn.classList.add('active');
+    } else {
+      soundToggleBtn.textContent = i18n.t('soundOff');
+      soundToggleBtn.classList.remove('active');
+    }
   }
 
   // Starship Selection Card Generator
@@ -255,7 +295,8 @@ window.addEventListener('DOMContentLoaded', () => {
                         (levelUpModal && levelUpModal.classList.contains('active')) ||
                         (gameOverModal && gameOverModal.classList.contains('active')) ||
                         (chestModal && chestModal.classList.contains('active')) ||
-                        (hangarModal && hangarModal.classList.contains('active'));
+                        (hangarModal && hangarModal.classList.contains('active')) ||
+                        (settingsModal && settingsModal.classList.contains('active'));
     if (isModalOpen) {
       document.body.classList.add('in-modal');
     } else {
@@ -263,22 +304,37 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Damage Meter Toggle Handlers (Hiển thị đồng thời cùng chỉ số tàu)
-  meterToggleBtn.addEventListener('click', () => {
-    sound.playCardSelect();
-    damageMeterPanel.classList.toggle('hidden');
-  });
+  // Helper: Reset Left Dock UI (Ẩn bảng, hiện lại các icon)
+  function resetLeftDockState() {
+    if (damageMeterPanel) damageMeterPanel.classList.add('hidden');
+    if (meterToggleBtn) meterToggleBtn.classList.remove('hidden');
+    if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
+    if (statsToggleBtn) statsToggleBtn.classList.remove('hidden');
+  }
 
-  meterCloseBtn.addEventListener('click', () => {
-    sound.playCardSelect();
-    damageMeterPanel.classList.add('hidden');
-  });
+  // Damage Meter Toggle Handlers (Bấm icon thì icon ẩn và bảng hiện ra; bấm ✕ thì bảng ẩn và icon hiện lại)
+  if (meterToggleBtn) {
+    meterToggleBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      damageMeterPanel.classList.remove('hidden');
+      meterToggleBtn.classList.add('hidden');
+    });
+  }
 
-  // Real-Time Ship Attributes Toggle Handlers (Hiển thị đồng thời cùng DPS)
+  if (meterCloseBtn) {
+    meterCloseBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      damageMeterPanel.classList.add('hidden');
+      meterToggleBtn.classList.remove('hidden');
+    });
+  }
+
+  // Real-Time Ship Attributes Toggle Handlers (Bấm icon thì icon ẩn và bảng hiện bên dưới bảng DPS)
   if (statsToggleBtn) {
     statsToggleBtn.addEventListener('click', () => {
       sound.playCardSelect();
-      shipStatsPanel.classList.toggle('hidden');
+      shipStatsPanel.classList.remove('hidden');
+      statsToggleBtn.classList.add('hidden');
     });
   }
 
@@ -286,6 +342,68 @@ window.addEventListener('DOMContentLoaded', () => {
     statsCloseBtn.addEventListener('click', () => {
       sound.playCardSelect();
       shipStatsPanel.classList.add('hidden');
+      statsToggleBtn.classList.remove('hidden');
+    });
+  }
+
+  // Dock Panel Opacity Controller (Điều chỉnh độ mờ của bảng hiển thị DPS và chỉ số)
+  function applyDockOpacity(val) {
+    const num = Math.min(100, Math.max(15, parseInt(val, 10) || 45));
+    document.documentElement.style.setProperty('--dock-panel-opacity', (num / 100).toFixed(2));
+    if (opacityValBadge) opacityValBadge.textContent = `${num}%`;
+    if (panelOpacitySlider && String(panelOpacitySlider.value) !== String(num)) {
+      panelOpacitySlider.value = num;
+    }
+    localStorage.setItem('dopamine_dock_opacity', String(num));
+  }
+
+  const savedOpacity = localStorage.getItem('dopamine_dock_opacity') || '45';
+  applyDockOpacity(savedOpacity);
+
+  if (panelOpacitySlider) {
+    panelOpacitySlider.addEventListener('input', (e) => {
+      applyDockOpacity(e.target.value);
+    });
+  }
+
+  // Settings Modal Handlers (Mở và đóng bảng cài đặt)
+  function openSettings() {
+    sound.playCardSelect();
+    updateSoundBtnUI();
+    if (settingsModal) {
+      settingsModal.classList.add('active');
+      updateModalState();
+    }
+  }
+
+  function closeSettings() {
+    sound.playCardSelect();
+    if (settingsModal) {
+      settingsModal.classList.remove('active');
+      updateModalState();
+    }
+  }
+
+  if (hudSettingsBtn) hudSettingsBtn.addEventListener('click', openSettings);
+  if (startSettingsBtn) startSettingsBtn.addEventListener('click', openSettings);
+  if (settingsCloseBtn) settingsCloseBtn.addEventListener('click', closeSettings);
+  if (settingsHeaderCloseBtn) settingsHeaderCloseBtn.addEventListener('click', closeSettings);
+
+  if (settingsModal) {
+    settingsModal.addEventListener('click', (e) => {
+      if (e.target === settingsModal) {
+        closeSettings();
+      }
+    });
+  }
+
+  if (soundToggleBtn) {
+    soundToggleBtn.addEventListener('click', () => {
+      const active = sound.toggleMute();
+      updateSoundBtnUI();
+      if (active) {
+        sound.playCardSelect();
+      }
     });
   }
 
@@ -304,8 +422,8 @@ window.addEventListener('DOMContentLoaded', () => {
         levelUpModal.classList.remove('active');
         gameOverModal.classList.remove('active');
         chestModal.classList.remove('active');
-        damageMeterPanel.classList.add('hidden');
-        if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
+        if (settingsModal) settingsModal.classList.remove('active');
+        resetLeftDockState();
         updateModalState();
       }
     });
@@ -859,8 +977,13 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   // Press Escape to close modal
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && hangarModal.classList.contains('active')) {
-      closeHangar();
+    if (e.key === 'Escape') {
+      if (hangarModal && hangarModal.classList.contains('active')) {
+        closeHangar();
+      }
+      if (settingsModal && settingsModal.classList.contains('active')) {
+        closeSettings();
+      }
     }
   });
 
@@ -1094,6 +1217,7 @@ window.addEventListener('DOMContentLoaded', () => {
     statGold.textContent = `${meta.gold.toLocaleString()} (+${game.earnedGold})`;
 
     gameOverModal.classList.add('active');
+    resetLeftDockState();
     updateModalState();
   };
 
@@ -1102,8 +1226,7 @@ window.addEventListener('DOMContentLoaded', () => {
     sound.resume();
     sound.playCardSelect();
     startScreen.classList.remove('active');
-    damageMeterPanel.classList.add('hidden');
-    if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
+    resetLeftDockState();
     game.state = 'playing';
     updateModalState();
   });
@@ -1112,8 +1235,7 @@ window.addEventListener('DOMContentLoaded', () => {
   retryBtn.addEventListener('click', () => {
     sound.playCardSelect();
     gameOverModal.classList.remove('active');
-    damageMeterPanel.classList.add('hidden');
-    if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
+    resetLeftDockState();
     game.restart();
     updateModalState();
   });

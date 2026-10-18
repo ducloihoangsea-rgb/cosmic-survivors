@@ -7,7 +7,8 @@ class SoundFX {
     this.masterGain = null;
     this.gemPitchIndex = 0;
     this.lastGemTime = 0;
-    this.enabled = true;
+    const savedMuted = localStorage.getItem('dopamine_sound_muted') === 'true';
+    this.enabled = !savedMuted;
 
     // Pentatonic scale frequencies for euphoric gem collection (C4 to C7)
     this.pentatonicScale = [
@@ -16,6 +17,19 @@ class SoundFX {
       1046.50, 1174.66, 1318.51, 1567.98, 1760.00, // C6 - A6
       2093.00, 2349.32, 2637.02, 3135.96 // C7+
     ];
+  }
+
+  setMuted(muted) {
+    this.enabled = !muted;
+    localStorage.setItem('dopamine_sound_muted', muted ? 'true' : 'false');
+    if (this.masterGain) {
+      this.masterGain.gain.value = this.enabled ? 0.35 : 0;
+    }
+  }
+
+  toggleMute() {
+    this.setMuted(this.enabled);
+    return !this.enabled;
   }
 
   init() {
