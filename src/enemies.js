@@ -72,29 +72,29 @@ export class Enemy {
     // Touch player damage / Ramming Collision
     if (dist < this.radius + player.radius) {
       if (player.isRammer) {
-        // 🛡️ Juggernaut Battering Ram Impact!
-        const ramDmg = 140 * player.stats.damageMult * (1 + (player.berserkerDmgBonus || 0));
+        // ☄️ Rammer Meteor Impact: Base * Mass * Speed * DamageMult
+        const ramDmg = (player.baseStats?.ramDamage || 180) * (player.stats.mass || 1.0) * player.stats.speedMult * player.stats.damageMult;
         player.game.damageEnemy(this, ramDmg, true, 'ram');
 
         // Knockback enemy away violently
         if (dist > 0.001) {
-          this.x -= (dx / dist) * 70;
-          this.y -= (dy / dist) * 70;
+          this.x -= (dx / dist) * 80;
+          this.y -= (dy / dist) * 80;
         }
 
-        // Sparks & debris
-        for (let i = 0; i < 4; i++) {
-          player.game.particles.push(new Particle(this.x, this.y, '#10b981', 4, 3.5));
+        // Magma sparks & fiery debris
+        for (let i = 0; i < 5; i++) {
+          player.game.particles.push(new Particle(this.x, this.y, '#f97316', 5, 4));
         }
 
         // Tông chết quái hồi máu!
         if (this.isDead && player.hp < player.maxHp) {
           player.hp = Math.min(player.maxHp, player.hp + 2);
-          player.game.floatingTexts.push(new FloatingText(player.x, player.y - 30, '+2 HP', '#10b981', 16, false));
+          player.game.floatingTexts.push(new FloatingText(player.x, player.y - 30, '+2 HP', '#22c55e', 16, false));
         }
 
-        // Player takes 65% reduced collision damage
-        player.takeDamage(this.damage * dt * 0.35);
+        // Player takes 70% reduced collision damage (receives only 30%)
+        player.takeDamage(this.damage * dt * 0.30);
       } else {
         player.takeDamage(this.damage * dt);
       }

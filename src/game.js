@@ -96,7 +96,7 @@ export class Game {
   }
 
   initShipLoadout() {
-    const shipDef = SHIP_ROSTER[this.selectedShipId] || SHIP_ROSTER.phantom;
+    const shipDef = SHIP_ROSTER[this.selectedShipId] || SHIP_ROSTER.rammer;
     this.player = new Player(this, this.selectedShipId);
     this.weaponManager = new WeaponManager(this);
 
@@ -133,8 +133,12 @@ export class Game {
   triggerUltimate() {
     if (this.ultimateCharge >= 100) {
       this.ultimateCharge = 0;
-      this.weaponManager.triggerEmpShockwave(this.player);
-      this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 45, '⚡ EMP SHOCKWAVE ⚡', '#00f2fe', 22, true));
+      if (this.player.isNovaShield) {
+        this.player.triggerNovaBlast(true);
+      } else {
+        this.weaponManager.triggerEmpShockwave(this.player);
+        this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 45, '⚡ EMP SHOCKWAVE ⚡', '#00f2fe', 22, true));
+      }
     }
   }
 
@@ -586,10 +590,12 @@ export class Game {
 }
 
 class Player {
-  constructor(game, shipId = 'phantom') {
+  constructor(game, shipId = 'rammer') {
     this.game = game;
     this.shipId = shipId;
-    const shipDef = SHIP_ROSTER[shipId] || SHIP_ROSTER.phantom;
+    const shipDef = SHIP_ROSTER[shipId] || SHIP_ROSTER.rammer;
+    this.shipDef = shipDef;
+    this.baseStats = shipDef.baseStats;
 
     this.x = 0;
     this.y = 0;
@@ -605,21 +611,20 @@ class Player {
     this.nextLevelXp = 15;
     this.revivesLeft = 0;
 
-    // Archetype Traits
+    // Archetype Traits (3 Distinct Paradigms)
     this.isRammer = shipDef.trait === 'rammer';
-    this.isBerserker = shipDef.trait === 'berserker';
-    this.isSniper = shipDef.trait === 'sniper';
-    this.isCarrier = shipDef.trait === 'carrier';
+    this.isSerpent = shipDef.trait === 'serpent';
+    this.isNovaShield = shipDef.trait === 'novashield';
+    this.noGuns = !!shipDef.baseStats.noGuns;
 
-    // Berserker Passives
-    this.hasCheatDeath = this.isBerserker;
-    this.cheatDeathUsed = false;
-    this.berserkerDmgBonus = 0;
-    this.berserkerAtkSpdBonus = 0;
+    // Serpent trail history buffer & segment positions
+    this.trailBuffer = [];
+    this.segmentPositions = [];
 
-    // Sniper Passives
-    this.noHitTimer = 0;
-    this.hasGhostFocus = false;
+    // Nova Shield barrier
+    this.shieldHp = shipDef.baseStats.shieldHp || 0;
+    this.shieldMaxHp = shipDef.baseStats.shieldMaxHp || 0;
+    this.shieldRechargeTimer = 0;
 
     // Red Mythic God-Tier Passives
     this.forceMythicSingleChoice = false;
@@ -636,7 +641,26 @@ class Player {
       speedMult: 1.0,
       magnetRadius: shipDef.baseStats.magnetRadius,
       critChance: shipDef.baseStats.critChance,
-      critMult: shipDef.baseStats.critMult
+      critMult: shipDef.baseStats.critMult,
+      mass: shipDef.baseStats.mass || 1.0,
+      bonusSegments: 0,
+      shieldRadiusMult: 1.0,
+      thorns: 0
+    };
+
+    // Track levels of passive stat augments
+    this.buffLevels = {
+      overclock: 0,
+      hypercharge: 0,
+      gravitywell: 0,
+      warpengine: 0,
+      eaglesight: 0,
+      criticalsurge: 0,
+      nanorepair: 0,
+      hullmass: 0,
+      serpentsegments: 0,
+      barrierradius: 0,
+      spikedthorns: 0
     };
 
     this.invulnerableTimer = 0;
@@ -654,32 +678,105 @@ class Player {
       this.invulnerableTimer -= dt;
     }
 
-    // Berserker dynamic scaling (máu càng thấp sát thương càng cao)
-    if (this.isBerserker) {
-      const missingRatio = Math.max(0, 1 - (this.hp / this.maxHp));
-      this.berserkerDmgBonus = missingRatio * 1.8;
-      this.berserkerAtkSpdBonus = missingRatio * 1.2;
-    }
-
-    // Sniper Ghost Focus charge (3s không dính đòn -> Chí Mạng tối thượng)
-    if (this.isSniper) {
-      this.noHitTimer += dt;
-      if (this.noHitTimer >= 3.0 && !this.hasGhostFocus) {
-        this.hasGhostFocus = true;
-      }
-    }
-
     const currentSpeed = this.baseSpeed * this.stats.speedMult * (this.game.isFrenzy ? 1.45 : 1.0);
     this.x += moveVector.x * currentSpeed * dt;
     this.y += moveVector.y * currentSpeed * dt;
 
     if (moveVector.x !== 0 || moveVector.y !== 0) {
       this.facingAngle = Math.atan2(moveVector.y, moveVector.x);
+    }
+
+    // Always maintain trail history buffer for Serpent and plasma trails
+    this.trailBuffer.unshift({ x: this.x, y: this.y, facingAngle: this.facingAngle });
+    if (this.trailBuffer.length > 250) {
+      this.trailBuffer.pop();
+    }
+
+    // Thruster plasma particles
+    if (moveVector.x !== 0 || moveVector.y !== 0) {
       if (Math.random() < 0.6) {
         const tx = this.x - Math.cos(this.facingAngle) * 16;
         const ty = this.y - Math.sin(this.facingAngle) * 16;
-        const particleColor = this.game.isFrenzy ? '#f43f5e' : (this.isBerserker ? '#ef4444' : (this.isRammer ? '#10b981' : '#38bdf8'));
-        this.game.particles.push(new Particle(tx, ty, particleColor, 2, 3));
+        const particleColor = this.game.isFrenzy ? '#f43f5e' : (this.isRammer ? '#f97316' : (this.isSerpent ? '#10b981' : '#00f2fe'));
+        this.game.particles.push(new Particle(tx, ty, particleColor, this.isRammer ? 3.5 : 2, 3));
+      }
+    }
+
+    // Nova Shield Recharge logic
+    if (this.isNovaShield) {
+      if (this.shieldRechargeTimer > 0) {
+        this.shieldRechargeTimer -= dt;
+      } else if (this.shieldHp < this.shieldMaxHp) {
+        this.shieldHp = Math.min(this.shieldMaxHp, this.shieldHp + dt * 45);
+      }
+    }
+
+    // Serpent Segments Logic
+    if (this.isSerpent) {
+      this.segmentPositions = [];
+      const totalSegments = (this.baseStats?.segments || 4) + (this.stats.bonusSegments || 0);
+      const segRadius = (this.baseStats?.segmentRadius || 14) * (this.stats.shieldRadiusMult || 1.0);
+      const step = 8; // Spacing along trail buffer
+
+      for (let s = 1; s <= totalSegments; s++) {
+        const idx = Math.min(this.trailBuffer.length - 1, s * step);
+        const pt = this.trailBuffer[idx] || { x: this.x, y: this.y, facingAngle: this.facingAngle };
+        const seg = { x: pt.x, y: pt.y, radius: segRadius, index: s };
+        this.segmentPositions.push(seg);
+
+        // Segment collision with nearby enemies: swipe damage + knockback
+        for (const enemy of this.game.enemies) {
+          const dx = enemy.x - seg.x;
+          const dy = enemy.y - seg.y;
+          const d = Math.hypot(dx, dy);
+          if (d < seg.radius + enemy.radius) {
+            const segDmg = (this.baseStats?.segmentDamage || 85) * this.stats.damageMult * (1 + (this.stats.thorns || 0)) * dt * 4;
+            this.game.damageEnemy(enemy, Math.max(1, segDmg), false, 'serpent');
+            if (d > 0.001) {
+              enemy.x += (dx / d) * 15 * dt * 60;
+              enemy.y += (dy / d) * 15 * dt * 60;
+            }
+            if (Math.random() < 0.2) {
+              this.game.particles.push(new Particle(enemy.x, enemy.y, '#34d399', 3, 2.5));
+            }
+          }
+        }
+      }
+    }
+  }
+
+  triggerNovaBlast(isSuper = false) {
+    const baseRadius = (this.baseStats?.novaRadius || 160) * (this.stats.shieldRadiusMult || 1.0) * (this.stats.mass || 1.0);
+    const radius = isSuper ? baseRadius * 1.6 : baseRadius;
+    const baseDmg = (this.baseStats?.novaDamage || 320) * this.stats.damageMult * (this.stats.mass || 1.0);
+    const dmg = isSuper ? baseDmg * 2.0 : baseDmg;
+
+    sound.playExplosion();
+    this.game.addScreenShake(isSuper ? 16 : 10);
+
+    // Shockwave particle visual
+    for (let i = 0; i < (isSuper ? 36 : 22); i++) {
+      const angle = (i / (isSuper ? 36 : 22)) * Math.PI * 2;
+      const spd = (radius / 18);
+      const px = this.x + Math.cos(angle) * 15;
+      const py = this.y + Math.sin(angle) * 15;
+      const p = new Particle(px, py, isSuper ? '#facc15' : '#00f2fe', 6, 4.5, 0.9);
+      p.vx = Math.cos(angle) * spd;
+      p.vy = Math.sin(angle) * spd;
+      this.game.particles.push(p);
+    }
+
+    this.game.floatingTexts.push(new FloatingText(this.x, this.y - 45, isSuper ? '⚡ MEGA NOVA! ⚡' : '💥 NOVA BLAST! 💥', '#00f2fe', 22, true));
+
+    // Damage & knock back all enemies in radius
+    for (const enemy of this.game.enemies) {
+      const d = Math.hypot(enemy.x - this.x, enemy.y - this.y);
+      if (d < radius + enemy.radius) {
+        this.game.damageEnemy(enemy, dmg, true, 'novashield');
+        if (d > 0.001) {
+          enemy.x += ((enemy.x - this.x) / d) * (isSuper ? 90 : 60);
+          enemy.y += ((enemy.y - this.y) / d) * (isSuper ? 90 : 60);
+        }
       }
     }
   }
@@ -687,20 +784,19 @@ class Player {
   takeDamage(amount) {
     if (this.invulnerableTimer > 0) return;
 
-    // Reset Sniper Focus
-    if (this.isSniper) {
-      this.noHitTimer = 0;
-      this.hasGhostFocus = false;
-    }
-
-    // Berserker Cheat Death Undying (chết đi sống lại bất tử 3s)
-    if (this.isBerserker && this.hasCheatDeath && !this.cheatDeathUsed && (this.hp - amount <= 0)) {
-      this.cheatDeathUsed = true;
-      this.hasCheatDeath = false;
-      this.hp = Math.round(this.maxHp * 0.25);
-      this.invulnerableTimer = 3.0;
-      sound.playJackpot();
-      this.game.floatingTexts.push(new FloatingText(this.x, this.y - 50, '🩸 BẤT TỬ CUỒNG NỘ! 🩸', '#ef4444', 24, true));
+    // Nova Shield barrier absorbs damage first
+    if (this.isNovaShield && this.shieldHp > 0) {
+      this.shieldHp -= amount;
+      this.invulnerableTimer = 0.15;
+      sound.playHit();
+      for (let i = 0; i < 4; i++) {
+        this.game.particles.push(new Particle(this.x, this.y, '#00f2fe', 3, 3));
+      }
+      if (this.shieldHp <= 0) {
+        this.shieldHp = 0;
+        this.shieldRechargeTimer = (this.baseStats?.shieldRechargeTime || 3.5);
+        this.triggerNovaBlast(false);
+      }
       return;
     }
 
@@ -708,6 +804,16 @@ class Player {
     this.invulnerableTimer = 0.2;
     this.game.addScreenShake(5);
     sound.playHit();
+
+    // Spiked Thorns reflection
+    if (this.stats.thorns > 0) {
+      for (const e of this.game.enemies) {
+        const d = Math.hypot(e.x - this.x, e.y - this.y);
+        if (d < this.radius + e.radius + 20) {
+          this.game.damageEnemy(e, amount * this.stats.thorns * 2.0, false, 'thorns');
+        }
+      }
+    }
 
     if (this.hp < 0) this.hp = 0;
   }

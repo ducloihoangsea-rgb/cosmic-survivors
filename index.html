@@ -128,15 +128,17 @@
 
     <!-- START SCREEN MODAL -->
     <div id="start-screen" class="modal-overlay active">
-      <div class="lang-selector-bar">
-        <button id="start-theme-btn" class="lang-pill" title="Chuyển chế độ Sáng / Tối">🌙 TỐI</button>
-        <button id="lang-btn-vi" class="lang-pill active">🇻🇳 Tiếng Việt</button>
-        <button id="lang-btn-en" class="lang-pill">🇬🇧 English</button>
-      </div>
+      <div class="start-header-section">
+        <div class="lang-selector-bar">
+          <button id="start-theme-btn" class="lang-pill" title="Chuyển chế độ Sáng / Tối">🌙 TỐI</button>
+          <button id="lang-btn-vi" class="lang-pill active">🇻🇳 Tiếng Việt</button>
+          <button id="lang-btn-en" class="lang-pill">🇬🇧 English</button>
+        </div>
 
-      <div class="logo-container">
-        <h1 id="start-title" class="game-logo">CHIẾN HẠM<br>VÔ CỰC</h1>
-        <div id="start-sub" class="sub-tagline">⚡ BÙNG NỔ DOPAMINE ⚡</div>
+        <div class="logo-container">
+          <h1 id="start-title" class="game-logo">CHIẾN HẠM<br>VÔ CỰC</h1>
+          <div id="start-sub" class="sub-tagline">⚡ BÙNG NỔ DOPAMINE ⚡</div>
+        </div>
       </div>
 
       <!-- STARSHIP SELECTION SECTION -->
@@ -150,24 +152,26 @@
         </div>
       </div>
 
-      <div class="start-btn-group">
-        <button id="start-btn" class="btn-primary">BẮT ĐẦU SĂN</button>
-        <button id="start-hangar-btn" class="btn-secondary">⚙️ XƯỞNG PHI THUYỀN</button>
-      </div>
+      <div class="start-footer-section">
+        <div class="start-btn-group">
+          <button id="start-btn" class="btn-primary">BẮT ĐẦU SĂN</button>
+          <button id="start-hangar-btn" class="btn-secondary">⚙️ XƯỞNG PHI THUYỀN</button>
+        </div>
 
-      <div class="control-tips">
-        <span id="tip-mobile">📱 Di động: Kéo ngón cái để lướt • Nút EMP</span>
-        <span id="tip-pc">💻 PC: Phím WASD • Phím Cách (Space): Sóng EMP</span>
+        <div class="control-tips">
+          <span id="tip-mobile">📱 Di động: Kéo ngón cái để lướt • Nút EMP</span>
+          <span id="tip-pc">💻 PC: Phím WASD • Phím Cách (Space): Sóng EMP</span>
+        </div>
       </div>
     </div>
 
-    <!-- HANGAR TECH TREE MODAL -->
+    <!-- HANGAR TECH TREE & SHIP SHOWCASE MODAL -->
     <div id="hangar-modal" class="modal-overlay">
       <div class="hangar-card-box">
         <div class="hangar-header">
           <div>
             <h2 id="hangar-title" class="modal-title" style="text-align: left; margin: 0;">XƯỞNG CÔNG NGHỆ</h2>
-            <div id="hangar-sub" class="modal-subtitle" style="text-align: left; margin-bottom: 4px;">Cường hóa vĩnh viễn phi thuyền bằng Vàng tích lũy.</div>
+            <div id="hangar-sub" class="modal-subtitle" style="text-align: left; margin-bottom: 4px;">Cường hóa vĩnh viễn phi thuyền & Tinh chỉnh hạm đội.</div>
           </div>
           <div class="hangar-gold-pill">
             <span class="gold-icon">🪙</span>
@@ -175,8 +179,24 @@
           </div>
         </div>
 
-        <div id="hangar-list" class="hangar-upgrades-list">
-          <!-- Rendered dynamically -->
+        <!-- 2 HANGAR TABS -->
+        <div class="hangar-tabs-bar">
+          <button id="hangar-tab-ships-btn" class="hangar-tab-btn active">🚀 CHI HẠM & KỸ NĂNG</button>
+          <button id="hangar-tab-tech-btn" class="hangar-tab-btn">⚙️ NÂNG CẤP VĨNH VIỄN</button>
+        </div>
+
+        <!-- TAB 1: 3 SHIPS & STATS DETAILS -->
+        <div id="hangar-ships-view" class="hangar-tab-content active">
+          <div id="hangar-ships-list" class="hangar-ships-grid">
+            <!-- Dynamically populated with 3 ships, detailed stats, synergies, and Deploy button -->
+          </div>
+        </div>
+
+        <!-- TAB 2: TECH TREE UPGRADES -->
+        <div id="hangar-tech-view" class="hangar-tab-content hidden">
+          <div id="hangar-list" class="hangar-upgrades-list">
+            <!-- Rendered dynamically -->
+          </div>
         </div>
 
         <button id="hangar-close-btn" class="btn-primary" style="margin-top: 14px; width: 100%;">ĐÓNG XƯỞNG</button>

@@ -1,154 +1,169 @@
-// Starship Archetype Definitions, Base Stats & Playstyles
+// Starship Archetype Definitions, Base Stats & Playstyles (3 Distinct Combat Paradigms)
 import { i18n } from './i18n.js';
 
 export const SHIP_ROSTER = {
-  juggernaut: {
-    id: 'juggernaut',
-    nameKey: 'shipJuggernautName',
-    roleKey: 'shipJuggernautRole',
-    descKey: 'shipJuggernautDesc',
-    traitNameKey: 'shipJuggernautTrait',
-    traitDescKey: 'shipJuggernautTraitDesc',
-    icon: '🛡️',
+  rammer: {
+    id: 'rammer',
+    nameKey: 'shipRammerName',
+    roleKey: 'shipRammerRole',
+    descKey: 'shipRammerDesc',
+    traitNameKey: 'shipRammerTrait',
+    traitDescKey: 'shipRammerTraitDesc',
+    icon: '☄️',
+    color: '#ef4444',
+    accentColor: '#f97316',
+    glowColor: '#dc2626',
+    stats: {
+      hp: 100, // Khối lượng & Giáp khủng
+      dmg: 90, // Sát thương va chạm cực cao
+      spd: 85, // Tốc độ lao dũng mãnh
+      range: 35
+    },
+    baseStats: {
+      maxHp: 280,
+      baseSpeed: 235,
+      damageMult: 1.0,
+      fireRateMult: 1.0,
+      critChance: 0.12,
+      critMult: 2.0,
+      magnetRadius: 130,
+      mass: 1.5,
+      ramDamage: 180,
+      damageReduction: 0.70
+    },
+    startingWeapon: 'orbs',
+    trait: 'rammer',
+    specs: {
+      vi: [
+        { label: 'Sát thương tông húc', val: '180 dmg (× Khối lượng × Tốc độ)' },
+        { label: 'Giảm sát thương khi đâm', val: '-70% sát thương nhận' },
+        { label: 'Hấp thu sinh lực', val: '+2 HP mỗi quái húc chết' },
+        { label: 'Đẩy lùi thiên thạch', val: 'Hất văng bầy quái 80px' },
+        { label: 'Vũ khí khởi đầu', val: 'Quả Cầu Hộ Thể' },
+        { label: 'Kỹ năng Nộ (Space / EMP)', val: 'Thiên Thạch Xuyên Phá (Lao cực đại)' }
+      ],
+      en: [
+        { label: 'Ramming Impact', val: '180 dmg (× Mass × Speed)' },
+        { label: 'Head-on Defense', val: '-70% collision damage taken' },
+        { label: 'Siphon Health', val: '+2 HP on ram kill' },
+        { label: 'Knockback Force', val: 'Blasts swarms back 80px' },
+        { label: 'Starting Weapon', val: 'Orbiting Orbs' },
+        { label: 'Ultimate (Space / EMP)', val: 'Meteor Piercing Dash' }
+      ]
+    },
+    synergies: {
+      vi: ['Khối Lượng Thân Tàu (+Mass, +Hitbox)', 'Gai Gai Phản Đòn (Phản sát thương)', 'Động Cơ Tên Lửa (+Tốc độ húc)'],
+      en: ['Titan Hull Mass (+Mass, +Hitbox)', 'Spiked Retaliation (Reflect Damage)', 'Thruster Overdrive (+Ram Speed)']
+    }
+  },
+  serpent: {
+    id: 'serpent',
+    nameKey: 'shipSerpentName',
+    roleKey: 'shipSerpentRole',
+    descKey: 'shipSerpentDesc',
+    traitNameKey: 'shipSerpentTrait',
+    traitDescKey: 'shipSerpentTraitDesc',
+    icon: '🐉',
     color: '#10b981',
     accentColor: '#34d399',
     glowColor: '#059669',
     stats: {
-      hp: 100, // VƯỢT TRỘI DUY NHẤT: MÁU/GIÁP
-      dmg: 45,
-      spd: 45,
-      range: 40
+      hp: 65,
+      dmg: 80,
+      spd: 80,
+      range: 95 // Chiều dài uốn lượn và đốt thân
     },
     baseStats: {
-      maxHp: 240,
-      baseSpeed: 190,
-      damageMult: 0.9,
-      fireRateMult: 0.95,
-      critChance: 0.08,
-      critMult: 1.6,
-      magnetRadius: 120
-    },
-    startingWeapon: 'orbs',
-    trait: 'rammer'
-  },
-  berserker: {
-    id: 'berserker',
-    nameKey: 'shipBerserkerName',
-    roleKey: 'shipBerserkerRole',
-    descKey: 'shipBerserkerDesc',
-    traitNameKey: 'shipBerserkerTrait',
-    traitDescKey: 'shipBerserkerTraitDesc',
-    icon: '🩸',
-    color: '#ef4444',
-    accentColor: '#f87171',
-    glowColor: '#dc2626',
-    stats: {
-      hp: 40,
-      dmg: 100, // VƯỢT TRỘI DUY NHẤT: CÔNG / BẠO KÍCH
-      spd: 55,
-      range: 45
-    },
-    baseStats: {
-      maxHp: 85,
+      maxHp: 160,
       baseSpeed: 215,
-      damageMult: 1.25,
-      fireRateMult: 1.05,
-      critChance: 0.28,
-      critMult: 2.6,
-      magnetRadius: 110
-    },
-    startingWeapon: 'glaive',
-    trait: 'berserker'
-  },
-  phantom: {
-    id: 'phantom',
-    nameKey: 'shipPhantomName',
-    roleKey: 'shipPhantomRole',
-    descKey: 'shipPhantomDesc',
-    traitNameKey: 'shipPhantomTrait',
-    traitDescKey: 'shipPhantomTraitDesc',
-    icon: '🎯',
-    color: '#00f2fe',
-    accentColor: '#38bdf8',
-    glowColor: '#0284c7',
-    stats: {
-      hp: 35,
-      dmg: 55,
-      spd: 100, // VƯỢT TRỘI DUY NHẤT: TỐC ĐỘ DI CHUYỂN
-      range: 60
-    },
-    baseStats: {
-      maxHp: 75,
-      baseSpeed: 285,
       damageMult: 1.0,
       fireRateMult: 1.0,
       critChance: 0.15,
       critMult: 2.0,
-      magnetRadius: 115
+      magnetRadius: 150,
+      segments: 4,
+      segmentRadius: 14,
+      segmentDamage: 85
     },
-    startingWeapon: 'blaster',
-    trait: 'sniper'
+    startingWeapon: 'glaive',
+    trait: 'serpent',
+    specs: {
+      vi: [
+        { label: 'Đốt thân rồng nối đuôi', val: '4 đốt bọc thép (Tối đa 10)' },
+        { label: 'Phòng thủ chặn đạn', val: '100% đạn địch bị đốt triệt tiêu' },
+        { label: 'Sát thương xé rách', val: '85 dmg/tick khi quẹt quái' },
+        { label: 'Cơ chế chiến đấu', val: 'Uốn lượn bo tròn xiết chết bầy địch' },
+        { label: 'Vũ khí khởi đầu', val: 'Phi Tiêu Nảy' },
+        { label: 'Kỹ năng Nộ (Space / EMP)', val: 'Long Trảo Xung Kích (Nổ sóng làm chậm)' }
+      ],
+      en: [
+        { label: 'Trailing Segments', val: '4 armored segments (Max 10)' },
+        { label: 'Projectile Barrier', val: 'Blocks 100% incoming bullets' },
+        { label: 'Laceration Damage', val: '85 dmg/tick on contact' },
+        { label: 'Combat Style', val: 'Encircle & constrict mob swarms' },
+        { label: 'Starting Weapon', val: 'Bouncing Glaive' },
+        { label: 'Ultimate (Space / EMP)', val: 'Dragon Claw Shockwave' }
+      ]
+    },
+    synergies: {
+      vi: ['Đốt Thân Xà Vương (+2 Đốt thân)', 'Khuếch Đại Khiên & Thân (+Bán kính)', 'Gai Gai Phản Đòn (Phản đòn)'],
+      en: ['Dragon Segments (+2 Segments)', 'Barrier Expansion (+Body Radius)', 'Spiked Retaliation (Reflect Dmg)']
+    }
   },
-  carrier: {
-    id: 'carrier',
-    nameKey: 'shipCarrierName',
-    roleKey: 'shipCarrierRole',
-    descKey: 'shipCarrierDesc',
-    traitNameKey: 'shipCarrierTrait',
-    traitDescKey: 'shipCarrierTraitDesc',
-    icon: '🛸',
-    color: '#facc15',
-    accentColor: '#fde047',
-    glowColor: '#d97706',
+  novashield: {
+    id: 'novashield',
+    nameKey: 'shipNovaShieldName',
+    roleKey: 'shipNovaShieldRole',
+    descKey: 'shipNovaShieldDesc',
+    traitNameKey: 'shipNovaShieldTrait',
+    traitDescKey: 'shipNovaShieldTraitDesc',
+    icon: '🛡️',
+    color: '#00f2fe',
+    accentColor: '#38bdf8',
+    glowColor: '#0284c7',
     stats: {
-      hp: 50,
-      dmg: 50,
-      spd: 45,
-      range: 100 // VƯỢT TRỘI DUY NHẤT: TẦM BẮN & HÚT NGỌC
+      hp: 85,
+      dmg: 100, // Bom khiên sát thương cực đại
+      spd: 70,
+      range: 90 // Bán kính sóng xung kích
     },
     baseStats: {
-      maxHp: 95,
+      maxHp: 180,
       baseSpeed: 200,
-      damageMult: 0.95,
+      damageMult: 1.15,
       fireRateMult: 1.0,
-      critChance: 0.10,
-      critMult: 1.8,
-      magnetRadius: 180
+      critChance: 0.18,
+      critMult: 2.2,
+      magnetRadius: 140,
+      shieldHp: 160,
+      shieldMaxHp: 160,
+      shieldRechargeTime: 3.5,
+      novaRadius: 160,
+      novaDamage: 320,
+      noGuns: true
     },
-    startingWeapon: 'wingmen',
-    secondaryWeapon: 'missiles',
-    trait: 'carrier'
-  },
-  nebula: {
-    id: 'nebula',
-    nameKey: 'shipNebulaName',
-    roleKey: 'shipNebulaRole',
-    descKey: 'shipNebulaDesc',
-    traitNameKey: 'shipNebulaTrait',
-    traitDescKey: 'shipNebulaTraitDesc',
-    icon: '🌌',
-    isRare: true,
-    color: '#a855f7',
-    accentColor: '#c084fc',
-    glowColor: '#7e22ce',
-    stats: {
-      hp: 45,
-      dmg: 90, // VƯỢT TRỘI KÉP 1: CÔNG CAO
-      spd: 90, // VƯỢT TRỘI KÉP 2: TỐC ĐỘ CAO
-      range: 50
+    startingWeapon: null,
+    trait: 'novashield',
+    specs: {
+      vi: [
+        { label: 'Khiên bảo vệ độc lập', val: '160 HP hấp thụ mọi sát thương' },
+        { label: 'Sóng nổ Nova', val: 'Bán kính 160px • 320 dmg khi vỡ' },
+        { label: 'Tự sạc lại khiên', val: '3.5 giây sau lần trúng đòn cuối' },
+        { label: 'Hỏa lực', val: 'Không có súng thường • Bom khiên áp sát' },
+        { label: 'Kỹ năng Nộ (Space / EMP)', val: 'Super Mega Nova Blast (Bán kính x2.2)' }
+      ],
+      en: [
+        { label: 'Energy Barrier', val: '160 HP independent damage absorption' },
+        { label: 'Nova Shockwave', val: '160px radius • 320 dmg on rupture' },
+        { label: 'Recharge Delay', val: '3.5s after last damage taken' },
+        { label: 'Firepower', val: 'No conventional guns • Close-range blast' },
+        { label: 'Ultimate (Space / EMP)', val: 'Super Mega Nova Blast (Radius x2.2)' }
+      ]
     },
-    baseStats: {
-      maxHp: 80,
-      baseSpeed: 275,
-      damageMult: 1.2,
-      fireRateMult: 1.15,
-      critChance: 0.22,
-      critMult: 2.3,
-      magnetRadius: 130
-    },
-    startingWeapon: 'lightning',
-    secondaryWeapon: 'blaster',
-    trait: 'nebula'
+    synergies: {
+      vi: ['Khuếch Đại Khiên (+Bán kính nổ)', 'Khối Lượng Thân Tàu (+Diện tích)', 'Lò Phản Ứng Siêu Cấp (+25% Sát thương)'],
+      en: ['Barrier Expansion (+Nova Radius)', 'Titan Hull Mass (+Blast Area)', 'Hyper Reactor (+25% Damage)']
+    }
   }
 };
 

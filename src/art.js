@@ -12,32 +12,48 @@ export class ArtEngine {
     const invuln = player.invulnerableTimer > 0;
     const shipId = player.shipId || 'phantom';
 
-    // Ship Palette Selection
-    let shipMain = '#00f2fe';
-    let shipAccent = '#38bdf8';
-    let shipGlow = '#0284c7';
+    // Ship Palette Selection (3 Classes)
+    let shipMain = '#ef4444';
+    let shipAccent = '#f97316';
+    let shipGlow = '#dc2626';
 
-    if (shipId === 'juggernaut') {
+    if (shipId === 'serpent') {
       shipMain = '#10b981';
       shipAccent = '#34d399';
       shipGlow = '#059669';
-    } else if (shipId === 'berserker') {
-      shipMain = '#ef4444';
-      shipAccent = '#f87171';
-      shipGlow = '#dc2626';
-    } else if (shipId === 'carrier') {
-      shipMain = '#facc15';
-      shipAccent = '#fde047';
-      shipGlow = '#d97706';
-    } else if (shipId === 'nebula') {
-      shipMain = '#a855f7';
-      shipAccent = '#c084fc';
-      shipGlow = '#7e22ce';
+    } else if (shipId === 'novashield') {
+      shipMain = '#00f2fe';
+      shipAccent = '#38bdf8';
+      shipGlow = '#0284c7';
     }
 
     const mainColor = isFrenzy ? '#f43f5e' : shipMain;
     const accentColor = isFrenzy ? '#fbbf24' : shipAccent;
     const glowColor = isFrenzy ? '#ec4899' : shipGlow;
+
+    // 0. Draw Serpent Trailing Segments in World Space
+    if (player.segmentPositions && player.segmentPositions.length > 0) {
+      for (let i = player.segmentPositions.length - 1; i >= 0; i--) {
+        const seg = player.segmentPositions[i];
+        ctx.save();
+        ctx.fillStyle = '#064e3b';
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2.2;
+        ctx.shadowColor = '#059669';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(seg.x, seg.y, seg.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Inner glowing dragon scale / energy core
+        ctx.fillStyle = '#34d399';
+        ctx.beginPath();
+        ctx.arc(seg.x, seg.y, seg.radius * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
 
     ctx.save();
     ctx.translate(player.x, player.y);
@@ -82,155 +98,122 @@ export class ArtEngine {
     ctx.setLineDash([]);
 
     // Wing Gradient
-    const hullGrad = ctx.createLinearGradient(-16, 0, 22, 0);
+    const hullGrad = ctx.createLinearGradient(-16, 0, 24, 0);
     hullGrad.addColorStop(0, '#090d16');
     hullGrad.addColorStop(0.5, '#1e293b');
     hullGrad.addColorStop(1, invuln ? '#ffffff' : '#334155');
 
     ctx.fillStyle = hullGrad;
     ctx.strokeStyle = mainColor;
-    ctx.lineWidth = 2.2;
+    ctx.lineWidth = 2.4;
     ctx.shadowColor = glowColor;
     ctx.shadowBlur = invuln ? 25 : 14;
 
-    if (shipId === 'juggernaut') {
-      // 🛡️ JUGGERNAUT: Heavy Armored Battering Ram with reinforced front wedge
+    if (shipId === 'rammer') {
+      // ☄️ RAMMER: Heavy Meteor Battering Ram Wedge with Magma Spikes
       ctx.beginPath();
-      ctx.moveTo(24, 0);          // Heavy front ram tip
-      ctx.lineTo(16, -12);        // Heavy angled ram plate
-      ctx.lineTo(4, -18);         // Left shoulder plate
-      ctx.lineTo(-12, -22);       // Left flank armor
-      ctx.lineTo(-16, -12);       // Left rear wing
-      ctx.lineTo(-12, 0);         // Rear thruster plate
-      ctx.lineTo(-16, 12);        // Right rear wing
+      ctx.moveTo(28, 0);          // Heavy front ramming beak
+      ctx.lineTo(16, -14);        // Angled deflector armor
+      ctx.lineTo(4, -20);         // Left shoulder plate
+      ctx.lineTo(-12, -22);       // Heavy flank armor
+      ctx.lineTo(-16, -12);       // Rear thruster fin
+      ctx.lineTo(-12, 0);         // Main combustion exhaust
+      ctx.lineTo(-16, 12);        // Right thruster fin
       ctx.lineTo(-12, 22);        // Right flank armor
-      ctx.lineTo(4, 18);          // Right shoulder plate
-      ctx.lineTo(16, 12);         // Right angled ram plate
+      ctx.lineTo(4, 20);          // Right shoulder plate
+      ctx.lineTo(16, 14);         // Angled deflector armor
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // Front Ramming Spikes / Barricade
+      // Molten Reinforced Ram Spikes
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 2.8;
       ctx.beginPath();
       ctx.moveTo(14, -8);
-      ctx.lineTo(26, -5);
+      ctx.lineTo(28, -4);
       ctx.moveTo(14, 8);
-      ctx.lineTo(26, 5);
+      ctx.lineTo(28, 4);
       ctx.stroke();
 
       // Armor plating lines
       ctx.strokeStyle = accentColor;
-      ctx.lineWidth = 1.6;
+      ctx.lineWidth = 1.8;
       ctx.beginPath();
-      ctx.moveTo(6, -14);
+      ctx.moveTo(8, -14);
       ctx.lineTo(-8, -14);
-      ctx.moveTo(6, 14);
+      ctx.moveTo(8, 14);
       ctx.lineTo(-8, 14);
       ctx.stroke();
 
-    } else if (shipId === 'berserker') {
-      // 🩸 BERSERKER: Aggressive forward-swept bloodfang blades
+    } else if (shipId === 'serpent') {
+      // 🐉 SERPENT: Articulated Emerald Dragon Head with mandibles
       ctx.beginPath();
-      ctx.moveTo(26, 0);          // Needle nose
-      ctx.lineTo(10, -6);
-      ctx.lineTo(18, -22);        // Forward razor blade left
-      ctx.lineTo(4, -16);
-      ctx.lineTo(-12, -18);       // Rear swept tooth
-      ctx.lineTo(-14, 0);
-      ctx.lineTo(-12, 18);        // Rear swept tooth right
-      ctx.lineTo(4, 16);
-      ctx.lineTo(18, 22);         // Forward razor blade right
-      ctx.lineTo(10, 6);
+      ctx.moveTo(26, 0);          // Dragon snout
+      ctx.lineTo(16, -7);
+      ctx.lineTo(22, -16);        // Left forward mandible horn
+      ctx.lineTo(8, -18);         // Left temple crest
+      ctx.lineTo(-6, -16);        // Dorsal spine
+      ctx.lineTo(-14, -8);        // Neck joint
+      ctx.lineTo(-10, 0);
+      ctx.lineTo(-14, 8);         // Neck joint
+      ctx.lineTo(-6, 16);         // Dorsal spine
+      ctx.lineTo(8, 18);          // Right temple crest
+      ctx.lineTo(22, 16);         // Right forward mandible horn
+      ctx.lineTo(16, 7);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // Blood Edge Accents
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
+      // Glowing Dragon Eyes
+      ctx.fillStyle = '#fde047';
+      ctx.shadowColor = '#fde047';
+      ctx.shadowBlur = 8;
       ctx.beginPath();
-      ctx.moveTo(18, -22);
-      ctx.lineTo(8, -12);
-      ctx.moveTo(18, 22);
-      ctx.lineTo(8, 12);
-      ctx.stroke();
-
-    } else if (shipId === 'nebula') {
-      // 🌌 NEBULA VANGUARD: Dual-Fuselage Void Interceptor with Singularity Stabilizer
-      ctx.beginPath();
-      ctx.moveTo(28, 0);          // Hyper-needle
-      ctx.lineTo(16, -8);
-      ctx.lineTo(22, -18);        // Left forward fin
-      ctx.lineTo(2, -24);         // Outer void blade
-      ctx.lineTo(-8, -18);
-      ctx.lineTo(-6, -8);
-      ctx.lineTo(-15, 0);         // Void core
-      ctx.lineTo(-6, 8);
-      ctx.lineTo(-8, 18);
-      ctx.lineTo(2, 24);          // Right outer blade
-      ctx.lineTo(22, 18);         // Right forward fin
-      ctx.lineTo(16, 8);
-      ctx.closePath();
+      ctx.arc(8, -6, 2.2, 0, Math.PI * 2);
+      ctx.arc(8, 6, 2.2, 0, Math.PI * 2);
       ctx.fill();
-      ctx.stroke();
-
-      // Void Warp Rings
-      ctx.strokeStyle = '#c084fc';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(0, 0, 9, 0, Math.PI * 2);
-      ctx.stroke();
-
-    } else if (shipId === 'carrier') {
-      // 🛸 CARRIER: Command Carrier with Dual Lateral Drone Bays
-      ctx.beginPath();
-      ctx.moveTo(20, 0);          // Flat forward prow
-      ctx.lineTo(14, -10);
-      ctx.lineTo(6, -22);         // Left hangar bay
-      ctx.lineTo(-14, -22);       // Hangar rear
-      ctx.lineTo(-10, -10);
-      ctx.lineTo(-16, 0);         // Engine core
-      ctx.lineTo(-10, 10);
-      ctx.lineTo(-14, 22);        // Right hangar rear
-      ctx.lineTo(6, 22);          // Right hangar bay
-      ctx.lineTo(14, 10);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
-
-      // Dual Launch Bay Indicators
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(-2, -18, 6, 3);
-      ctx.fillRect(-2, 15, 6, 3);
 
     } else {
-      // 🎯 PHANTOM: Sleek Swept Wing Hypersonic Stealth Fighter
+      // 🛡️ NOVA SHIELD: Circular High-Tech Barrier Emitter Hull
       ctx.beginPath();
-      ctx.moveTo(25, 0);          // Sharpened needle nose
-      ctx.lineTo(8, -7);
-      ctx.lineTo(-6, -22);        // High-aspect left wing
-      ctx.lineTo(-12, -17);
-      ctx.lineTo(-8, -6);
-      ctx.lineTo(-15, 0);
-      ctx.lineTo(-8, 6);
-      ctx.lineTo(-12, 17);
-      ctx.lineTo(-6, 22);         // High-aspect right wing
-      ctx.lineTo(8, 7);
+      ctx.moveTo(22, 0);          // Forward sensor prow
+      ctx.lineTo(14, -12);
+      ctx.lineTo(2, -22);         // Left barrier projector
+      ctx.lineTo(-12, -20);
+      ctx.lineTo(-16, -10);
+      ctx.lineTo(-12, 0);         // Engine core
+      ctx.lineTo(-16, 10);
+      ctx.lineTo(-12, 20);
+      ctx.lineTo(2, 22);          // Right barrier projector
+      ctx.lineTo(14, 12);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // Stealth Panel Lines
+      // Reactor Emitter Ring
       ctx.strokeStyle = accentColor;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(-2, -16);
-      ctx.lineTo(5, -6);
-      ctx.moveTo(-2, 16);
-      ctx.lineTo(5, 6);
+      ctx.arc(0, 0, 10, 0, Math.PI * 2);
       ctx.stroke();
+
+      // Rotating Energy Barrier Bubble (When Active)
+      const hasShield = (player.shieldHp === undefined || player.shieldHp > 0);
+      if (hasShield) {
+        const barrierPulse = Math.sin(animTime * 8) * 3;
+        const barrierRad = (player.radius + 14 + barrierPulse) * (player.stats?.shieldRadiusMult || 1.0);
+        ctx.strokeStyle = '#00f2fe';
+        ctx.lineWidth = 2.6;
+        ctx.shadowColor = '#00f2fe';
+        ctx.shadowBlur = 16;
+        ctx.beginPath();
+        ctx.arc(0, 0, barrierRad, animTime * 2.5, animTime * 2.5 + Math.PI * 1.4);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(0, 0, barrierRad, animTime * 2.5 + Math.PI, animTime * 2.5 + Math.PI * 2.4);
+        ctx.stroke();
+      }
     }
 
     // Cockpit / Cyber Reactor Core
@@ -238,6 +221,17 @@ export class ArtEngine {
     coreGrad.addColorStop(0, '#ffffff');
     coreGrad.addColorStop(0.5, mainColor);
     coreGrad.addColorStop(1, glowColor);
+
+    ctx.fillStyle = coreGrad;
+    ctx.beginPath();
+    ctx.ellipse(3, 0, 7, 3.5, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Visor specular shine
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(5, -1, 1.4, 0, Math.PI * 2);
+    ctx.fill();
 
     ctx.fillStyle = coreGrad;
     ctx.beginPath();
@@ -274,7 +268,15 @@ export class ArtEngine {
       facingAngle: 0,
       shipId: shipId,
       magnetRadius: 28,
+      radius: 16,
       invulnerableTimer: 0,
+      shieldHp: shipId === 'novashield' ? 100 : 0,
+      isNovaShield: shipId === 'novashield',
+      segmentPositions: shipId === 'serpent' ? [
+        { x: -12, y: Math.sin(animTime * 4) * 3, radius: 9 },
+        { x: -22, y: Math.sin(animTime * 4 + 1) * 4, radius: 7 },
+        { x: -30, y: Math.sin(animTime * 4 + 2) * 5, radius: 5 }
+      ] : null,
       game: { isFrenzy: false }
     };
 

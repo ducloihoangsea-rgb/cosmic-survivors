@@ -36,52 +36,42 @@ export const translations = {
     categorySupport: '🛡️ SUPPORT',
     categoryMythic: '👑 GOD-TIER',
 
-    // Starship Roster
+    // Starship Roster (3 Unique Gameplay Classes)
     shipSelectTitle: 'CHOOSE YOUR STARSHIP',
-    shipSelectSubtitle: 'Each chassis features unique combat physics, passive traits & loadouts',
+    shipSelectSubtitle: '3 distinctive combat paradigms: Ramming Meteor, Slithering Serpent & Exploding Nova Shield',
     shipSelectedBadge: 'READY FOR LAUNCH',
     shipSelectBtn: 'SELECT SHIP',
 
-    // Juggernaut
-    shipJuggernautName: 'TITAN JUGGERNAUT',
-    shipJuggernautRole: '🛡️ TANK / RAMMING FORTRESS',
-    shipJuggernautDesc: 'Super heavy armor. Obliterates enemy swarms by ramming into them directly.',
-    shipJuggernautTrait: '⚡ Battering Ram',
-    shipJuggernautTraitDesc: 'Ramming enemies deals 140 damage and knocks them back. Kills from ramming heal +2 HP! Takes 65% reduced collision damage.',
+    // 1. Rammer
+    shipRammerName: 'METEOR RAMMER',
+    shipRammerRole: '☄️ IMPACT / METEOR CRUSH',
+    shipRammerDesc: 'Heavy battering hull. Obliterates enemy hordes by ramming directly into them like a blazing meteor.',
+    shipRammerTrait: '☄️ Meteor Collision',
+    shipRammerTraitDesc: 'Extreme ramming damage (scales with Mass * Speed). Takes 70% reduced damage on direct collision. Kills heal +2 HP!',
 
-    // Berserker
-    shipBerserkerName: 'BLOOD BERSERKER',
-    shipBerserkerRole: '🩸 MELEE / LOW-HP RAMPAGE',
-    shipBerserkerDesc: 'The lower your HP drops, the more catastrophic your damage and attack speed become.',
-    shipBerserkerTrait: '🔥 Adrenaline Bloodlust',
-    shipBerserkerTraitDesc: 'Gains up to +180% Damage & +120% Attack Speed at low HP! 12% chance to leech +1 HP. Survived lethal hit with 3s invulnerability once.',
+    // 2. Serpent
+    shipSerpentName: 'COSMIC SERPENT',
+    shipSerpentRole: '🐉 SEGMENTED DRAGON / CONSTRICTION',
+    shipSerpentDesc: 'Mythic articulated serpentine dreadnought. Slithers in loops to encircle and crush enemies.',
+    shipSerpentTrait: '🐉 Dragon Segments',
+    shipSerpentTraitDesc: 'Starts with 4 trailing armored segments. Segments block enemy bullets and shred monsters on swipe contact!',
 
-    // Phantom
-    shipPhantomName: 'PHANTOM SNIPER',
-    shipPhantomRole: '🎯 LONG-RANGE ARTILLERY',
-    shipPhantomDesc: 'Ultra-fast stealth interceptor. Shreds targets from screen edge with penetrating lasers.',
-    shipPhantomTrait: '👁️ Long-Range Focus',
-    shipPhantomTraitDesc: 'Deals up to +85% extra damage at long distance. When unhurt for 3s, next hit is a GUARANTEED 300% CRIT! Projectiles gain +2 pierce.',
+    // 3. Nova Shield
+    shipNovaShieldName: 'NOVA SHIELD',
+    shipNovaShieldRole: '🛡️ SHIELD BOMB / SHOCKWAVE',
+    shipNovaShieldDesc: 'Experimental barrier warship. No conventional guns. Detonates catastrophic EMP shockwaves when barrier shatters.',
+    shipNovaShieldTrait: '🛡️ Nova Blast',
+    shipNovaShieldTraitDesc: 'No main gun. Surrounding shield detonates a massive destructive shockwave when broken (or press Space)! Recharges in 3.5s.',
 
-    // Carrier
-    shipCarrierName: 'CARRIER SUMMONER',
-    shipCarrierRole: '🛸 DRONE FLEET COMMANDER',
-    shipCarrierDesc: 'Command an autonomous swarm of wingmen drones and homing missiles while collecting gems.',
-    shipCarrierTrait: '👑 Fleet Synergy',
-    shipCarrierTraitDesc: 'Starts with Wingmen Drones AND Heat-Seeking Missiles! Drones fire +35% faster with massive vacuum radius.',
-
-    // Nebula (Rare Twin-Stat Ship)
-    shipNebulaName: 'NEBULA VANGUARD',
-    shipNebulaRole: '🌌 ELITE HYBRID / HIGH ATK & SPEED',
-    shipNebulaDesc: 'Experimental void interceptor with dual over-tuned thrusters and twin combat systems.',
-    shipNebulaTrait: '⚡ Void Overdrive',
-    shipNebulaTraitDesc: 'RARE 2-STAT SUPREME: Boasts both Extreme Speed (275) & Heavy Attack (+20% dmg, +15% atk speed)! Starts with Chain Lightning AND Plasma Blaster.',
-
-    statHp: 'HULL',
+    statHp: 'HULL / MASS',
     statDmg: 'DAMAGE',
     statSpd: 'SPEED',
-    statDiff: 'RANGE',
-    shipRareBadge: '⭐ RARE',
+    statDiff: 'RADIUS / RANGE',
+    shipRareBadge: '⭐ CLASS',
+
+    hangarTabShips: '🚀 STARSHIPS & SYNERGY',
+    hangarTabTech: '⚙️ PERMANENT TECH',
+    hangarSelectShipBtn: 'DEPLOY THIS SHIP',
 
     hudHomeBtn: '🏠 MENU',
     confirmQuit: 'Quit to Main Menu? Current run progress will be converted to gold.',
@@ -133,6 +123,14 @@ export const translations = {
     criticalsurgeDesc: '+15% Critical Chance, +40% Critical Damage multipliers.',
     nanorepairTitle: 'Emergency Stimpack',
     nanorepairDesc: 'Instantly heals 60 HP and permanently grants +25 Max HP.',
+    hullMassTitle: 'Titan Hull Mass',
+    hullMassDesc: '+40% Mass & Hitbox size. Amplifies Meteor Ramming damage x1.6 and Nova blast area!',
+    serpentSegmentsTitle: 'Dragon Segments',
+    serpentSegmentsDesc: '+2 Armored Segments. Lengthens dragon body to crush and encircle more mobs!',
+    barrierRadiusTitle: 'Barrier Expansion',
+    barrierRadiusDesc: '+35% Shield & Segment radius. Massive Nova blasts and giant dragon body!',
+    spikedThornsTitle: 'Spiked Retaliation',
+    spikedThornsDesc: 'Reflects 100% collision damage back to attackers and boosts ram/swipe impact!',
     tacticalnukeTitle: '☢️ ORBITAL PURGE NUKE',
     tacticalnukeDesc: 'LEGENDARY: Vaporizes all existing enemies on screen and turns them into high-value gems!',
 
@@ -239,52 +237,42 @@ export const translations = {
     categorySupport: '🛡️ PHỤ TRỢ',
     categoryMythic: '👑 THẦN CẤP',
 
-    // Starship Roster
+    // Starship Roster (3 Thân Tàu Khởi Đầu)
     shipSelectTitle: 'CHỌN PHI THUYỀN XUẤT TRẬN',
-    shipSelectSubtitle: 'Mỗi loại tàu sở hữu phong cách chiến đấu, nội tại và vũ khí riêng biệt',
+    shipSelectSubtitle: '3 thân tàu đại diện cho 3 cơ chế gameplay khác biệt hoàn toàn',
     shipSelectedBadge: 'SẴN SÀNG XUẤT KÍCH',
     shipSelectBtn: 'CHỌN TÀU NÀY',
 
-    // Juggernaut
-    shipJuggernautName: 'THIẾT GIÁP JUGGERNAUT',
-    shipJuggernautRole: '🛡️ TĂNG THỦ / TÔNG HÚC',
-    shipJuggernautDesc: 'Pháo đài bọc thép siêu trâu. Lấy thân tàu làm vũ khí tông thẳng nghiền nát bầy quái.',
-    shipJuggernautTrait: '⚡ Thiết Giáp Tông Quái',
-    shipJuggernautTraitDesc: 'Tông thẳng vào quái gây 140 sát thương và hất văng quái. Tông chết quái hồi ngay +2 HP! Giảm 65% sát thương va chạm.',
+    // 1. Rammer
+    shipRammerName: 'TÀU TÔNG HÚC (RAMMER)',
+    shipRammerRole: '☄️ VA CHẠM / THIÊN THẠCH',
+    shipRammerDesc: 'Thân tàu siêu trọng tải. Lấy gia tốc lao thẳng vào giữa bầy địch như một quả thiên thạch rực lửa.',
+    shipRammerTrait: '☄️ Thiên Thạch Công Phá',
+    shipRammerTraitDesc: 'Sát thương va chạm cực cao (nhân chéo Khối lượng * Tốc độ). Giảm 70% sát thương khi đâm trực diện quái. Tông chết quái hồi +2 HP!',
 
-    // Berserker
-    shipBerserkerName: 'HUYẾT ĐAO BERSERKER',
-    shipBerserkerRole: '🩸 CẬN CHIẾN / CUỒNG BẠO',
-    shipBerserkerDesc: 'Máu càng tụt hỏa lực càng điên cuồng. Càng đứng bên bờ vực chết chóc sức mạnh càng bộc phát cực hạn.',
-    shipBerserkerTrait: '🔥 Huyết Nộ Tuyệt Mạng',
-    shipBerserkerTraitDesc: 'Mất máu tăng tối đa +180% Sát thương & +120% Tốc đánh! 12% tỉ lệ hút +1 Máu khi đánh. Bất tử 3 giây khi nhận đòn chí tử.',
+    // 2. Serpent
+    shipSerpentName: 'TÀU RỒNG XÀ (SERPENT)',
+    shipSerpentRole: '🐉 ĐỐT THÂN / UỐN LƯỢN',
+    shipSerpentDesc: 'Chiến hạm rồng xà uốn lượn. Bo tròn cô lập và quấn chết toàn bộ bầy quái nhỏ xung quanh.',
+    shipSerpentTrait: '🐉 Đốt Thân Xà Thần',
+    shipSerpentTraitDesc: 'Khởi đầu với 4 đốt thân nối đuôi nhau. Đốt thân chặn toàn bộ đạn và gây sát thương xé rách khi quẹt trúng quái!',
 
-    // Phantom
-    shipPhantomName: 'XẠ THỦ PHANTOM',
-    shipPhantomRole: '🎯 XẠ THỦ TẦM XA',
-    shipPhantomDesc: 'Tiêm kích tàng hình siêu cơ động. Thả diều bắn tỉa xuyên táo cả bầy quái từ rìa màn hình.',
-    shipPhantomTrait: '👁️ Kính Ngắm Viễn Thấu',
-    shipPhantomTraitDesc: 'Bắn quái ở càng xa tăng tối đa +85% sát thương. Né đòn 3s đòn tiếp theo CHẮC CHẮN CHÍ MẠNG x300%! Đạn mặc định +2 lần xuyên quái.',
+    // 3. Nova Shield
+    shipNovaShieldName: 'KHIÊN XUNG KÍCH (NOVA SHIELD)',
+    shipNovaShieldRole: '🛡️ BOM KHIÊN / SÓNG CHẤN ĐỘNG',
+    shipNovaShieldDesc: 'Không có súng thường. Tận dụng áp sát kích nổ bom khiên diện rộng càn quét sạch sẽ màn hình.',
+    shipNovaShieldTrait: '🛡️ Sóng Nổ Xung Kích',
+    shipNovaShieldTraitDesc: 'Không súng thường. Khiên khi bị bắn vỡ (hoặc bấm Space) sẽ nổ tung một vòng sóng xung kích cực đại tỏa ra xung quanh!',
 
-    // Carrier
-    shipCarrierName: 'HẠM TRƯỞNG CARRIER',
-    shipCarrierRole: '🛸 HẠM ĐỘI DRONE',
-    shipCarrierDesc: 'Chỉ huy đàn drone chiến đấu tự động và tên lửa tầm nhiệt, tàu mẹ chỉ việc bay gom ngọc.',
-    shipCarrierTrait: '👑 Hạm Đội Thần Tốc',
-    shipCarrierTraitDesc: 'Khởi đầu sở hữu NGAY CẢ HAI: Drone Đồng Minh và Tên Lửa Tầm Nhiệt! Drone xả đạn nhanh hơn +35%, phễu hút ngọc cực rộng.',
-
-    // Nebula (Tàu Hiếm 2 Chỉ Số Vượt Trội)
-    shipNebulaName: 'TIÊN PHONG NEBULA',
-    shipNebulaRole: '🌌 CHIẾN HẠM HYBRID HIẾM / CÔNG & TỐC CỰC HẠN',
-    shipNebulaDesc: 'Chiến hạm nguyên mẫu Hư Không sở hữu động cơ phản lực kép và 2 hệ thống hỏa lực tối tân.',
-    shipNebulaTrait: '⚡ Siêu Tải Hư Không',
-    shipNebulaTraitDesc: 'TÀU HIẾM 2 CHỈ SỐ VƯỢT TRỘI: Đồng thời sở hữu Tốc Độ Đỉnh Cao (275) VÀ Hỏa Lực Khủng (+20% công, +15% tốc đánh)! Khởi đầu sở hữu Sét Chuỗi VÀ Súng Plasma.',
-
-    statHp: 'GIÁP',
+    statHp: 'GIÁP / KHỐI LƯỢNG',
     statDmg: 'CÔNG',
     statSpd: 'TỐC ĐỘ',
-    statDiff: 'TẦM BẮN',
-    shipRareBadge: '⭐ HIẾM',
+    statDiff: 'BÁN KÍNH / TẦM',
+    shipRareBadge: '⭐ CLASS',
+
+    hangarTabShips: '🚀 CHI HẠM & KỸ NĂNG',
+    hangarTabTech: '⚙️ CƯỜNG HÓA VĨNH VIỄN',
+    hangarSelectShipBtn: 'CHỌN XUẤT TRẬN',
 
     hudHomeBtn: '🏠 MENU',
     confirmQuit: 'Bạn có chắc chắn muốn thoát về Menu chính? Điểm số hiện tại sẽ được quy đổi thành Vàng.',
@@ -336,6 +324,14 @@ export const translations = {
     criticalsurgeDesc: '+15% Tỷ lệ chí mạng, +40% Sát thương đòn đánh chí mạng.',
     nanorepairTitle: 'Tiêm Hồi Máu Khẩn Cấp',
     nanorepairDesc: 'Hồi phục ngay 60 Máu và tăng vĩnh viễn +25 Máu tối đa.',
+    hullMassTitle: 'Khối Lượng Thân Tàu',
+    hullMassDesc: '+40% Khối lượng & Hitbox. Tăng uy lực tông húc x1.6 cho Rammer và diện tích nổ cho Nova!',
+    serpentSegmentsTitle: 'Đốt Thân Xà Vương',
+    serpentSegmentsDesc: '+2 Đốt thân bọc thép. Kéo dài thân rồng, quẹt quái rộng hơn và chặn thêm đạn!',
+    barrierRadiusTitle: 'Khuếch Đại Khiên & Thân',
+    barrierRadiusDesc: '+35% Bán kính khiên và kích cỡ đốt thân. Vòng nổ Nova cực đại và đốt rắn khổng lồ!',
+    spikedThornsTitle: 'Gai Gai Phản Đòn',
+    spikedThornsDesc: 'Phản lại 100% sát thương va chạm cho quái vật và tăng sát thương quẹt thân!',
     tacticalnukeTitle: '☢️ BOM HẠT NHÂN THANH TRỪNG',
     tacticalnukeDesc: 'HUYỀN THOẠI: Quét sạch toàn bộ quái vật trên màn hình thành ngọc quý!',
 

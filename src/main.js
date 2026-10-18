@@ -20,6 +20,11 @@ window.addEventListener('DOMContentLoaded', () => {
   const hordeAlert = document.getElementById('horde-alert');
   const hangarModal = document.getElementById('hangar-modal');
   const chestModal = document.getElementById('chest-modal');
+  const hangarTabShipsBtn = document.getElementById('hangar-tab-ships-btn');
+  const hangarTabTechBtn = document.getElementById('hangar-tab-tech-btn');
+  const hangarShipsView = document.getElementById('hangar-ships-view');
+  const hangarTechView = document.getElementById('hangar-tech-view');
+  const hangarShipsList = document.getElementById('hangar-ships-list');
 
   // Starship Selection Elements
   const shipSelectorBox = document.getElementById('ship-selector-box');
@@ -241,13 +246,24 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Damage Meter Toggle Handlers
+  // Modal Visibility State Controller (che hết phần không cần thiết khi mở modal)
+  function updateModalState() {
+    const isModalOpen = (startScreen && startScreen.classList.contains('active')) ||
+                        (levelUpModal && levelUpModal.classList.contains('active')) ||
+                        (gameOverModal && gameOverModal.classList.contains('active')) ||
+                        (chestModal && chestModal.classList.contains('active')) ||
+                        (hangarModal && hangarModal.classList.contains('active'));
+    if (isModalOpen) {
+      document.body.classList.add('in-modal');
+    } else {
+      document.body.classList.remove('in-modal');
+    }
+  }
+
+  // Damage Meter Toggle Handlers (Hiển thị đồng thời cùng chỉ số tàu)
   meterToggleBtn.addEventListener('click', () => {
     sound.playCardSelect();
     damageMeterPanel.classList.toggle('hidden');
-    if (!damageMeterPanel.classList.contains('hidden') && shipStatsPanel) {
-      shipStatsPanel.classList.add('hidden');
-    }
   });
 
   meterCloseBtn.addEventListener('click', () => {
@@ -255,14 +271,11 @@ window.addEventListener('DOMContentLoaded', () => {
     damageMeterPanel.classList.add('hidden');
   });
 
-  // Real-Time Ship Attributes Toggle Handlers
+  // Real-Time Ship Attributes Toggle Handlers (Hiển thị đồng thời cùng DPS)
   if (statsToggleBtn) {
     statsToggleBtn.addEventListener('click', () => {
       sound.playCardSelect();
       shipStatsPanel.classList.toggle('hidden');
-      if (!shipStatsPanel.classList.contains('hidden')) {
-        damageMeterPanel.classList.add('hidden');
-      }
     });
   }
 
@@ -290,7 +303,127 @@ window.addEventListener('DOMContentLoaded', () => {
         chestModal.classList.remove('active');
         damageMeterPanel.classList.add('hidden');
         if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
+        updateModalState();
       }
+    });
+  }
+
+  // Render Hangar Ships & Detailed Stats
+  const hangarShipPreviews = [];
+  function renderHangarShips() {
+    if (!hangarShipsList) return;
+    hangarShipPreviews.length = 0;
+    hangarShipsList.innerHTML = '';
+
+    const lang = i18n.current === 'vi' ? 'vi' : 'en';
+
+    SHIP_KEYS.forEach(key => {
+      const ship = SHIP_ROSTER[key];
+      const isSelected = game.selectedShipId === key;
+
+      const card = document.createElement('div');
+      card.className = `hangar-ship-card ${isSelected ? 'active' : ''}`;
+      card.style.setProperty('--ship-color', ship.color);
+      card.style.setProperty('--ship-accent', ship.accentColor);
+      card.style.setProperty('--ship-glow', ship.glowColor);
+
+      const specsList = ship.specs ? (ship.specs[lang] || ship.specs.vi) : [];
+      const specsHtml = specsList.map(s => `
+        <div class="hangar-spec-row">
+          <span class="hangar-spec-lbl">${s.label}:</span>
+          <span class="hangar-spec-val">${s.val}</span>
+        </div>
+      `).join('');
+
+      const synergiesList = ship.synergies ? (ship.synergies[lang] || ship.synergies.vi) : [];
+      const synergiesHtml = synergiesList.map(syn => `
+        <span class="hangar-synergy-tag">${syn}</span>
+      `).join('');
+
+      card.innerHTML = `
+        <div class="hangar-ship-top">
+          <div class="ship-canvas-wrap">
+            <canvas width="54" height="54"></canvas>
+          </div>
+          <div class="hangar-ship-heading">
+            <div class="ship-card-name">${i18n.t(ship.nameKey)}</div>
+            <div class="ship-card-role">${i18n.t(ship.roleKey)}</div>
+          </div>
+        </div>
+        <div class="ship-stat-bars">
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statHp')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.hp}%;"></div></div>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statDmg')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.dmg}%;"></div></div>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statSpd')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.spd}%;"></div></div>
+          </div>
+          <div class="stat-mini-row">
+            <span class="stat-mini-lbl">${i18n.t('statDiff')}</span>
+            <div class="stat-mini-track"><div class="stat-mini-fill" style="width: ${ship.stats.range}%;"></div></div>
+          </div>
+        </div>
+        <div class="ship-trait-pill">
+          <b>${i18n.t(ship.traitNameKey)}</b>
+          ${i18n.t(ship.traitDescKey)}
+        </div>
+
+        <div class="hangar-specs-box">
+          <div class="hangar-section-title">${i18n.current === 'vi' ? '📊 CHỈ SỐ KỸ NĂNG & CƠ CHẾ' : '📊 SKILL STATS & MECHANICS'}</div>
+          ${specsHtml}
+        </div>
+
+        <div class="hangar-synergies-box">
+          <div class="hangar-section-title">${i18n.current === 'vi' ? '⚡ NÂNG CẤP SYNERGY TỐI ƯU' : '⚡ RECOMMENDED SYNERGIES'}</div>
+          <div class="hangar-synergies-wrap">
+            ${synergiesHtml}
+          </div>
+        </div>
+
+        <button class="btn-select-ship ${isSelected ? 'selected' : ''}">
+          ${isSelected ? `✓ ${i18n.t('shipSelectedBadge')}` : i18n.t('hangarSelectShipBtn')}
+        </button>
+      `;
+
+      const selectBtn = card.querySelector('.btn-select-ship');
+      selectBtn.addEventListener('click', () => {
+        sound.playJackpot();
+        game.selectShip(key);
+        renderShipSelector();
+        renderHangarShips();
+      });
+
+      hangarShipsList.appendChild(card);
+      const cvs = card.querySelector('canvas');
+      if (cvs) {
+        hangarShipPreviews.push({ canvas: cvs, shipId: key });
+      }
+    });
+  }
+
+  // Hangar Tabs Switching
+  if (hangarTabShipsBtn && hangarTabTechBtn) {
+    hangarTabShipsBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      hangarTabShipsBtn.classList.add('active');
+      hangarTabTechBtn.classList.remove('active');
+      if (hangarShipsView) hangarShipsView.classList.remove('hidden');
+      if (hangarTechView) hangarTechView.classList.add('hidden');
+      renderHangarShips();
+    });
+
+    hangarTabTechBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      hangarTabTechBtn.classList.add('active');
+      hangarTabShipsBtn.classList.remove('active');
+      if (hangarTechView) hangarTechView.classList.remove('hidden');
+      if (hangarShipsView) hangarShipsView.classList.add('hidden');
+      renderHangar();
     });
   }
 
@@ -299,6 +432,9 @@ window.addEventListener('DOMContentLoaded', () => {
     meta.load();
     hangarGoldVal.textContent = meta.gold.toLocaleString();
     hangarList.innerHTML = '';
+
+    if (hangarTabShipsBtn) hangarTabShipsBtn.textContent = i18n.t('hangarTabShips');
+    if (hangarTabTechBtn) hangarTabTechBtn.textContent = i18n.t('hangarTabTech');
 
     const upgrades = [
       { id: 'hull', titleKey: 'upgradeHull', descKey: 'upgradeHullDesc', icon: '🛡️' },
@@ -354,7 +490,9 @@ window.addEventListener('DOMContentLoaded', () => {
   function openHangar() {
     sound.playCardSelect();
     renderHangar();
+    renderHangarShips();
     hangarModal.classList.add('active');
+    updateModalState();
   }
 
   startHangarBtn.addEventListener('click', openHangar);
@@ -362,6 +500,7 @@ window.addEventListener('DOMContentLoaded', () => {
   hangarCloseBtn.addEventListener('click', () => {
     sound.playCardSelect();
     hangarModal.classList.remove('active');
+    updateModalState();
   });
 
   // Theme Toggle Engine (Dark / Light)
@@ -442,6 +581,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Lucky Slot Machine Chest Flow
   game.onLuckyChestCallback = () => {
     chestModal.classList.add('active');
+    updateModalState();
     chestResult.classList.add('hidden');
     chestClaimBtn.classList.add('hidden');
     chestSub.textContent = i18n.t('chestSpinning');
@@ -470,12 +610,25 @@ window.addEventListener('DOMContentLoaded', () => {
           card.apply();
           const cEl = document.createElement('div');
           cEl.className = `upgrade-card rarity-${card.rarityKey}`;
+
+          let levelBadgeHtml = '';
+          if (card.currentLevel !== undefined && card.maxLevel) {
+            if (card.currentLevel === 0) {
+              levelBadgeHtml = `<span class="card-level-badge unlock">${i18n.current === 'vi' ? 'MỞ KHÓA (CẤP 1)' : 'UNLOCK (LV.1)'}</span>`;
+            } else {
+              levelBadgeHtml = `<span class="card-level-badge progress">${i18n.current === 'vi' ? `CẤP ${card.currentLevel} ➔ ${card.nextLevel} (TỐI ĐA ${card.maxLevel})` : `LV.${card.currentLevel} ➔ ${card.nextLevel} (MAX ${card.maxLevel})`}</span>`;
+            }
+          } else if (card.rarityKey === 'Mythic') {
+            levelBadgeHtml = `<span class="card-level-badge mythic">${i18n.current === 'vi' ? 'TỐI THƯỢNG' : 'ULTIMATE'}</span>`;
+          }
+
           cEl.innerHTML = `
             <div class="card-icon">${card.icon}</div>
             <div class="card-info">
               <div class="card-header-row">
                 <span class="card-name">${card.title}</span>
                 <div class="card-badges-group">
+                  ${levelBadgeHtml}
                   <span class="card-category-badge ${card.categoryKey}">${card.category}</span>
                   <span class="card-badge ${card.rarityKey}">${card.rarity}</span>
                 </div>
@@ -497,6 +650,7 @@ window.addEventListener('DOMContentLoaded', () => {
     sound.playCardSelect();
     chestModal.classList.remove('active');
     game.state = 'playing';
+    updateModalState();
   });
 
   // Level Up Modal Handler
@@ -524,12 +678,26 @@ window.addEventListener('DOMContentLoaded', () => {
     cards.forEach((card) => {
       const cardEl = document.createElement('div');
       cardEl.className = `upgrade-card rarity-${card.rarityKey}`;
+
+      // Build Level Badge
+      let levelBadgeHtml = '';
+      if (card.currentLevel !== undefined && card.maxLevel) {
+        if (card.currentLevel === 0) {
+          levelBadgeHtml = `<span class="card-level-badge unlock">${i18n.current === 'vi' ? 'MỞ KHÓA (CẤP 1)' : 'UNLOCK (LV.1)'}</span>`;
+        } else {
+          levelBadgeHtml = `<span class="card-level-badge progress">${i18n.current === 'vi' ? `CẤP ${card.currentLevel} ➔ ${card.nextLevel} (TỐI ĐA ${card.maxLevel})` : `LV.${card.currentLevel} ➔ ${card.nextLevel} (MAX ${card.maxLevel})`}</span>`;
+        }
+      } else if (card.rarityKey === 'Mythic') {
+        levelBadgeHtml = `<span class="card-level-badge mythic">${i18n.current === 'vi' ? 'TỐI THƯỢNG' : 'ULTIMATE'}</span>`;
+      }
+
       cardEl.innerHTML = `
         <div class="card-icon">${card.icon}</div>
         <div class="card-info">
           <div class="card-header-row">
             <span class="card-name">${card.title}</span>
             <div class="card-badges-group">
+              ${levelBadgeHtml}
               <span class="card-category-badge ${card.categoryKey}">${card.category}</span>
               <span class="card-badge ${card.rarityKey}">${card.rarity}</span>
             </div>
@@ -543,12 +711,14 @@ window.addEventListener('DOMContentLoaded', () => {
         card.apply();
         levelUpModal.classList.remove('active');
         game.state = 'playing';
+        updateModalState();
       });
 
       cardsContainer.appendChild(cardEl);
     });
 
     levelUpModal.classList.add('active');
+    updateModalState();
   };
 
   // Game Over Handler
@@ -563,26 +733,34 @@ window.addEventListener('DOMContentLoaded', () => {
     statGold.textContent = `${meta.gold.toLocaleString()} (+${game.earnedGold})`;
 
     gameOverModal.classList.add('active');
+    updateModalState();
   };
 
-  // Start Button Click
+  // Start Button Click (Vào trận đấu chỉ hiển thị chỉ số cơ bản)
   startBtn.addEventListener('click', () => {
     sound.resume();
     sound.playCardSelect();
     startScreen.classList.remove('active');
+    damageMeterPanel.classList.add('hidden');
+    if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
     game.state = 'playing';
+    updateModalState();
   });
 
   // Retry Button Click
   retryBtn.addEventListener('click', () => {
     sound.playCardSelect();
     gameOverModal.classList.remove('active');
+    damageMeterPanel.classList.add('hidden');
+    if (shipStatsPanel) shipStatsPanel.classList.add('hidden');
     game.restart();
+    updateModalState();
   });
 
   // Initial language & theme application
   applyLanguage(i18n.current);
   applyTheme(currentTheme);
+  updateModalState();
 
   // Main Animation Loop
   let lastTime = performance.now();
@@ -596,6 +774,12 @@ window.addEventListener('DOMContentLoaded', () => {
     // Render animated Starship preview models on Start Screen
     if (startScreen.classList.contains('active')) {
       for (const sp of shipPreviews) {
+        art.drawShipPreview(sp.canvas, sp.shipId, currentTime / 1000);
+      }
+    }
+    // Render animated Starship preview models in Hangar
+    if (hangarModal && hangarModal.classList.contains('active') && hangarShipsView && !hangarShipsView.classList.contains('hidden')) {
+      for (const sp of hangarShipPreviews) {
         art.drawShipPreview(sp.canvas, sp.shipId, currentTime / 1000);
       }
     }
