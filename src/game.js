@@ -921,9 +921,34 @@ class Player {
     };
 
     this.invulnerableTimer = 0;
+    this.hpRegen = 0;
+    this.luckBonus = 0;
+    this.cooldownReduction = 0;
+    this.isTransformed = false;
+    this.transformFlashTimer = 0;
 
     // Apply persistent Meta Hangar upgrades!
     meta.applyToPlayer(this);
+  }
+
+  triggerTransform(label = 'AWAKENING') {
+    this.isTransformed = true;
+    this.transformFlashTimer = 1.4;
+    this.game.screenShake = 18;
+    sound.playJackpot();
+    if (this.game.weaponManager) {
+      this.game.weaponManager.triggerEmpShockwave(this);
+    }
+    // Radiate golden and cyan particles
+    for (let i = 0; i < 45; i++) {
+      const angle = (i / 45) * Math.PI * 2;
+      const spd = 160 + Math.random() * 260;
+      const p = new Particle(this.x, this.y, i % 2 === 0 ? '#facc15' : '#00f2fe', 5, 4, 0.8);
+      p.vx = Math.cos(angle) * spd;
+      p.vy = Math.sin(angle) * spd;
+      this.game.particles.push(p);
+    }
+    this.game.floatingTexts.push(new FloatingText(this.x, this.y - 75, `⚡ ${label.toUpperCase()} ⚡`, '#facc15', 26, true));
   }
 
   get magnetRadius() {
@@ -934,8 +959,16 @@ class Player {
     if (this.invulnerableTimer > 0) {
       this.invulnerableTimer -= dt;
     }
+    if (this.transformFlashTimer > 0) {
+      this.transformFlashTimer -= dt;
+    }
     if (this.crashNovaCooldown > 0) {
       this.crashNovaCooldown -= dt;
+    }
+
+    // Nano HP Regeneration
+    if (this.hpRegen > 0 && this.hp < this.maxHp) {
+      this.hp = Math.min(this.maxHp, this.hp + this.hpRegen * dt);
     }
 
     const currentSpeed = this.baseSpeed * this.stats.speedMult * (this.game.isFrenzy ? 1.45 : 1.0);

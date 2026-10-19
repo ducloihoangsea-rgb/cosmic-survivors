@@ -1054,11 +1054,18 @@ window.addEventListener('DOMContentLoaded', () => {
     if (hangarTabCodexBtn) hangarTabCodexBtn.textContent = i18n.t('hangarTabCodex');
 
     const upgrades = [
-      { id: 'hull', titleKey: 'upgradeHull', descKey: 'upgradeHullDesc', icon: '🛡️' },
-      { id: 'reactor', titleKey: 'upgradeReactor', descKey: 'upgradeReactorDesc', icon: '⚛️' },
-      { id: 'magnet', titleKey: 'upgradeMagnet', descKey: 'upgradeMagnetDesc', icon: '🧲' },
-      { id: 'revive', titleKey: 'upgradeRevive', descKey: 'upgradeReviveDesc', icon: '💖' },
-      { id: 'greed', titleKey: 'upgradeGreed', descKey: 'upgradeGreedDesc', icon: '🪙' }
+      { id: 'hull', titleKey: 'upgradeHull', descKey: 'upgradeHullDesc', icon: 'hull' },
+      { id: 'reactor', titleKey: 'upgradeReactor', descKey: 'upgradeReactorDesc', icon: 'reactor' },
+      { id: 'firerate', titleKey: 'upgradeFirerate', descKey: 'upgradeFirerateDesc', icon: 'firerate' },
+      { id: 'speed', titleKey: 'upgradeSpeed', descKey: 'upgradeSpeedDesc', icon: 'speed' },
+      { id: 'shield', titleKey: 'upgradeShield', descKey: 'upgradeShieldDesc', icon: 'shield' },
+      { id: 'crit', titleKey: 'upgradeCrit', descKey: 'upgradeCritDesc', icon: 'crit' },
+      { id: 'regen', titleKey: 'upgradeRegen', descKey: 'upgradeRegenDesc', icon: 'regen' },
+      { id: 'magnet', titleKey: 'upgradeMagnet', descKey: 'upgradeMagnetDesc', icon: 'magnet' },
+      { id: 'luck', titleKey: 'upgradeLuck', descKey: 'upgradeLuckDesc', icon: 'luck' },
+      { id: 'cooldown', titleKey: 'upgradeCooldown', descKey: 'upgradeCooldownDesc', icon: 'cooldown' },
+      { id: 'greed', titleKey: 'upgradeGreed', descKey: 'upgradeGreedDesc', icon: 'greed' },
+      { id: 'revive', titleKey: 'upgradeRevive', descKey: 'upgradeReviveDesc', icon: 'revive' }
     ];
 
     upgrades.forEach(u => {
@@ -1078,13 +1085,16 @@ window.addEventListener('DOMContentLoaded', () => {
       item.innerHTML = `
         <div class="hangar-item-icon">${renderCyberIconHtml(u.id, u.icon)}</div>
         <div class="hangar-item-info">
-          <div class="hangar-item-title">${i18n.t(u.titleKey)}</div>
+          <div class="hangar-item-title-row">
+            <span class="hangar-item-title">${i18n.t(u.titleKey)}</span>
+            <span class="hangar-rank-badge">Lv.${currentRank}/${maxRank}</span>
+          </div>
           <div class="hangar-item-desc">${i18n.t(u.descKey)}</div>
           <div class="rank-nodes-row">${rankPillsHtml}</div>
         </div>
         <div class="hangar-item-action">
           <button class="btn-upgrade ${isMaxed ? 'maxed' : (canAfford ? 'affordable' : 'locked')}">
-            ${isMaxed ? i18n.t('maxedLabel') : `🪙 ${cost}`}
+            ${isMaxed ? i18n.t('maxedLabel') : `🪙 ${cost.toLocaleString()}`}
           </button>
         </div>
       `;
@@ -1114,12 +1124,25 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   startHangarBtn.addEventListener('click', openHangar);
-  overHangarBtn.addEventListener('click', openHangar);
+  if (overHangarBtn) {
+    overHangarBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      gameOverModal.classList.remove('active');
+      resetLeftDockState();
+      openHangar();
+      updateModalState();
+    });
+  }
   setupCodexFilters();
   const hangarHeaderCloseBtn = document.getElementById('hangar-header-close-btn');
   const closeHangar = () => {
     sound.playCardSelect();
     hangarModal.classList.remove('active');
+    if (game.state !== 'playing') {
+      game.state = 'start';
+      startScreen.classList.add('active');
+      renderShipSelector();
+    }
     updateModalState();
   };
   hangarCloseBtn.addEventListener('click', closeHangar);
@@ -1301,6 +1324,12 @@ window.addEventListener('DOMContentLoaded', () => {
                   <span class="card-badge ${card.rarityKey}">${card.rarity}</span>
                 </div>
               </div>
+              ${card.benefit ? `
+                <div class="card-benefit-row">
+                  <span class="card-benefit-tag">⚡ ${i18n.t('cardBenefitPrefix')}:</span>
+                  <span class="card-benefit-val">${card.benefit}</span>
+                </div>
+              ` : ''}
               <div class="card-desc">${card.desc}</div>
             </div>
           `;
@@ -1378,6 +1407,12 @@ window.addEventListener('DOMContentLoaded', () => {
               <span class="card-badge ${card.rarityKey}">${card.rarity}</span>
             </div>
           </div>
+          ${card.benefit ? `
+            <div class="card-benefit-row">
+              <span class="card-benefit-tag">⚡ ${i18n.t('cardBenefitPrefix')}:</span>
+              <span class="card-benefit-val">${card.benefit}</span>
+            </div>
+          ` : ''}
           <div class="card-desc">${card.desc}</div>
         </div>
       `;
@@ -1432,7 +1467,9 @@ window.addEventListener('DOMContentLoaded', () => {
       sound.playCardSelect();
       if (victoryModal) victoryModal.classList.remove('active');
       resetLeftDockState();
-      game.restart();
+      game.state = 'start';
+      startScreen.classList.add('active');
+      renderShipSelector();
       updateModalState();
     });
   }
@@ -1457,12 +1494,14 @@ window.addEventListener('DOMContentLoaded', () => {
     updateModalState();
   });
 
-  // Retry Button Click
+  // Retry Button Click -> Goes to Start Screen with Ship & Skin Selection
   retryBtn.addEventListener('click', () => {
     sound.playCardSelect();
     gameOverModal.classList.remove('active');
     resetLeftDockState();
-    game.restart();
+    game.state = 'start';
+    startScreen.classList.add('active');
+    renderShipSelector();
     updateModalState();
   });
 

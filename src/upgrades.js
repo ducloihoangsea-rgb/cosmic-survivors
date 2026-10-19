@@ -25,9 +25,109 @@ export class UpgradeSystem {
     return 'Common';
   }
 
+  getCardBenefit(id, nextLvl = 1) {
+    const isVi = i18n.current === 'vi';
+    const benefits = {
+      thrust: isVi ? '+25% Tốc độ bay, +15% Tốc độ xoay tàu' : '+25% Flight Speed, +15% Turn Rate',
+      juggernaut: isVi ? '+40% Khối lượng đâm húc, +30% Máu tối đa' : '+40% Ram Mass, +30% Max HP',
+      microcraft: isVi ? '-30% Kích thước Hitbox, +35% Tốc độ bay (né đạn cực dễ)' : '-30% Hitbox, +35% Flight Speed',
+      energycore: isVi ? '+40% Tốc độ sạc khiên, giảm 25% thời gian nổ khiên' : '+40% Shield Recharge & faster burst',
+      growsegments: isVi ? '+2 Đốt thân rồng hoặc vệt lửa phản lực thiêu đốt dài hơn' : '+2 Segments / Longer Jet Flame Trail',
+      cosmicscope: isVi ? '+25% Tầm nhìn toàn cảnh, +45px Bán kính nam châm hút ngọc' : '+25% FOV, +45px Magnet Radius',
+      drill: isVi ? '+120% Sát thương đâm húc, không bị khựng khi đâm xuyên quái' : '+120% Ram Damage & piercing momentum',
+      burnfield: isVi ? 'Tạo vòng khiên lửa thiêu đốt 40 DPS xung quanh thân tàu' : 'Scorching fire aura dealing 40 DPS',
+      ricochet: isVi ? 'Đạn và mảnh vỡ nảy thêm 2 lần giữa các kẻ địch lân cận' : 'Projectiles bounce 2 extra times',
+      toxicexhaust: isVi ? 'Phun khói độc gây 35 DPS làm chậm quái phía sau đuôi' : 'Toxic smoke trail dealing 35 DPS & slow',
+      crashnova: isVi ? 'Tông trúng quái lập tức phát nổ sóng xung kích 250 DMG diện rộng' : 'Ramming detonates a 250 DMG shockwave',
+      irondragon: isVi ? 'Đốt thân bọc giáp thép gai, phản 100% sát thương va chạm' : 'Heavy armored segments with thorns',
+      immortality: isVi ? 'Toàn bộ máu chuyển thành Khiên Lực, sạc khiên siêu tốc' : 'HP converted to ultra fast recharging shield',
+      tacticalnuke: isVi ? 'Kích nổ bom hạt nhân quét sạch 100% quái vật trên màn hình' : 'Purge nuke clears 100% screen enemies',
+      core_firerate: isVi ? '+20% Tốc độ bắn & xả đạn cho mọi vũ khí trên tàu' : '+20% Fire Rate across all weapons',
+      core_blast: isVi ? '+35% Bán kính vụ nổ diện rộng cho mìn & tên lửa' : '+35% Blast Radius for mines & missiles',
+      core_summon: isVi ? '+40% Sát thương và Máu cho Đơn vị Triệu Hồi (Drone, Mìn)' : '+40% Damage & HP for Summon Units',
+      core_range: isVi ? '+35% Tầm bắn, độ dài quét laze và tầm nhìn radar' : '+35% Weapon Range & laser reach',
+      core_shield: isVi ? '+50 HP Khiên năng lượng, sạc khiên nhanh hơn 25%' : '+50 Max Shield & 25% faster recharge',
+      core_hull: isVi ? '+40% Máu tối đa, +35% Khối lượng thân tàu đâm húc' : '+40% Max HP & +35% Ram Mass',
+      core_tail: isVi ? '+2 Đốt thân rồng chiến đấu, tăng tầm càn quét' : '+2 Dragon Combat Segments',
+
+      // Weapons level-specific benefits
+      blaster: {
+        1: isVi ? 'Mở khóa Súng Plasma 2 nòng tự động bắn mục tiêu gần' : 'Unlock Dual Plasma Blaster auto-targeting',
+        2: isVi ? '+25% Tốc độ bắn, +15% Sát thương đạn' : '+25% Fire Rate, +15% Bullet Damage',
+        3: isVi ? 'Nâng cấp thành 3 nòng bắn chùm diện rộng' : 'Upgrade to Triple-Barrel spread shot',
+        4: isVi ? '+30% Sát thương, đạn xuyên qua 1 kẻ địch' : '+30% Damage, bullets pierce 1 target',
+        5: isVi ? 'CẤP TỐI THƯỢNG: Đại bác Plasma 4 nòng xuyên phá cực mạnh' : 'ULTIMATE: Quad-Barrel Heavy Piercing Cannon'
+      },
+      orbs: {
+        1: isVi ? 'Mở khóa 2 Quả Cầu Năng Lượng quay quanh bảo vệ tàu' : 'Unlock 2 Energy Orbs orbiting the ship',
+        2: isVi ? '+1 Cầu năng lượng (tổng 3 cầu), +20% Tốc độ quay' : '+1 Orb (3 total), +20% Orbit Speed',
+        3: isVi ? '+25% Sát thương và mở rộng bán kính quỹ đạo quay' : '+25% Damage & wider orbit radius',
+        4: isVi ? '+1 Cầu năng lượng (tổng 4 cầu), đòn đánh làm choáng quái' : '+1 Orb (4 total), hits stun enemies',
+        5: isVi ? 'CẤP TỐI THƯỢNG: 5 Quả Cầu Siêu Lượng Tử quét sạch cận chiến' : 'ULTIMATE: 5 Hyper-Quantum Orbs'
+      },
+      lightning: {
+        1: isVi ? 'Mở khóa Sấm Sét Lượng Tử giật sét ngẫu nhiên kẻ địch' : 'Unlock Quantum Lightning striking random foes',
+        2: isVi ? '+1 Tia sét giật thêm, +25% Sát thương điện' : '+1 Extra bolt, +25% Electric Damage',
+        3: isVi ? 'Sét lan truyền giật chuỗi sang 2 mục tiêu lân cận' : 'Chain lightning jumps to 2 nearby foes',
+        4: isVi ? 'Giảm 30% thời gian hồi chiêu sấm sét' : '-30% Lightning Cooldown',
+        5: isVi ? 'CẤP TỐI THƯỢNG: Bão Điện Từ giật 6 tia liên hoàn toàn màn hình' : 'ULTIMATE: 6-Bolt Continuous EMP Storm'
+      },
+      glaive: {
+        1: isVi ? 'Mở khóa Phi Tiêu Laze quay bên thân tàu, tự phóng rồi quay lại' : 'Unlock Docked Laser Glaive auto-launching & returning',
+        2: isVi ? '+30% Sát thương phi tiêu, nảy thêm 2 mục tiêu' : '+30% Damage, bounces to 2 extra targets',
+        3: isVi ? 'Xuất hiện thêm phi tiêu phụ ở cả 2 bên thân tàu, giảm 20% hồi chiêu' : 'Dual-docked glaives on both sides, -20% CD',
+        4: isVi ? 'Tốc độ xoay và bay của phi tiêu +40%, gây xuất huyết kẻ địch' : '+40% Glaive Speed, inflicts bleed',
+        5: isVi ? 'CẤP TỐI THƯỢNG: Phi Tiêu Tam Thần nảy 8 lần, phát nổ năng lượng' : 'ULTIMATE: Trinity Glaive bounces 8 times with energy bursts'
+      },
+      missiles: {
+        1: isVi ? 'Mở khóa Bệ Phóng Tên Lửa Tầm Nhiệt tự ngắm mục tiêu nguy hiểm' : 'Unlock Heat-Seeking Missile pods',
+        2: isVi ? 'Bắn 2 tên lửa mỗi đợt, +25% Sát thương nổ' : 'Fires 2 missiles per salvo, +25% Blast Dmg',
+        3: isVi ? 'Bắn 3 tên lửa, tăng 35% bán kính vụ nổ' : 'Fires 3 missiles, +35% Blast Area',
+        4: isVi ? 'Giảm 25% thời gian nạp tên lửa, tốc độ bay +30%' : '-25% Reload Cooldown, +30% Flight Speed',
+        5: isVi ? 'CẤP TỐI THƯỢNG: Bão Tên Lửa 5 đầu đạn nhiệt hạch hủy diệt diện rộng' : 'ULTIMATE: 5-Warhead Thermonuclear Barrage'
+      },
+      wingmen: {
+        1: isVi ? 'Mở khóa 1 Phi Thuyền Con Hộ Vệ bay kèm và bắn phụ trợ' : 'Unlock 1 Wingman Drone companion',
+        2: isVi ? '+1 Phi thuyền con (tổng 2 Drone), +20% Sát thương bắn' : '+1 Drone (2 total), +20% Drone Damage',
+        3: isVi ? 'Drone tăng gấp đôi tốc độ bắn và có khiên mini tự vệ' : 'Double drone fire rate & mini shields',
+        4: isVi ? '+1 Phi thuyền con (tổng 3 Drone), Drone bắn đạn laze xuyên' : '+1 Drone (3 total), piercing laser shots',
+        5: isVi ? 'CẤP TỐI THƯỢNG: Hạm Đội 4 Drone Thần Vệ càn quét mọi góc chết' : 'ULTIMATE: 4-Drone Sovereign Fleet'
+      },
+      laser: {
+        1: isVi ? 'Mở khóa Pháo Laze Lăng Kính quét tia năng lượng xuyên thẳng hàng' : 'Unlock Prism Laser firing high-energy piercing beam',
+        2: isVi ? '+30% Sát thương tia laze, tăng độ rộng chùm tia' : '+30% Laser Damage, wider beam width',
+        3: isVi ? 'Quét thêm 1 tia laze phụ góc 45 độ, thiêu đốt kẻ địch' : 'Dual laser beams sweeping wide arc',
+        4: isVi ? 'Tia laze duy trì liên tục lâu hơn 50%, giảm 20% hồi chiêu' : '+50% Beam duration, -20% Cooldown',
+        5: isVi ? 'CẤP TỐI THƯỢNG: Siêu Pháo Hạt Nhân hủy diệt toàn bộ kẻ địch trên đường quét' : 'ULTIMATE: Orbital Death Ray incinerating all path foes'
+      },
+      bombs: {
+        1: isVi ? 'Mở khóa Máy Rải Bom Không Gian thả mìn từ trường phía sau đuôi tàu' : 'Unlock Space Mine Dropper behind ship tail',
+        2: isVi ? 'Thả 2 quả mìn cùng lúc, +30% Sát thương nổ' : 'Drops 2 mines simultaneously, +30% Blast Dmg',
+        3: isVi ? 'Mìn tạo sóng xung kích đẩy lùi và làm choáng quái vật' : 'Mines emit concussive blast & stun',
+        4: isVi ? 'Mở rộng bán kính nổ lên 50%, mìn phát nổ dây chuyền' : '+50% Blast Radius, chain detonations',
+        5: isVi ? 'CẤP TỐI THƯỢNG: Bom Trọng Lực Hút Quái rồi phát nổ bốc hơi tất cả' : 'ULTIMATE: Graviton Mines pull & vaporize swarms'
+      },
+
+      // Awakenings
+      awaken_blaster: isVi ? 'THỨC TỈNH: Bão Súng Gatling Laze xả 20 phát/giây, xé nát mọi quái vật!' : 'Gatling Laserstorm fires 20 shots/sec piercing all mobs!',
+      awaken_bombs: isVi ? 'THỨC TỈNH: Bom Hạt Nhân Tận Thế phát nổ hủy diệt nửa màn hình!' : 'Apocalypse Nuke Mines obliterate half the screen!',
+      awaken_drone: isVi ? 'THỨC TỈNH: Hạm Đội Thần Mẫu Mothership điều khiển phi đội máy bay tiêm kích vĩnh cửu!' : 'Mothership Armada commands permanent fighter squadrons!',
+      awaken_laser: isVi ? 'THỨC TỈNH: Tia Chết Chóc Quỹ Đạo quét chùm tia plasma vô tận thiêu rụi Boss!' : 'Orbital Death Ray sweeps endless scorching plasma!',
+      awaken_shield: isVi ? 'THỨC TỈNH: Khiên Vĩnh Hằng sạc đầy tức thì, phản đòn 300% sát thương va chạm!' : 'Aegis of Eternity recharges instantly & reflects 300% dmg!',
+      awaken_rammer: isVi ? 'THỨC TỈNH: Thiết Giáp Thần Long Titan tăng 250% khối lượng, đâm xuyên Boss không bị cản!' : 'Dreadnought Leviathan: +250% Mass, unstoppable ramming!',
+      awaken_serpent: isVi ? 'THỨC TỈNH: Thần Rồng Ouroboros mọc thêm 8 đốt thân, bọc lửa toàn thân rồng càn quét!' : 'Ouroboros Dragon: +8 Segments, blazing firestorm body!'
+    };
+
+    const item = benefits[id];
+    if (!item) return '';
+    if (typeof item === 'string') return item;
+    return item[nextLvl] || item[1] || '';
+  }
+
   getMythicCards() {
     const player = this.game.player;
     const cards = [];
+    const isVi = i18n.current === 'vi';
 
     // 1. Divine Destiny Pact (God-Tier Support)
     if (!player.forceMythicSingleChoice) {
@@ -40,6 +140,7 @@ export class UpgradeSystem {
         icon: getCyberSkillIcon('godpact'),
         title: i18n.t('godPactTitle'),
         desc: i18n.t('godPactDesc'),
+        benefit: isVi ? 'Lần lên cấp kế tiếp CHỈ RA DUY NHẤT 1 THẺ nhưng BẢO ĐẢM là Thần Thoại Đỏ!' : 'Next level forces a single GUARANTEED Red Mythic God-Tier card!',
         apply: () => {
           player.forceMythicSingleChoice = true;
           this.game.floatingTexts.push(new FloatingText(player.x, player.y - 60, i18n.t('destinyPactActivated'), '#ef4444', 22, true));
@@ -58,6 +159,7 @@ export class UpgradeSystem {
         icon: getCyberSkillIcon('blackhole'),
         title: i18n.t('blackHoleTitle'),
         desc: i18n.t('blackHoleDesc'),
+        benefit: isVi ? 'Hút toàn bộ quái vật trên bản đồ mỗi 12 giây, nghiền nát diện rộng' : 'Spawns cosmic singularity pulling & crushing swarms every 12s',
         apply: () => {
           player.hasBlackHole = true;
           player.blackHoleTimer = 1.0;
@@ -76,6 +178,7 @@ export class UpgradeSystem {
         icon: getCyberSkillIcon('bloodfrenzy'),
         title: i18n.t('bloodFrenzyTitle'),
         desc: i18n.t('bloodFrenzyDesc'),
+        benefit: isVi ? '+100% Sát thương toàn thể, hồi phục +1 Máu mỗi quái bị tiêu diệt' : '+100% Total Damage, restores +1 HP per monster kill',
         apply: () => {
           player.stats.damageMult += 1.0;
           player.hasBloodGodFrenzy = true;
@@ -94,6 +197,7 @@ export class UpgradeSystem {
         icon: getCyberSkillIcon('reaper'),
         title: i18n.t('reaperTitle'),
         desc: i18n.t('reaperDesc'),
+        benefit: isVi ? '10% Tỉ lệ KẾT LIỄU quái tức thì (trảm sát Boss dưới 25% Máu)' : '10% chance to INSTANTLY EXECUTE targets (<25% HP)',
         apply: () => {
           player.hasReaperExecution = true;
         }
@@ -111,6 +215,7 @@ export class UpgradeSystem {
         icon: getCyberSkillIcon('chronos'),
         title: i18n.t('chronosTitle'),
         desc: i18n.t('chronosDesc'),
+        benefit: isVi ? 'Đóng băng toàn thể quái vật trong 5 giây mỗi 20s, nhận +60% Sát thương' : 'Freezes all enemies for 5s every 20s and grants +60% Damage',
         apply: () => {
           player.hasChronosFreeze = true;
           player.chronosTimer = 5.0;
@@ -132,6 +237,9 @@ export class UpgradeSystem {
       const mythics = this.getMythicCards().filter(c => c.id !== 'godpact');
       if (mythics.length > 0) {
         const singleCard = mythics[Math.floor(Math.random() * mythics.length)];
+        if (!singleCard.benefit) {
+          singleCard.benefit = this.getCardBenefit(singleCard.id, singleCard.nextLevel || 1);
+        }
         return [singleCard];
       }
     }
@@ -1003,6 +1111,20 @@ export class UpgradeSystem {
     for (const card of selected) {
       if (!card.icon || typeof card.icon !== 'string' || !card.icon.includes('<svg')) {
         card.icon = getCyberSkillIcon(card.id, card.icon);
+      }
+      if (!card.benefit) {
+        card.benefit = this.getCardBenefit(card.id, card.nextLevel || 1);
+      }
+
+      // If card triggers transformation (Awakening or reaching Max Lv.5)
+      if (card.rarityKey === 'Awakening' || (card.categoryKey === 'offense' && card.nextLevel >= 5)) {
+        const origApply = card.apply;
+        card.apply = () => {
+          origApply();
+          if (player.triggerTransform) {
+            player.triggerTransform(card.title);
+          }
+        };
       }
     }
 

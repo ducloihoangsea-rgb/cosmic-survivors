@@ -705,6 +705,76 @@ const ICON_SVGS = {
       <polygon points="24,12 32,24 24,36 16,24" stroke="#ffffff" stroke-width="1.8" fill="none"/>
       <circle cx="24" cy="24" r="3" fill="#facc15"/>
     </svg>
+  `,
+
+  firerate: (c) => `
+    <svg viewBox="0 0 48 48" class="cyber-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 28 L24 8 L22 22 L36 22 L18 42 L22 28 Z" fill="rgba(250,204,21,0.25)" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>
+      <line x1="6" y1="14" x2="14" y2="14" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="34" y1="34" x2="42" y2="34" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+  `,
+
+  speed: (c) => `
+    <svg viewBox="0 0 48 48" class="cyber-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="24,6 34,26 24,22 14,26" fill="rgba(56,189,248,0.25)" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M16 32 L24 44 L32 32" stroke="${c}" stroke-width="2" fill="none"/>
+      <line x1="6" y1="24" x2="2" y2="24" stroke="#ffffff" stroke-width="2"/>
+      <line x1="42" y1="24" x2="46" y2="24" stroke="#ffffff" stroke-width="2"/>
+    </svg>
+  `,
+
+  shield: (c) => `
+    <svg viewBox="0 0 48 48" class="cyber-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="24,4 40,12 36,32 24,44 12,32 8,12" fill="rgba(0,242,254,0.25)" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>
+      <polygon points="24,14 32,18 30,28 24,35 18,28 16,18" stroke="#ffffff" stroke-width="1.6" fill="none"/>
+    </svg>
+  `,
+
+  crit: (c) => `
+    <svg viewBox="0 0 48 48" class="cyber-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="24" cy="24" r="16" stroke="${c}" stroke-width="2" stroke-dasharray="6 3"/>
+      <circle cx="24" cy="24" r="6" stroke="#ffffff" stroke-width="1.5"/>
+      <circle cx="24" cy="24" r="2.5" fill="#f43f5e"/>
+      <line x1="24" y1="4" x2="24" y2="12" stroke="${c}" stroke-width="2"/>
+      <line x1="24" y1="36" x2="24" y2="44" stroke="${c}" stroke-width="2"/>
+      <line x1="4" y1="24" x2="12" y2="24" stroke="${c}" stroke-width="2"/>
+      <line x1="36" y1="24" x2="44" y2="24" stroke="${c}" stroke-width="2"/>
+    </svg>
+  `,
+
+  regen: (c) => `
+    <svg viewBox="0 0 48 48" class="cyber-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="8" width="8" height="32" rx="2" fill="rgba(16,185,129,0.25)" stroke="${c}" stroke-width="2"/>
+      <rect x="8" y="20" width="32" height="8" rx="2" fill="rgba(16,185,129,0.25)" stroke="${c}" stroke-width="2"/>
+      <circle cx="24" cy="24" r="3.5" fill="#ffffff"/>
+      <circle cx="12" cy="12" r="1.5" fill="${c}"/>
+      <circle cx="36" cy="12" r="1.5" fill="${c}"/>
+      <circle cx="12" cy="36" r="1.5" fill="${c}"/>
+      <circle cx="36" cy="36" r="1.5" fill="${c}"/>
+    </svg>
+  `,
+
+  luck: (c) => `
+    <svg viewBox="0 0 48 48" class="cyber-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- 4-Leaf Quantum Matrix Sigil -->
+      <circle cx="18" cy="18" r="6" fill="rgba(251,191,36,0.25)" stroke="${c}" stroke-width="1.8"/>
+      <circle cx="30" cy="18" r="6" fill="rgba(251,191,36,0.25)" stroke="${c}" stroke-width="1.8"/>
+      <circle cx="18" cy="30" r="6" fill="rgba(251,191,36,0.25)" stroke="${c}" stroke-width="1.8"/>
+      <circle cx="30" cy="30" r="6" fill="rgba(251,191,36,0.25)" stroke="${c}" stroke-width="1.8"/>
+      <polygon points="24,14 26,22 34,24 26,26 24,34 22,26 14,24 22,22" fill="#ffffff"/>
+    </svg>
+  `,
+
+  cooldown: (c) => `
+    <svg viewBox="0 0 48 48" class="cyber-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Cryo Snowflake Superconductor -->
+      <line x1="24" y1="6" x2="24" y2="42" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="6" y1="24" x2="42" y2="24" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>
+      <line x1="11" y1="11" x2="37" y2="37" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>
+      <line x1="11" y1="37" x2="37" y2="11" stroke="${c}" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="24" cy="24" r="5" fill="#ffffff" stroke="${c}" stroke-width="1.5"/>
+    </svg>
   `
 };
 

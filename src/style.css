@@ -1811,11 +1811,30 @@ body.in-modal #horde-alert {
   flex: 1;
 }
 
+.hangar-item-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  gap: 8px;
+}
+
+.hangar-rank-badge {
+  font-size: 10.5px;
+  font-weight: 900;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  padding: 1px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
 .hangar-item-title {
   font-size: 14.5px;
   font-weight: 800;
   color: #ffffff;
-  margin-bottom: 2px;
 }
 
 .hangar-item-desc {
@@ -1826,19 +1845,71 @@ body.in-modal #horde-alert {
 
 .rank-nodes-row {
   display: flex;
-  gap: 4px;
+  flex-wrap: wrap;
+  gap: 3.5px;
+  margin-top: 5px;
 }
 
 .rank-node {
-  width: 14px;
+  width: 9.5px;
   height: 6px;
-  border-radius: 3px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.15);
+  transition: all 0.2s ease;
 }
 
 .rank-node.active {
   background: #38bdf8;
   box-shadow: 0 0 6px #38bdf8;
+}
+
+/* Card Benefit Annotation Row */
+.card-benefit-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  background: rgba(34, 197, 94, 0.08);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  padding: 4px 8px;
+  margin: 4px 0 6px 0;
+  font-size: 11px;
+  line-height: 1.35;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.08);
+}
+
+.card-benefit-tag {
+  color: #4ade80;
+  font-weight: 900;
+  font-size: 9.5px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.card-benefit-val {
+  color: #f0fdf4;
+  font-weight: 700;
+  flex: 1;
+}
+
+.single-choice .card-benefit-row {
+  background: rgba(250, 204, 21, 0.1);
+  border-color: rgba(250, 204, 21, 0.4);
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.15);
+  padding: 8px 12px;
+  font-size: 12.5px;
+}
+
+.single-choice .card-benefit-tag {
+  color: #facc15;
+  font-size: 11px;
+}
+
+.single-choice .card-benefit-val {
+  color: #fef08a;
+  font-weight: 800;
 }
 
 .btn-upgrade {

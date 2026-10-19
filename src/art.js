@@ -275,16 +275,369 @@ export class ArtEngine {
     ctx.arc(5, -1, 1.4, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = coreGrad;
-    ctx.beginPath();
-    ctx.ellipse(3, 0, 7, 3.5, 0, 0, Math.PI * 2);
-    ctx.fill();
+    // ==========================================
+    // 4. PHYSICAL WEAPON ACCESSORIES ATTACHED TO SHIP
+    // ==========================================
+    const wm = player.game?.weaponManager || player.game?.weapons;
+    if (wm && wm.weapons && !player.isPreview) {
+      // 4A. Glaive (Phi tiêu xoay bên thân tàu, nạp đạn phóng đi rồi quay lại)
+      const gl = wm.weapons.glaive;
+      if (gl && gl.level > 0) {
+        const gCd = gl.cooldown || 1.8;
+        const chargeRatio = Math.min(1.0, Math.max(0, gl.timer / gCd));
+        const spinSpeed = 14 + chargeRatio * 20 + gl.level * 4;
+        const glAngle = animTime * spinSpeed;
+        const glScale = 0.5 + 0.5 * chargeRatio;
+        const isUltGlaive = gl.level >= 5 || gl.isAwakened;
+        const glaiveColor = isUltGlaive ? '#facc15' : '#a855f7';
+        const bladeColor = isUltGlaive ? '#ffffff' : '#f3e8ff';
 
-    // Visor specular shine
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(5, -1, 1.4, 0, Math.PI * 2);
-    ctx.fill();
+        const drawDockedGlaive = (gx, gy) => {
+          ctx.save();
+          ctx.translate(gx, gy);
+          ctx.rotate(glAngle);
+          ctx.scale(glScale, glScale);
+
+          // Docking energy tether beam
+          ctx.strokeStyle = `rgba(168, 85, 247, ${0.25 + chargeRatio * 0.65})`;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(-gx * 0.45, -gy * 0.45);
+          ctx.stroke();
+
+          // Blades
+          const bladeCount = isUltGlaive ? 4 : 3;
+          for (let b = 0; b < bladeCount; b++) {
+            const bAngle = (b / bladeCount) * Math.PI * 2;
+            ctx.save();
+            ctx.rotate(bAngle);
+            ctx.fillStyle = glaiveColor;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(8, -2.5);
+            ctx.lineTo(13, 0);
+            ctx.lineTo(8, 2.5);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = bladeColor;
+            ctx.beginPath();
+            ctx.moveTo(3, 0);
+            ctx.lineTo(12, 0);
+            ctx.lineTo(8, 1.8);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+          }
+
+          // Center glowing core
+          ctx.fillStyle = chargeRatio >= 0.9 ? '#ffffff' : glaiveColor;
+          ctx.beginPath();
+          ctx.arc(0, 0, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.restore();
+        };
+
+        drawDockedGlaive(2, 22);
+        if (gl.level >= 3) {
+          drawDockedGlaive(2, -22);
+        }
+      }
+
+      // 4B. Micro-Missiles (Bệ phóng tên lửa gắn 2 bên cánh)
+      const ms = wm.weapons.missiles;
+      if (ms && ms.level > 0) {
+        const isUltMs = ms.level >= 5 || ms.isAwakened;
+        [-20, 20].forEach(yPos => {
+          ctx.save();
+          ctx.translate(-4, yPos);
+          // Missile pod casing
+          ctx.fillStyle = '#0f172a';
+          ctx.strokeStyle = isUltMs ? '#f97316' : '#64748b';
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.rect(-6, -3, 12, 6);
+          ctx.fill();
+          ctx.stroke();
+
+          // Loaded missile warheads
+          ctx.fillStyle = isUltMs ? '#fde047' : '#ef4444';
+          ctx.beginPath();
+          ctx.arc(6, -1.5, 1.6, 0, Math.PI * 2);
+          ctx.arc(6, 1.5, 1.6, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Targeting laser dot
+          if (Math.sin(animTime * 15) > 0) {
+            ctx.fillStyle = '#f43f5e';
+            ctx.beginPath();
+            ctx.arc(7.5, 0, 1.0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        });
+      }
+
+      // 4C. Prism Laser Rail (Pháo Laze Lăng Kính gắn trên sống lưng)
+      const ls = wm.weapons.laser;
+      if (ls && ls.level > 0) {
+        const isUltLaser = ls.level >= 5 || ls.isAwakened;
+        ctx.save();
+        ctx.translate(6, 0);
+        // Rail emitter mounting
+        ctx.fillStyle = '#090d16';
+        ctx.strokeStyle = isUltLaser ? '#38bdf8' : '#0284c7';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.rect(-8, -2.5, 16, 5);
+        ctx.fill();
+        ctx.stroke();
+
+        // Focusing crystal
+        ctx.fillStyle = isUltLaser ? '#ffffff' : '#00f2fe';
+        ctx.beginPath();
+        ctx.moveTo(8, 0);
+        ctx.lineTo(13, -3);
+        ctx.lineTo(16, 0);
+        ctx.lineTo(13, 3);
+        ctx.closePath();
+        ctx.fill();
+
+        // Rotating energy focusing ring
+        if (isUltLaser) {
+          ctx.strokeStyle = '#38bdf8';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.ellipse(10, 0, 3, 5, animTime * 6, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 4D. Space Mine Magnetic Clamp (Mìn không gian kẹp đuôi tàu)
+      const bm = wm.weapons.bombs;
+      if (bm && bm.level > 0) {
+        const isUltBombs = bm.level >= 5 || bm.isAwakened;
+        ctx.save();
+        ctx.translate(-18, 0);
+        // Magnetic prongs
+        ctx.strokeStyle = isUltBombs ? '#c084fc' : '#94a3b8';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(2, -4);
+        ctx.lineTo(-3, -6);
+        ctx.moveTo(2, 4);
+        ctx.lineTo(-3, 6);
+        ctx.stroke();
+
+        // Graviton mine core
+        ctx.fillStyle = isUltBombs ? '#a855f7' : '#64748b';
+        ctx.beginPath();
+        ctx.arc(-4, 0, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Gravity distortion pulse rings
+        const ripple = (animTime * 3) % 1;
+        ctx.strokeStyle = `rgba(168, 85, 247, ${1 - ripple})`;
+        ctx.lineWidth = 1.0;
+        ctx.beginPath();
+        ctx.arc(-4, 0, 4 + ripple * 8, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // 4E. Twin Heavy Plasma Blaster Barrels (Đại bác plasma gắn đầu cánh)
+      const b = wm.weapons.blaster;
+      if (b && b.level >= 2) {
+        const isUltBlaster = b.level >= 5 || b.isAwakened;
+        [-10, 10].forEach(yPos => {
+          ctx.save();
+          ctx.translate(18, yPos);
+          ctx.fillStyle = isUltBlaster ? '#facc15' : '#00f2fe';
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.0;
+          ctx.beginPath();
+          ctx.rect(0, -1.5, isUltBlaster ? 10 : 6, 3);
+          ctx.fill();
+          ctx.stroke();
+          // Muzzle glow
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(isUltBlaster ? 10 : 6, 0, 1.2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+      }
+    }
+
+    // ==========================================
+    // 5. SHIP TRANSFORMATION & ULTIMATE AWAKENING EXTERIOR
+    // ==========================================
+    const isUltimate = player.isTransformed || 
+                       player.isRammerAwakened || 
+                       player.isSerpentAwakened || 
+                       player.isShieldAwakened || 
+                       player.isDroneAwakened || 
+                       player.buffLevels?.immortality || 
+                       player.hasBloodGodFrenzy;
+
+    if (isUltimate) {
+      // 5A. Celestial God-Tier Power Aura Rings
+      ctx.save();
+      const auraPulse = Math.sin(animTime * 6) * 3;
+      ctx.strokeStyle = isFrenzy ? 'rgba(244, 63, 94, 0.45)' : 'rgba(250, 204, 21, 0.45)';
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([10, 6, 4, 6]);
+      ctx.beginPath();
+      ctx.arc(0, 0, 32 + auraPulse, animTime * 2, animTime * 2 + Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Counter-rotating inner energy ring
+      ctx.strokeStyle = 'rgba(0, 242, 254, 0.35)';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.arc(0, 0, 26 - auraPulse * 0.5, -animTime * 3, -animTime * 3 + Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      // 5B. Specific Ship Ultimate Form Additions
+      if (shipId === 'rammer') {
+        // ☄️ RAMMER DREADNOUGHT TITAN: Massive Golden Thermal Battering Ram & Flank Armor
+        ctx.save();
+        ctx.strokeStyle = '#facc15';
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.35)';
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        ctx.moveTo(28, 0);
+        ctx.lineTo(44, 0);          // Extended golden thermal ram horn
+        ctx.lineTo(34, -8);
+        ctx.lineTo(34, 8);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Molten side dreadnought blades
+        ctx.strokeStyle = '#f97316';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(10, -18);
+        ctx.lineTo(-6, -26);
+        ctx.lineTo(2, -18);
+        ctx.moveTo(10, 18);
+        ctx.lineTo(-6, 26);
+        ctx.lineTo(2, 18);
+        ctx.stroke();
+        ctx.restore();
+
+      } else if (shipId === 'serpent') {
+        // 🐉 SERPENT OUROBOROS DRAGON: Sweeping Golden Horns & Dragon Whiskers
+        ctx.save();
+        ctx.strokeStyle = '#facc15';
+        ctx.lineWidth = 2.6;
+        // Dual sweeping dragon horns
+        ctx.beginPath();
+        ctx.moveTo(12, -14);
+        ctx.quadraticCurveTo(0, -28, -14, -24);
+        ctx.moveTo(12, 14);
+        ctx.quadraticCurveTo(0, 28, -14, 24);
+        ctx.stroke();
+
+        // Dragon flowing whisker tendrils
+        const whiskerWave = Math.sin(animTime * 8) * 4;
+        ctx.strokeStyle = 'rgba(52, 211, 153, 0.85)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(22, -4);
+        ctx.quadraticCurveTo(34, -12 + whiskerWave, 42, -6 - whiskerWave);
+        ctx.moveTo(22, 4);
+        ctx.quadraticCurveTo(34, 12 - whiskerWave, 42, 6 + whiskerWave);
+        ctx.stroke();
+        ctx.restore();
+
+      } else if (shipId === 'novashield') {
+        // 🛡️ NOVA SHIELD AEGIS FORTRESS: Dual Concentric Rotating Hexagonal Runic Aegis
+        ctx.save();
+        const hexRad = 36 + Math.sin(animTime * 5) * 2;
+        ctx.strokeStyle = 'rgba(0, 242, 254, 0.75)';
+        ctx.lineWidth = 2.0;
+        ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+          const hAngle = (i / 6) * Math.PI * 2 + animTime * 1.5;
+          const hx = Math.cos(hAngle) * hexRad;
+          const hy = Math.sin(hAngle) * hexRad;
+          if (i === 0) ctx.moveTo(hx, hy);
+          else ctx.lineTo(hx, hy);
+        }
+        ctx.closePath();
+        ctx.stroke();
+
+        // 4 floating quantum defense pylons
+        for (let i = 0; i < 4; i++) {
+          const pAngle = (i / 4) * Math.PI * 2 - animTime * 2.2;
+          const px = Math.cos(pAngle) * 44;
+          const py = Math.sin(pAngle) * 44;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(px, py, 2.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+      } else if (shipId === 'carrier') {
+        // 🛸 CARRIER MOTHERSHIP ARMADA: Expanded Hyper-Warp Deck Wings & Overcharged Reactor
+        ctx.save();
+        ctx.strokeStyle = '#c084fc';
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        ctx.moveTo(18, -24);
+        ctx.lineTo(8, -36);
+        ctx.lineTo(-12, -34);
+        ctx.lineTo(-4, -26);
+        ctx.moveTo(18, 24);
+        ctx.lineTo(8, 36);
+        ctx.lineTo(-12, 34);
+        ctx.lineTo(-4, 26);
+        ctx.stroke();
+
+        // Pulsing Ion Warp Core Ring
+        ctx.fillStyle = 'rgba(192, 132, 252, 0.35)';
+        ctx.beginPath();
+        ctx.arc(-2, 0, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    // ==========================================
+    // 6. IMMEDIATE TRANSFORMATION SHOCKWAVE FLASH
+    // ==========================================
+    if (player.transformFlashTimer > 0) {
+      const flashRatio = player.transformFlashTimer / 1.4; // 1.0 -> 0.0
+      ctx.save();
+      // Expanding golden ring
+      ctx.strokeStyle = `rgba(250, 204, 21, ${flashRatio})`;
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.arc(0, 0, (1.0 - flashRatio) * 95 + 15, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Expanding cyan ring
+      ctx.strokeStyle = `rgba(0, 242, 254, ${flashRatio * 0.85})`;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(0, 0, (1.0 - flashRatio) * 125 + 10, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // Core flash burst
+      ctx.fillStyle = `rgba(255, 255, 255, ${flashRatio * 0.6})`;
+      ctx.beginPath();
+      ctx.arc(0, 0, 22 * flashRatio, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
 
     ctx.restore();
   }

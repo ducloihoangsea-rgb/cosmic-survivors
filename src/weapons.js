@@ -90,12 +90,14 @@ export class WeaponManager {
   }
 
   update(dt, player, enemies) {
+    const cdMult = Math.max(0.35, 1.0 - (player.cooldownReduction || 0));
     const fireMult = player.stats.fireRateMult * (1 + (player.berserkerAtkSpdBonus || 0)) * (player.isCarrier ? 1.15 : 1.0);
 
     // 1. Blaster logic
     const b = this.weapons.blaster;
     if (b.level > 0) {
-      const cooldown = Math.max(0.12, (0.55 - b.level * 0.08) / fireMult);
+      const cooldown = Math.max(0.10, ((0.55 - b.level * 0.08) / fireMult) * cdMult);
+      b.cooldown = cooldown;
       b.timer += dt;
       if (b.timer >= cooldown) {
         b.timer = 0;
@@ -114,7 +116,8 @@ export class WeaponManager {
     // 3. Lightning logic
     const light = this.weapons.lightning;
     if (light.level > 0) {
-      const lCooldown = Math.max(0.6, (2.2 - light.level * 0.3) / fireMult);
+      const lCooldown = Math.max(0.45, ((2.2 - light.level * 0.3) / fireMult) * cdMult);
+      light.cooldown = lCooldown;
       light.timer += dt;
       if (light.timer >= lCooldown) {
         light.timer = 0;
@@ -125,7 +128,8 @@ export class WeaponManager {
     // 4. Glaive logic
     const gl = this.weapons.glaive;
     if (gl.level > 0) {
-      const gCooldown = Math.max(0.8, (2.8 - gl.level * 0.35) / fireMult);
+      const gCooldown = Math.max(0.65, ((2.8 - gl.level * 0.35) / fireMult) * cdMult);
+      gl.cooldown = gCooldown;
       gl.timer += dt;
       if (gl.timer >= gCooldown) {
         gl.timer = 0;
@@ -136,7 +140,8 @@ export class WeaponManager {
     // 5. Micro-Missiles logic
     const ms = this.weapons.missiles;
     if (ms.level > 0) {
-      const mCooldown = Math.max(1.0, (3.2 - ms.level * 0.4) / fireMult);
+      const mCooldown = Math.max(0.8, ((3.2 - ms.level * 0.4) / fireMult) * cdMult);
+      ms.cooldown = mCooldown;
       ms.timer += dt;
       if (ms.timer >= mCooldown) {
         ms.timer = 0;
@@ -148,7 +153,8 @@ export class WeaponManager {
     const wm = this.weapons.wingmen;
     if (wm.level > 0) {
       wm.angle = (wm.angle + 1.8 * dt) % (Math.PI * 2);
-      const wCooldown = Math.max(0.25, (0.9 - wm.level * 0.12) / fireMult);
+      const wCooldown = Math.max(0.20, ((0.9 - wm.level * 0.12) / fireMult) * cdMult);
+      wm.cooldown = wCooldown;
       wm.timer += dt;
       if (wm.timer >= wCooldown) {
         wm.timer = 0;
@@ -159,7 +165,8 @@ export class WeaponManager {
     // 7. Prism Laser logic
     const ls = this.weapons.laser;
     if (ls.level > 0) {
-      const lCooldown = ls.isAwakened ? 0.35 : Math.max(0.4, (1.8 - ls.level * 0.25) / fireMult);
+      const lCooldown = ls.isAwakened ? 0.30 * cdMult : Math.max(0.35, ((1.8 - ls.level * 0.25) / fireMult) * cdMult);
+      ls.cooldown = lCooldown;
       ls.timer += dt;
       if (ls.timer >= lCooldown) {
         ls.timer = 0;
@@ -170,7 +177,8 @@ export class WeaponManager {
     // 8. Space Mine Dropper logic
     const bm = this.weapons.bombs;
     if (bm.level > 0) {
-      const bCooldown = bm.isAwakened ? 0.9 : Math.max(0.8, (2.6 - bm.level * 0.3) / fireMult);
+      const bCooldown = bm.isAwakened ? 0.75 * cdMult : Math.max(0.65, ((2.6 - bm.level * 0.3) / fireMult) * cdMult);
+      bm.cooldown = bCooldown;
       bm.timer += dt;
       if (bm.timer >= bCooldown) {
         bm.timer = 0;
