@@ -10,6 +10,7 @@ import { meta } from './meta.js';
 import { SHIP_ROSTER } from './ships.js';
 import { SpatialHashGrid } from './spatial-grid.js';
 import { MiniDrone } from './drone.js';
+import { skinManager } from './skins.js';
 
 export class Game {
   constructor(canvas) {
@@ -119,6 +120,12 @@ export class Game {
   initShipLoadout() {
     const shipDef = SHIP_ROSTER[this.selectedShipId] || SHIP_ROSTER.rammer;
     this.player = new Player(this, this.selectedShipId);
+
+    // Apply Equipped Ship Skin & Luck Bonus
+    const equippedSkin = skinManager.getEquippedSkin(this.selectedShipId);
+    this.player.skinDef = equippedSkin;
+    this.player.luckBonus = equippedSkin?.luckBonus || 0;
+
     this.weaponManager = new WeaponManager(this);
 
     // Reset default weapons
@@ -630,6 +637,9 @@ export class Game {
     const rawGold = Math.floor(this.score / 5); // x2 Gold Bonus
     this.earnedGold = meta.addGold(rawGold);
 
+    // Record Persistent Milestones for Skin Unlocks
+    skinManager.recordGameEnd(this.gameTime, this.kills, this.earnedGold, true, this.comboMilestone);
+
     if (this.onVictoryCallback) {
       this.onVictoryCallback();
     }
@@ -639,6 +649,9 @@ export class Game {
     this.state = 'gameover';
     const rawGold = Math.floor(this.score / 10);
     this.earnedGold = meta.addGold(rawGold);
+
+    // Record Persistent Milestones for Skin Unlocks
+    skinManager.recordGameEnd(this.gameTime, this.kills, this.earnedGold, false, this.comboMilestone);
 
     if (this.onGameOverCallback) {
       this.onGameOverCallback();

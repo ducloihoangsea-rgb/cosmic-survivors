@@ -1,5 +1,6 @@
 // Procedural High-Definition Cyberpunk Vector Art & Animation Engine
 // Renders ultra-crisp, high-fidelity glowing sprites with zero asset loading lag.
+import { skinManager } from './skins.js';
 
 export class ArtEngine {
   constructor() {
@@ -13,19 +14,28 @@ export class ArtEngine {
     const invuln = player.invulnerableTimer > 0;
     const shipId = player.shipId || 'phantom';
 
-    // Ship Palette Selection (3 Classes)
-    let shipMain = '#ef4444';
-    let shipAccent = '#f97316';
-    let shipGlow = '#dc2626';
+    // Ship Palette & Skin Customization Selection
+    const skinDef = player.skinDef || skinManager.getEquippedSkin(shipId);
+    const skinColors = skinDef?.colors || {};
 
-    if (shipId === 'serpent') {
-      shipMain = '#10b981';
-      shipAccent = '#34d399';
-      shipGlow = '#059669';
-    } else if (shipId === 'novashield') {
-      shipMain = '#00f2fe';
-      shipAccent = '#38bdf8';
-      shipGlow = '#0284c7';
+    let shipMain = skinColors.main || '#ef4444';
+    let shipAccent = skinColors.accent || '#f97316';
+    let shipGlow = skinColors.glow || '#dc2626';
+
+    if (!skinDef) {
+      if (shipId === 'serpent') {
+        shipMain = '#10b981';
+        shipAccent = '#34d399';
+        shipGlow = '#059669';
+      } else if (shipId === 'novashield') {
+        shipMain = '#00f2fe';
+        shipAccent = '#38bdf8';
+        shipGlow = '#0284c7';
+      } else if (shipId === 'carrier') {
+        shipMain = '#a855f7';
+        shipAccent = '#c084fc';
+        shipGlow = '#9333ea';
+      }
     }
 
     const mainColor = isFrenzy ? '#f43f5e' : shipMain;
@@ -37,8 +47,8 @@ export class ArtEngine {
       for (let i = player.segmentPositions.length - 1; i >= 0; i--) {
         const seg = player.segmentPositions[i];
         ctx.save();
-        ctx.fillStyle = '#064e3b';
-        ctx.strokeStyle = '#10b981';
+        ctx.fillStyle = skinColors.segmentBase || '#064e3b';
+        ctx.strokeStyle = isFrenzy ? '#f43f5e' : (skinColors.main || '#10b981');
         ctx.lineWidth = 2.2;
         ctx.beginPath();
         ctx.arc(seg.x, seg.y, seg.radius, 0, Math.PI * 2);
@@ -46,7 +56,7 @@ export class ArtEngine {
         ctx.stroke();
 
         // Inner glowing dragon scale / energy core
-        ctx.fillStyle = '#34d399';
+        ctx.fillStyle = isFrenzy ? '#fde047' : (skinColors.segmentCore || '#34d399');
         ctx.beginPath();
         ctx.arc(seg.x, seg.y, seg.radius * 0.45, 0, Math.PI * 2);
         ctx.fill();
@@ -97,9 +107,11 @@ export class ArtEngine {
     }
 
     // Wing Gradient
+    const hullStart = skinColors.hullStart || '#090d16';
+    const hullMid = skinColors.hullMid || '#1e293b';
     const hullGrad = ctx.createLinearGradient(-16, 0, 24, 0);
-    hullGrad.addColorStop(0, '#090d16');
-    hullGrad.addColorStop(0.5, '#1e293b');
+    hullGrad.addColorStop(0, hullStart);
+    hullGrad.addColorStop(0.5, hullMid);
     hullGrad.addColorStop(1, invuln ? '#ffffff' : '#334155');
 
     ctx.fillStyle = hullGrad;
@@ -235,7 +247,7 @@ export class ArtEngine {
       if (hasShield) {
         const barrierPulse = Math.sin(animTime * 8) * (player.isPreview ? 1.5 : 3);
         const barrierRad = (player.radius + (player.isPreview ? 8 : 14) + barrierPulse) * (player.stats?.shieldRadiusMult || 1.0);
-        ctx.strokeStyle = '#00f2fe';
+        ctx.strokeStyle = skinColors.shield || '#00f2fe';
         ctx.lineWidth = player.isPreview ? 2.0 : 2.6;
         ctx.beginPath();
         ctx.arc(0, 0, barrierRad, animTime * 2.5, animTime * 2.5 + Math.PI * 1.4);
@@ -278,7 +290,7 @@ export class ArtEngine {
   }
 
   // Draw Animated Ship Preview for Selection Menu
-  drawShipPreview(canvas, shipId, animTime) {
+  drawShipPreview(canvas, shipId, animTime, skinId = null) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -295,11 +307,14 @@ export class ArtEngine {
     // Safety scale to keep all glows, thrusters and segments inside canvas without clipping edges
     ctx.scale(0.80, 0.80);
 
+    const activeSkin = skinId ? (skinManager.getSkinsForShip(shipId).find(s => s.id === skinId) || skinManager.getEquippedSkin(shipId)) : skinManager.getEquippedSkin(shipId);
+
     const mockPlayer = {
       x: 0,
       y: 0,
       facingAngle: 0,
       shipId: shipId,
+      skinDef: activeSkin,
       magnetRadius: 0,
       isPreview: true,
       radius: 14,

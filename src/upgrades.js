@@ -15,11 +15,12 @@ export class UpgradeSystem {
   // Blue Rare: 35%
   // White Common: 42%
   rollRarity() {
+    const luck = (this.game?.player?.luckBonus || 0) * 0.01; // e.g. 3% -> 0.03
     const r = Math.random();
-    if (r < 0.015) return 'Mythic';
-    if (r < 0.07) return 'Legendary';
-    if (r < 0.23) return 'Epic';
-    if (r < 0.58) return 'Rare';
+    if (r < 0.015 + luck * 0.15) return 'Mythic';
+    if (r < 0.07 + luck * 0.45) return 'Legendary';
+    if (r < 0.23 + luck * 0.75) return 'Epic';
+    if (r < 0.58 + luck * 1.0) return 'Rare';
     return 'Common';
   }
 

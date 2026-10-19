@@ -6,6 +6,7 @@ import { i18n } from './i18n.js';
 import { meta } from './meta.js';
 import { art } from './art.js';
 import { SHIP_ROSTER, SHIP_KEYS } from './ships.js';
+import { skinManager } from './skins.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('game-canvas');
@@ -271,6 +272,9 @@ window.addEventListener('DOMContentLoaded', () => {
       card.style.setProperty('--ship-glow', ship.glowColor);
       card.dataset.shipId = key;
 
+      const equippedSkin = skinManager.getEquippedSkin(key);
+      const luckBadge = equippedSkin.luckBonus > 0 ? `<span class="skin-luck-mini">🍀 +${equippedSkin.luckBonus}%</span>` : '';
+
       card.innerHTML = `
         <span class="ship-card-selected-tag">${i18n.t('shipSelectedBadge')}</span>
         ${ship.isRare ? `<span class="ship-card-rare-tag">${i18n.t('shipRareBadge')}</span>` : ''}
@@ -279,6 +283,11 @@ window.addEventListener('DOMContentLoaded', () => {
         </div>
         <div class="ship-card-name">${i18n.t(ship.nameKey)}</div>
         <div class="ship-card-role">${i18n.t(ship.roleKey)}</div>
+        <div class="ship-equipped-skin-pill">
+          <span class="skin-color-pip-mini" style="background: ${equippedSkin.colors.main}; box-shadow: 0 0 6px ${equippedSkin.colors.glow || equippedSkin.colors.main};"></span>
+          <span>${i18n.t(equippedSkin.nameKey)}</span>
+          ${luckBadge}
+        </div>
         <div class="ship-stat-bars">
           <div class="stat-mini-row">
             <span class="stat-mini-lbl">${i18n.t('statHp')}</span>
@@ -530,6 +539,33 @@ window.addEventListener('DOMContentLoaded', () => {
         <span class="hangar-synergy-tag">${syn}</span>
       `).join('');
 
+      // Generate Skins Customization HTML for this ship
+      const skins = skinManager.getSkinsForShip(key);
+      const skinsHtml = skins.map(skin => {
+        const isUnlocked = skin.isUnlocked;
+        const isEquipped = skin.isEquipped;
+        const reqText = skin.milestoneKey ? i18n.t(skin.milestoneKey) : '';
+        const luckText = skin.luckBonus > 0 ? `+${skin.luckBonus}% ${i18n.t('skinLuckBonus')}` : '';
+
+        return `
+          <div class="ship-skin-card ${isEquipped ? 'equipped' : ''} ${isUnlocked ? 'unlocked' : 'locked'}" data-skin-id="${skin.id}" data-ship-id="${key}">
+            <div class="skin-card-header">
+              <span class="skin-color-pip" style="background: ${skin.colors.main}; box-shadow: 0 0 8px ${skin.colors.glow || skin.colors.main};"></span>
+              <span class="skin-name">${i18n.t(skin.nameKey)}</span>
+              ${skin.badge ? `<span class="skin-badge ${skin.badge.toLowerCase()}">${skin.badge}</span>` : ''}
+            </div>
+            <div class="skin-desc">${i18n.t(skin.descKey)}</div>
+            <div class="skin-footer-row">
+              ${luckText ? `<span class="skin-luck-tag">🍀 ${luckText}</span>` : `<span class="skin-luck-tag neutral">Chuẩn</span>`}
+              <button class="btn-skin-action ${isEquipped ? 'active-equipped' : (isUnlocked ? 'can-equip' : 'is-locked')}" ${!isUnlocked || isEquipped ? 'disabled' : ''}>
+                ${isEquipped ? i18n.t('skinEquippedBtn') : (isUnlocked ? i18n.t('skinEquipBtn') : i18n.t('skinLockedLabel'))}
+              </button>
+            </div>
+            ${!isUnlocked ? `<div class="skin-lock-tip">🔒 ${reqText}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+
       card.innerHTML = `
         <div class="hangar-ship-top">
           <div class="ship-canvas-wrap">
@@ -575,10 +611,34 @@ window.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
 
+        <!-- SKINS & CUSTOMIZATION MODULE -->
+        <div class="hangar-skins-box">
+          <div class="hangar-section-title">${i18n.t('skinSectionTitle')}</div>
+          <div class="hangar-skins-grid">
+            ${skinsHtml}
+          </div>
+        </div>
+
         <button class="btn-select-ship ${isSelected ? 'selected' : ''}">
           ${isSelected ? `✓ ${i18n.t('shipSelectedBadge')}` : i18n.t('hangarSelectShipBtn')}
         </button>
       `;
+
+      // Skin Equip Listeners
+      card.querySelectorAll('.ship-skin-card.unlocked .btn-skin-action.can-equip').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const skinCard = btn.closest('.ship-skin-card');
+          const skinId = skinCard?.dataset?.skinId;
+          if (skinId) {
+            sound.playJackpot();
+            skinManager.equipSkin(key, skinId);
+            game.initShipLoadout();
+            renderHangarShips();
+            renderShipSelector();
+          }
+        });
+      });
 
       const selectBtn = card.querySelector('.btn-select-ship');
       selectBtn.addEventListener('click', () => {
