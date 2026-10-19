@@ -352,6 +352,41 @@ class SoundFX {
     });
   }
 
+  // Hyperspace Warp Jump sci-fi sweep and heavy entry boom
+  playWarpJump() {
+    if (!this.enabled) return;
+    this.resume();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    // 1. Ascending hyper-drive charge
+    const osc1 = this.ctx.createOscillator();
+    const gain1 = this.ctx.createGain();
+    osc1.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(90, now);
+    osc1.frequency.exponentialRampToValueAtTime(1100, now + 0.55);
+    gain1.gain.setValueAtTime(0.01, now);
+    gain1.gain.linearRampToValueAtTime(0.25, now + 0.45);
+    gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.65);
+    osc1.connect(gain1);
+    gain1.connect(this.masterGain);
+    osc1.start(now);
+    osc1.stop(now + 0.7);
+
+    // 2. Heavy sub-bass entry boom
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this.ctx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(240, now + 0.5);
+    osc2.frequency.exponentialRampToValueAtTime(32, now + 1.4);
+    gain2.gain.setValueAtTime(0.45, now + 0.5);
+    gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.45);
+    osc2.connect(gain2);
+    gain2.connect(this.masterGain);
+    osc2.start(now + 0.5);
+    osc2.stop(now + 1.5);
+  }
+
   // EMP Shockwave Heavy Sub-Bass Boom
   playEmpShockwave() {
     if (!this.enabled) return;

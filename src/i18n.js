@@ -19,6 +19,18 @@ export const translations = {
     reviveFloat: '💖 REVIVED! 💖',
     hordeAlert: '⚠️ WARNING: HORDE DETECTED! ⚠️',
 
+    // Dynamic Battlefields (Sectors)
+    sector1Title: 'SECTOR I: ENDLESS GALAXY',
+    sector1Sub: 'Deep space & luminous cyber constellations',
+    sector2Title: 'SECTOR II: PLANETARY WARZONE',
+    sector2Sub: 'Asteroid belts & distant orbital bombardments',
+    sector3Title: 'SECTOR III: SOLAR INFERNO & BLACK HOLE',
+    sector3Sub: 'Blazing solar corona & cosmic singularity',
+    warpAlert: '⚡ HYPERSPACE WARP JUMP ⚡',
+    sectorBadge1: 'SECTOR I: GALAXY',
+    sectorBadge2: 'SECTOR II: WARZONE',
+    sectorBadge3: 'SECTOR III: SOLAR FLARE',
+
     levelUpTitle: 'LEVEL UP!',
     levelUpSubtitle: 'Choose your augmentation:',
     destinyLevelUpTitle: '⚡ DESTINY AWAKENING ⚡',
@@ -332,6 +344,18 @@ export const translations = {
     critFloat: 'CHÍ MẠNG!',
     reviveFloat: '💖 TÁI SINH THÀNH CÔNG! 💖',
     hordeAlert: '⚠️ CẢNH BÁO: BẦY QUÁI ĐANG TRÀN VÀO! ⚠️',
+
+    // Phông nền chiến trường động (Sectors)
+    sector1Title: 'SECTOR I: VỰC SÂU NGÂN HÀ',
+    sector1Sub: 'Chòm sao rực sáng & tinh vân vũ trụ sâu thẳm',
+    sector2Title: 'SECTOR II: CHIẾN TRƯỜNG HÀNH TINH',
+    sector2Sub: 'Vành đai tiểu hành tinh & hỏa lực pháo kích tầm xa',
+    sector3Title: 'SECTOR III: BÃO LỬA MẶT TRỜI & HỐ ĐEN',
+    sector3Sub: 'Bề mặt thái dương rực lửa & hố đen tử thần',
+    warpAlert: '⚡ BƯỚC NHẢY KHÔNG GIAN ⚡',
+    sectorBadge1: 'SECTOR I: NGÂN HÀ',
+    sectorBadge2: 'SECTOR II: CHIẾN TRƯỜNG',
+    sectorBadge3: 'SECTOR III: BÃO LỬA',
 
     levelUpTitle: 'LÊN CẤP THÀNH CÔNG!',
     levelUpSubtitle: 'Chọn công nghệ cường hóa sinh học:',

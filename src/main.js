@@ -112,6 +112,15 @@ window.addEventListener('DOMContentLoaded', () => {
   const comboBadge = document.getElementById('combo-badge');
   const comboText = document.getElementById('combo-text');
 
+  // Dynamic Sector HUD Elements & Warp Banner
+  const sectorDisplay = document.getElementById('sector-display');
+  const sectorBadgeText = document.getElementById('sector-badge-text');
+  const sectorIcon = document.getElementById('sector-icon');
+  const sectorWarpBanner = document.getElementById('sector-warp-banner');
+  const warpAlertLabel = document.getElementById('warp-alert-label');
+  const warpSectorName = document.getElementById('warp-sector-name');
+  const warpSectorSub = document.getElementById('warp-sector-sub');
+
   // Stats Values
   const statSurvive = document.getElementById('stat-survive');
   const statKills = document.getElementById('stat-kills');
@@ -1115,11 +1124,38 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Horde Alert Handler
   game.onHordeAlertCallback = () => {
-    hordeAlert.textContent = i18n.t('hordeAlert');
-    hordeAlert.classList.add('active');
-    setTimeout(() => {
-      hordeAlert.classList.remove('active');
-    }, 2800);
+    if (hordeAlert) {
+      hordeAlert.textContent = i18n.t('hordeAlert');
+      hordeAlert.classList.add('active');
+      setTimeout(() => {
+        hordeAlert.classList.remove('active');
+      }, 2800);
+    }
+  };
+
+  // Sector Warp Announcement Handler
+  let warpBannerTimeout = null;
+  game.onSectorChangeCallback = (newSector) => {
+    if (!sectorWarpBanner) return;
+    if (warpBannerTimeout) clearTimeout(warpBannerTimeout);
+
+    sectorWarpBanner.classList.remove('hidden', 'warp-sector-2', 'warp-sector-3');
+    sectorWarpBanner.classList.add(`warp-sector-${newSector}`);
+
+    if (warpAlertLabel) warpAlertLabel.textContent = i18n.t('warpAlert');
+    if (warpSectorName && warpSectorSub) {
+      if (newSector === 2) {
+        warpSectorName.textContent = i18n.t('sector2Title');
+        warpSectorSub.textContent = i18n.t('sector2Sub');
+      } else if (newSector === 3) {
+        warpSectorName.textContent = i18n.t('sector3Title');
+        warpSectorSub.textContent = i18n.t('sector3Sub');
+      }
+    }
+
+    warpBannerTimeout = setTimeout(() => {
+      sectorWarpBanner.classList.add('hidden');
+    }, 3200);
   };
 
   // Lucky Slot Machine Chest Flow
@@ -1383,6 +1419,22 @@ window.addEventListener('DOMContentLoaded', () => {
     const secs = Math.floor(game.gameTime % 60);
     timerDisplay.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     killsDisplay.textContent = `${game.kills} 💀`;
+
+    // Real-Time Sector HUD Badge update
+    if (sectorDisplay && sectorBadgeText && sectorIcon) {
+      const curSec = game.currentSector || 1;
+      sectorDisplay.className = `stat-item sector-badge-item sector-${curSec}`;
+      if (curSec === 1) {
+        sectorIcon.textContent = '🌌';
+        sectorBadgeText.textContent = i18n.t('sectorBadge1');
+      } else if (curSec === 2) {
+        sectorIcon.textContent = '🪐';
+        sectorBadgeText.textContent = i18n.t('sectorBadge2');
+      } else if (curSec === 3) {
+        sectorIcon.textContent = '☀️';
+        sectorBadgeText.textContent = i18n.t('sectorBadge3');
+      }
+    }
 
     // Dopamine meter
     dopamineBar.style.width = `${game.dopamineMeter}%`;

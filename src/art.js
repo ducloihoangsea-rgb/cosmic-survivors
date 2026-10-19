@@ -4,6 +4,7 @@
 export class ArtEngine {
   constructor() {
     this.cache = new Map();
+    this.initBattlefield();
   }
 
   // Draw Player Ship: Sleek Neon Fighter Drone with Animated Plasma Thruster
@@ -773,16 +774,607 @@ export class ArtEngine {
     ctx.restore();
   }
 
-  // Draw High-Tech Futuristic Cyber Floor Grid with Parallax Stars
-  drawArena(ctx, camera, width, height, animTime, isLight = false) {
+  // ==========================================
+  // DYNAMIC BATTLEFIELD BACKGROUND ENGINE (SECTOR I, II, III)
+  // ==========================================
+
+  initBattlefield() {
+    // 1. Parallax Starfield (Layer 1: distant micro stars, Layer 2: bright colored stars)
+    this.bgStars = [];
+    for (let i = 0; i < 90; i++) {
+      this.bgStars.push({
+        x: Math.random(),
+        y: Math.random(),
+        r: 0.6 + Math.random() * 1.2,
+        alpha: 0.3 + Math.random() * 0.5,
+        twinkleSpeed: 1.5 + Math.random() * 3.0,
+        phase: Math.random() * Math.PI * 2,
+        parallax: 0.07
+      });
+    }
+    for (let i = 0; i < 40; i++) {
+      this.bgStars.push({
+        x: Math.random(),
+        y: Math.random(),
+        r: 1.4 + Math.random() * 1.6,
+        alpha: 0.6 + Math.random() * 0.4,
+        twinkleSpeed: 2.0 + Math.random() * 2.5,
+        phase: Math.random() * Math.PI * 2,
+        color: ['#ffffff', '#38bdf8', '#c084fc', '#fde047', '#f43f5e'][i % 5],
+        parallax: 0.16
+      });
+    }
+
+    // 2. Cyber Constellations (Sector 1: Deep Galaxy)
+    this.constellations = [
+      {
+        name: 'Serpentis',
+        stars: [
+          { x: 0.15, y: 0.22 }, { x: 0.22, y: 0.18 }, { x: 0.28, y: 0.26 },
+          { x: 0.33, y: 0.21 }, { x: 0.38, y: 0.29 }, { x: 0.44, y: 0.24 }
+        ],
+        edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5]],
+        color: '#38bdf8'
+      },
+      {
+        name: 'Phoenix',
+        stars: [
+          { x: 0.62, y: 0.25 }, { x: 0.68, y: 0.18 }, { x: 0.74, y: 0.25 },
+          { x: 0.68, y: 0.32 }, { x: 0.68, y: 0.42 }, { x: 0.60, y: 0.36 }, { x: 0.76, y: 0.36 }
+        ],
+        edges: [[0, 1], [1, 2], [2, 3], [3, 0], [1, 4], [0, 5], [2, 6]],
+        color: '#c084fc'
+      },
+      {
+        name: 'Aegis',
+        stars: [
+          { x: 0.25, y: 0.68 }, { x: 0.32, y: 0.60 }, { x: 0.39, y: 0.68 },
+          { x: 0.36, y: 0.78 }, { x: 0.28, y: 0.78 }
+        ],
+        edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]],
+        color: '#38bdf8'
+      },
+      {
+        name: 'Nova',
+        stars: [
+          { x: 0.75, y: 0.70 }, { x: 0.82, y: 0.62 }, { x: 0.89, y: 0.70 }, { x: 0.82, y: 0.78 }
+        ],
+        edges: [[0, 1], [1, 2], [2, 3], [3, 0], [0, 2], [1, 3]],
+        color: '#fde047'
+      }
+    ];
+
+    // 3. Floating Asteroid Belt (Sector 2: Planetary Warzone)
+    this.asteroids = [];
+    for (let i = 0; i < 14; i++) {
+      const sides = 6 + Math.floor(Math.random() * 4);
+      const points = [];
+      const baseR = 12 + Math.random() * 20;
+      for (let s = 0; s < sides; s++) {
+        const ang = (s / sides) * Math.PI * 2;
+        const rad = baseR * (0.72 + Math.random() * 0.56);
+        points.push({ x: Math.cos(ang) * rad, y: Math.sin(ang) * rad });
+      }
+      this.asteroids.push({
+        x: Math.random(),
+        y: Math.random(),
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.4,
+        points,
+        parallax: 0.12 + Math.random() * 0.08,
+        color: ['#475569', '#334155', '#64748b', '#78350f'][i % 4]
+      });
+    }
+
+    // 4. Background Flak Explosions (Sector 2: Warzone & Sector 3: Solar flares)
+    this.flakExplosions = [
+      { x: 0.24, y: 0.28, period: 2.8, offset: 0.0, maxR: 44, color: '#f97316' },
+      { x: 0.72, y: 0.22, period: 3.4, offset: 1.1, maxR: 56, color: '#fb923c' },
+      { x: 0.38, y: 0.65, period: 2.5, offset: 1.8, maxR: 40, color: '#ea580c' },
+      { x: 0.86, y: 0.56, period: 3.2, offset: 0.6, maxR: 50, color: '#facc15' },
+      { x: 0.16, y: 0.74, period: 3.6, offset: 2.3, maxR: 52, color: '#ef4444' }
+    ];
+  }
+
+  // Draw Dynamic Battlefield Background + Cyber Floor Grid
+  drawArena(ctx, camera, width, height, animTime, isLight = false, currentSector = 1, warpTimer = 0) {
+    if (!this.bgStars) {
+      this.initBattlefield();
+    }
+
+    // Smooth transition weights for Sector 1, 2, 3
+    let w1 = 0, w2 = 0, w3 = 0;
+    const t = animTime;
+    if (t < 180) {
+      w1 = 1;
+    } else if (t < 186) {
+      const p = (t - 180) / 6;
+      w1 = 1 - p;
+      w2 = p;
+    } else if (t < 420) {
+      w2 = 1;
+    } else if (t < 426) {
+      const p = (t - 420) / 6;
+      w2 = 1 - p;
+      w3 = p;
+    } else {
+      w3 = 1;
+    }
+
+    // ==========================================
+    // 1. DRAW PARALLAX BATTLEFIELD IN SCREEN SPACE
+    // ==========================================
+    ctx.save();
+    // Temporarily cancel camera translation so we can render screen-space backdrop
+    ctx.translate(camera.x, camera.y);
+
+    // 1A. Sector Ambient Color Gradient Wash
+    this.drawSectorAmbientWash(ctx, width, height, w1, w2, w3, isLight);
+
+    // 1B. Parallax Stars & Hyperspace Warp Streaks
+    this.drawParallaxStars(ctx, camera, width, height, animTime, warpTimer, isLight);
+
+    // 1C. Sector 1: Deep Galaxy & Glowing Constellations
+    if (w1 > 0.01) {
+      this.drawSector1Galaxy(ctx, camera, width, height, animTime, w1, isLight);
+    }
+
+    // 1D. Sector 2: Planetary Warzone & Orbital Explosions
+    if (w2 > 0.01) {
+      this.drawSector2Warzone(ctx, camera, width, height, animTime, w2, isLight);
+    }
+
+    // 1E. Sector 3: Solar Corona Inferno & Black Hole Singularity
+    if (w3 > 0.01) {
+      this.drawSector3SolarSingularity(ctx, camera, width, height, animTime, w3, isLight);
+    }
+
+    // 1F. Hyperspace Warp Jump Flash
+    if (warpTimer > 0) {
+      const flashAlpha = Math.sin((warpTimer / 2.2) * Math.PI) * 0.28;
+      ctx.fillStyle = `rgba(255, 255, 255, ${flashAlpha})`;
+      ctx.fillRect(0, 0, width, height);
+    }
+
+    ctx.restore();
+
+    // ==========================================
+    // 2. DRAW DYNAMIC CYBER GRID IN WORLD SPACE
+    // ==========================================
+    this.drawSectorCyberGrid(ctx, camera, width, height, animTime, isLight, w1, w2, w3);
+  }
+
+  // Sector Ambient Gradient Wash
+  drawSectorAmbientWash(ctx, width, height, w1, w2, w3, isLight) {
+    if (isLight) return; // Keep crisp in light mode
+
+    // Sector 1: Deep Cosmic Violet / Midnight Blue
+    if (w1 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = w1 * 0.45;
+      const g1 = ctx.createRadialGradient(width * 0.4, height * 0.4, 60, width * 0.5, height * 0.5, Math.max(width, height) * 0.85);
+      g1.addColorStop(0, 'rgba(14, 165, 233, 0.15)');
+      g1.addColorStop(0.5, 'rgba(46, 16, 101, 0.20)');
+      g1.addColorStop(1, 'rgba(3, 7, 18, 0)');
+      ctx.fillStyle = g1;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+
+    // Sector 2: Fiery Amber / Smoky Warzone Dust
+    if (w2 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = w2 * 0.48;
+      const g2 = ctx.createRadialGradient(width * 0.7, height * 0.35, 80, width * 0.6, height * 0.5, Math.max(width, height) * 0.85);
+      g2.addColorStop(0, 'rgba(249, 115, 22, 0.22)');
+      g2.addColorStop(0.5, 'rgba(124, 45, 18, 0.25)');
+      g2.addColorStop(1, 'rgba(3, 7, 18, 0)');
+      ctx.fillStyle = g2;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+
+    // Sector 3: Solar Corona Crimson & Singularity Void
+    if (w3 > 0.01) {
+      ctx.save();
+      ctx.globalAlpha = w3 * 0.55;
+      const g3 = ctx.createRadialGradient(width * 0.15, height * 0.85, 100, width * 0.5, height * 0.5, Math.max(width, height) * 0.95);
+      g3.addColorStop(0, 'rgba(239, 68, 68, 0.28)');
+      g3.addColorStop(0.4, 'rgba(69, 10, 10, 0.30)');
+      g3.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = g3;
+      ctx.fillRect(0, 0, width, height);
+      ctx.restore();
+    }
+  }
+
+  // Parallax Stars with Hyperspace Warp Speed Streaks
+  drawParallaxStars(ctx, camera, width, height, animTime, warpTimer, isLight) {
+    const isWarp = warpTimer > 0;
+    const cx = width / 2;
+    const cy = height / 2;
+    const warpRatio = isWarp ? warpTimer / 2.2 : 0;
+    const streakMult = warpRatio * 65 + 10;
+
+    for (let i = 0; i < this.bgStars.length; i++) {
+      const s = this.bgStars[i];
+      const sx = ((s.x * width - camera.x * s.parallax) % width + width) % width;
+      const sy = ((s.y * height - camera.y * s.parallax) % height + height) % height;
+
+      if (isWarp) {
+        // Hyperspace Streaks radiating outward from screen center
+        const dx = sx - cx;
+        const dy = sy - cy;
+        const dist = Math.hypot(dx, dy) || 1;
+        const dirX = dx / dist;
+        const dirY = dy / dist;
+
+        ctx.strokeStyle = s.color || '#38bdf8';
+        ctx.lineWidth = Math.max(1, s.r * (1 + warpRatio * 0.8));
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx + dirX * streakMult, sy + dirY * streakMult);
+        ctx.stroke();
+      } else {
+        // Normal Twinkling Star
+        const twinkle = 0.65 + 0.35 * Math.sin(animTime * s.twinkleSpeed + s.phase);
+        ctx.fillStyle = s.color || (isLight ? 'rgba(2, 132, 199, 0.45)' : `rgba(255, 255, 255, ${s.alpha * twinkle})`);
+        ctx.beginPath();
+        ctx.arc(sx, sy, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+  }
+
+  // Sector 1: Deep Galaxy & Glowing Constellations
+  drawSector1Galaxy(ctx, camera, width, height, animTime, weight, isLight) {
+    ctx.save();
+    ctx.globalAlpha = weight;
+
+    // Distant Spiral Galaxy Center Glow
+    const gx = ((width * 0.5 - camera.x * 0.03) % width + width) % width;
+    const gy = ((height * 0.35 - camera.y * 0.03) % height + height) % height;
+    const galGrad = ctx.createRadialGradient(gx, gy, 15, gx, gy, 190);
+    galGrad.addColorStop(0, 'rgba(56, 189, 248, 0.20)');
+    galGrad.addColorStop(0.4, 'rgba(168, 85, 247, 0.12)');
+    galGrad.addColorStop(1, 'rgba(15, 23, 42, 0)');
+    ctx.fillStyle = galGrad;
+    ctx.beginPath();
+    ctx.arc(gx, gy, 190, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Render Constellations with Cyber Connecting Lines
+    const constParallax = 0.10;
+    for (const c of this.constellations) {
+      const screenStars = c.stars.map(st => ({
+        x: ((st.x * width - camera.x * constParallax) % width + width) % width,
+        y: ((st.y * height - camera.y * constParallax) % height + height) % height
+      }));
+
+      // Connecting Constellation Lines
+      ctx.strokeStyle = isLight ? 'rgba(14, 165, 233, 0.22)' : 'rgba(56, 189, 248, 0.28)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      for (const edge of c.edges) {
+        const p1 = screenStars[edge[0]];
+        const p2 = screenStars[edge[1]];
+        // Only draw if not wrapped across screen border
+        if (Math.hypot(p2.x - p1.x, p2.y - p1.y) < width * 0.4) {
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Traveling Energy Pulse along Constellation Edges
+      const pulseT = (animTime * 0.5) % 1.0;
+      for (const edge of c.edges) {
+        const p1 = screenStars[edge[0]];
+        const p2 = screenStars[edge[1]];
+        if (Math.hypot(p2.x - p1.x, p2.y - p1.y) < width * 0.4) {
+          const px = p1.x + (p2.x - p1.x) * pulseT;
+          const py = p1.y + (p2.y - p1.y) * pulseT;
+          ctx.fillStyle = '#ffffff';
+          ctx.beginPath();
+          ctx.arc(px, py, 1.8, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Constellation Star Nodes
+      for (const st of screenStars) {
+        const pulse = 0.75 + 0.25 * Math.sin(animTime * 3.5 + st.x * 0.02);
+        ctx.fillStyle = c.color;
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, 2.5 * pulse, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Outer halo
+        ctx.strokeStyle = c.color;
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.arc(st.x, st.y, 5.5 * pulse, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  // Sector 2: Planetary Warzone & Orbital Explosions
+  drawSector2Warzone(ctx, camera, width, height, animTime, weight, isLight) {
+    ctx.save();
+    ctx.globalAlpha = weight;
+
+    // 1. Giant Ringed Volcanic Exoplanet (Far Parallax 0.035)
+    const px = ((width * 0.76 - camera.x * 0.035) % (width * 1.5) + (width * 1.5)) % (width * 1.5) - width * 0.25;
+    const py = ((height * 0.28 - camera.y * 0.035) % (height * 1.5) + (height * 1.5)) % (height * 1.5) - height * 0.25;
+    const planetR = Math.min(105, width * 0.12);
+
+    // Planet atmosphere backlight halo
+    const haloGrad = ctx.createRadialGradient(px, py, planetR * 0.8, px, py, planetR * 1.45);
+    haloGrad.addColorStop(0, 'rgba(249, 115, 22, 0.35)');
+    haloGrad.addColorStop(0.6, 'rgba(194, 65, 12, 0.15)');
+    haloGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = haloGrad;
+    ctx.beginPath();
+    ctx.arc(px, py, planetR * 1.45, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Back half of planetary ring
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(-0.38);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, planetR * 2.1, planetR * 0.42, 0, Math.PI, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(249, 115, 22, 0.45)';
+    ctx.lineWidth = 14;
+    ctx.stroke();
+    ctx.restore();
+
+    // Volcanic Planet Sphere
+    const pGrad = ctx.createRadialGradient(px - planetR * 0.35, py - planetR * 0.35, planetR * 0.1, px, py, planetR);
+    pGrad.addColorStop(0, '#f97316');
+    pGrad.addColorStop(0.35, '#c2410c');
+    pGrad.addColorStop(0.75, '#431407');
+    pGrad.addColorStop(1, '#180703');
+    ctx.fillStyle = pGrad;
+    ctx.beginPath();
+    ctx.arc(px, py, planetR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Fiery Magma Fissures on Planet Face
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(px, py, planetR, 0, Math.PI * 2);
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(254, 215, 170, 0.7)';
+    ctx.lineWidth = 1.8;
+    ctx.beginPath();
+    ctx.moveTo(px - planetR * 0.6, py - planetR * 0.1);
+    ctx.quadraticCurveTo(px, py + planetR * 0.2, px + planetR * 0.5, py - planetR * 0.3);
+    ctx.moveTo(px - planetR * 0.2, py + planetR * 0.1);
+    ctx.lineTo(px + planetR * 0.3, py + planetR * 0.5);
+    ctx.stroke();
+    ctx.restore();
+
+    // Front half of planetary ring
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.rotate(-0.38);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, planetR * 2.1, planetR * 0.42, 0, 0, Math.PI);
+    ctx.strokeStyle = 'rgba(251, 146, 60, 0.65)';
+    ctx.lineWidth = 14;
+    ctx.stroke();
+    ctx.restore();
+
+    // Fractured Moonlet
+    const mx = px - planetR * 1.5;
+    const my = py + planetR * 0.9;
+    ctx.fillStyle = '#64748b';
+    ctx.beginPath();
+    ctx.arc(mx, my, 18, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#334155';
+    ctx.beginPath();
+    ctx.arc(mx - 3, my - 2, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 2. Floating Asteroid Belt
+    for (const ast of this.asteroids) {
+      const ax = ((ast.x * width - camera.x * ast.parallax) % width + width) % width;
+      const ay = ((ast.y * height - camera.y * ast.parallax) % height + height) % height;
+      const curRot = ast.rot + animTime * ast.rotSpeed;
+
+      ctx.save();
+      ctx.translate(ax, ay);
+      ctx.rotate(curRot);
+      ctx.fillStyle = ast.color;
+      ctx.strokeStyle = 'rgba(249, 115, 22, 0.25)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for (let i = 0; i < ast.points.length; i++) {
+        const pt = ast.points[i];
+        if (i === 0) ctx.moveTo(pt.x, pt.y);
+        else ctx.lineTo(pt.x, pt.y);
+      }
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 3. Distant Orbital Flak Explosions (Chiến trường với nhiều vụ nổ)
+    for (const exp of this.flakExplosions) {
+      const cycle = (animTime + exp.offset) % exp.period;
+      if (cycle < 1.35) {
+        const progress = cycle / 1.35;
+        const fx = ((exp.x * width - camera.x * 0.15) % width + width) % width;
+        const fy = ((exp.y * height - camera.y * 0.15) % height + height) % height;
+        const curR = progress * exp.maxR;
+        const fade = 1 - progress;
+
+        // Expanding blast core
+        const bGrad = ctx.createRadialGradient(fx, fy, 2, fx, fy, Math.max(3, curR));
+        bGrad.addColorStop(0, `rgba(255, 255, 255, ${fade})`);
+        bGrad.addColorStop(0.35, `rgba(251, 146, 60, ${fade * 0.85})`);
+        bGrad.addColorStop(0.8, `rgba(239, 68, 68, ${fade * 0.5})`);
+        bGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = bGrad;
+        ctx.beginPath();
+        ctx.arc(fx, fy, Math.max(3, curR), 0, Math.PI * 2);
+        ctx.fill();
+
+        // Expanding shockwave ring
+        ctx.strokeStyle = `rgba(254, 215, 170, ${fade * 0.8})`;
+        ctx.lineWidth = Math.max(0.5, fade * 2.5);
+        ctx.beginPath();
+        ctx.arc(fx, fy, curR * 1.4, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  // Sector 3: Solar Corona Inferno & Black Hole Singularity
+  drawSector3SolarSingularity(ctx, camera, width, height, animTime, weight, isLight) {
+    ctx.save();
+    ctx.globalAlpha = weight;
+
+    // 1. The Blazing Sun / Solar Corona (Bottom-Left Corner)
+    const sx = ((width * 0.12 - camera.x * 0.025) % (width * 1.8) + (width * 1.8)) % (width * 1.8) - width * 0.4;
+    const sy = ((height * 0.98 - camera.y * 0.025) % (height * 1.8) + (height * 1.8)) % (height * 1.8) - height * 0.4;
+    const sunR = Math.min(270, width * 0.32);
+
+    // Giant Solar Atmosphere Corona
+    const sunGrad = ctx.createRadialGradient(sx, sy, sunR * 0.15, sx, sy, sunR * 1.55);
+    sunGrad.addColorStop(0, '#ffffff');
+    sunGrad.addColorStop(0.3, '#fef08a');
+    sunGrad.addColorStop(0.65, '#f97316');
+    sunGrad.addColorStop(0.88, 'rgba(239, 68, 68, 0.4)');
+    sunGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = sunGrad;
+    ctx.beginPath();
+    ctx.arc(sx, sy, sunR * 1.55, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Solar Prominence Arcs (Quầng lửa nhô ra ngoài không gian)
+    for (let i = 0; i < 4; i++) {
+      const baseAng = -0.8 + i * 0.5 + Math.sin(animTime * 1.5 + i) * 0.1;
+      const arcDist = sunR * (1.18 + Math.sin(animTime * 2.8 + i * 2) * 0.15);
+      const startX = sx + Math.cos(baseAng - 0.18) * sunR * 0.98;
+      const startY = sy + Math.sin(baseAng - 0.18) * sunR * 0.98;
+      const tipX = sx + Math.cos(baseAng) * arcDist;
+      const tipY = sy + Math.sin(baseAng) * arcDist;
+      const endX = sx + Math.cos(baseAng + 0.18) * sunR * 0.98;
+      const endY = sy + Math.sin(baseAng + 0.18) * sunR * 0.98;
+
+      ctx.strokeStyle = i % 2 === 0 ? '#fde047' : '#f97316';
+      ctx.lineWidth = 3.5;
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.quadraticCurveTo(tipX, tipY, endX, endY);
+      ctx.stroke();
+    }
+
+    // 2. Cosmic Black Hole (Singularity & Swirling Accretion Disk)
+    const bx = ((width * 0.82 - camera.x * 0.04) % (width * 1.6) + (width * 1.6)) % (width * 1.6) - width * 0.3;
+    const by = ((height * 0.32 - camera.y * 0.04) % (height * 1.6) + (height * 1.6)) % (height * 1.6) - height * 0.3;
+    const holeR = Math.min(38, width * 0.05);
+
+    // Gravitational Lensing Arc (Bẻ cong ánh sáng trên đỉnh hố đen)
+    ctx.save();
+    ctx.translate(bx, by);
+    ctx.rotate(-0.35);
+
+    // Accretion Disk Upper Lensing Halo
+    ctx.beginPath();
+    ctx.arc(0, 0, holeR * 1.9, Math.PI * 0.9, Math.PI * 2.1);
+    ctx.strokeStyle = 'rgba(253, 224, 71, 0.7)';
+    ctx.lineWidth = 7;
+    ctx.stroke();
+
+    // Swirling Relativistic Accretion Disk (Đĩa bồi tụ)
+    ctx.beginPath();
+    ctx.ellipse(0, 0, holeR * 2.9, holeR * 0.72, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(244, 63, 94, 0.75)';
+    ctx.lineWidth = 14;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.ellipse(0, 0, holeR * 2.5, holeR * 0.58, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(250, 204, 21, 0.9)';
+    ctx.lineWidth = 6;
+    ctx.stroke();
+
+    // Pitch Black Event Horizon (Chân trời sự kiện đen tuyệt đối)
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.arc(0, 0, holeR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Golden Photon Sphere Ring
+    ctx.strokeStyle = '#fde047';
+    ctx.lineWidth = 2.2;
+    ctx.beginPath();
+    ctx.arc(0, 0, holeR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // 3. Cataclysmic Supernova Explosions across Sector 3
+    for (const exp of this.flakExplosions) {
+      const cycle = (animTime * 1.2 + exp.offset * 1.5) % exp.period;
+      if (cycle < 1.4) {
+        const progress = cycle / 1.4;
+        const fx = ((exp.x * width * 1.2 - camera.x * 0.18) % width + width) % width;
+        const fy = ((exp.y * height * 1.2 - camera.y * 0.18) % height + height) % height;
+        const curR = progress * exp.maxR * 1.6;
+        const fade = 1 - progress;
+
+        // White-hot core
+        ctx.fillStyle = `rgba(255, 255, 255, ${fade * 0.9})`;
+        ctx.beginPath();
+        ctx.arc(fx, fy, curR * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Dual plasma shockwave rings
+        ctx.strokeStyle = `rgba(250, 204, 21, ${fade * 0.85})`;
+        ctx.lineWidth = Math.max(1, fade * 3.5);
+        ctx.beginPath();
+        ctx.arc(fx, fy, curR, 0, Math.PI * 2);
+        ctx.stroke();
+
+        ctx.strokeStyle = `rgba(239, 68, 68, ${fade * 0.6})`;
+        ctx.lineWidth = Math.max(0.5, fade * 2.0);
+        ctx.beginPath();
+        ctx.arc(fx, fy, curR * 1.5, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    ctx.restore();
+  }
+
+  // Draw Cyber Floor Grid with Sector-Blended Colors
+  drawSectorCyberGrid(ctx, camera, width, height, animTime, isLight, w1, w2, w3) {
     const gridSize = 90;
     const startX = Math.floor(camera.x / gridSize) * gridSize;
     const startY = Math.floor(camera.y / gridSize) * gridSize;
     const endX = startX + width + gridSize * 2;
     const endY = startY + height + gridSize * 2;
 
-    // Ambient Cyber Grid Lines (Batched into 1 single stroke call for 60 FPS)
-    ctx.strokeStyle = isLight ? 'rgba(14, 165, 233, 0.15)' : 'rgba(14, 165, 233, 0.055)';
+    // Line RGB interpolation (Sector 1: 14, 165, 233 | Sector 2: 249, 115, 22 | Sector 3: 239, 68, 68)
+    const lr = Math.round(14 * w1 + 249 * w2 + 239 * w3);
+    const lg = Math.round(165 * w1 + 115 * w2 + 68 * w3);
+    const lb = Math.round(233 * w1 + 22 * w2 + 68 * w3);
+    const lAlpha = isLight ? 0.16 : 0.065;
+
+    ctx.strokeStyle = `rgba(${lr}, ${lg}, ${lb}, ${lAlpha})`;
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     for (let x = startX; x <= endX; x += gridSize) {
@@ -796,13 +1388,17 @@ export class ArtEngine {
     ctx.stroke();
 
     // Glowing Micro-Circuit Junction Points
+    // Junction RGB interpolation (Sector 1: 0, 242, 254 | Sector 2: 251, 146, 60 | Sector 3: 250, 204, 21)
+    const jr = Math.round(0 * w1 + 251 * w2 + 250 * w3);
+    const jg = Math.round(242 * w1 + 146 * w2 + 204 * w3);
+    const jb = Math.round(254 * w1 + 60 * w2 + 21 * w3);
+
     for (let x = startX; x <= endX; x += gridSize * 2) {
       for (let y = startY; y <= endY; y += gridSize * 2) {
         const pulse = Math.sin((x * 0.01 + y * 0.01) + animTime * 2);
         if (pulse > 0.4) {
-          ctx.fillStyle = isLight 
-            ? `rgba(2, 132, 199, ${(pulse - 0.4) * 0.45})` 
-            : `rgba(0, 242, 254, ${(pulse - 0.4) * 0.35})`;
+          const pAlpha = (pulse - 0.4) * (isLight ? 0.48 : 0.38);
+          ctx.fillStyle = `rgba(${jr}, ${jg}, ${jb}, ${pAlpha})`;
           ctx.fillRect(x - 2, y - 2, 4, 4);
         }
       }

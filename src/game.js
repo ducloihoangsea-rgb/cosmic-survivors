@@ -25,6 +25,8 @@ export class Game {
     // Game State
     this.state = 'start'; // 'start', 'playing', 'levelup', 'chest', 'gameover'
     this.gameTime = 0;
+    this.currentSector = 1;
+    this.warpSpeedTimer = 0;
     this.kills = 0;
     this.score = 0;
     this.earnedGold = 0;
@@ -94,6 +96,7 @@ export class Game {
     this.onVictoryCallback = null;
     this.onHordeAlertCallback = null;
     this.onLuckyChestCallback = null;
+    this.onSectorChangeCallback = null;
 
     // Spacebar listener for EMP Ultimate
     window.addEventListener('keydown', (e) => {
@@ -373,6 +376,25 @@ export class Game {
 
     this.gameTime += dt;
 
+    // Dynamic Battlefield Sector Progression (Sector 1: 0-3m, Sector 2: 3-7m, Sector 3: 7-10m)
+    let targetSector = 1;
+    if (this.gameTime >= 420) {
+      targetSector = 3;
+    } else if (this.gameTime >= 180) {
+      targetSector = 2;
+    }
+    if (targetSector !== this.currentSector) {
+      this.currentSector = targetSector;
+      this.warpSpeedTimer = 2.2;
+      sound.playWarpJump();
+      if (this.onSectorChangeCallback) {
+        this.onSectorChangeCallback(targetSector);
+      }
+    }
+    if (this.warpSpeedTimer > 0) {
+      this.warpSpeedTimer = Math.max(0, this.warpSpeedTimer - dt);
+    }
+
     // Combo timer decay
     if (this.comboTimer > 0) {
       this.comboTimer -= dt;
@@ -636,9 +658,9 @@ export class Game {
 
     ctx.translate(-this.camera.x, -this.camera.y);
 
-    // Draw Infinite Arena
+    // Draw Infinite Arena with Dynamic Battlefield Sectors
     const isLight = document.body.classList.contains('theme-light');
-    art.drawArena(ctx, this.camera, this.canvas.width / zoom, this.canvas.height / zoom, this.gameTime, isLight);
+    art.drawArena(ctx, this.camera, this.canvas.width / zoom, this.canvas.height / zoom, this.gameTime, isLight, this.currentSector, this.warpSpeedTimer);
 
     // Viewport Frustum Culling bounds
     const halfW = (this.canvas.width / zoom) * 0.5 + 90;
@@ -728,6 +750,8 @@ export class Game {
   restart() {
     this.state = 'playing';
     this.gameTime = 0;
+    this.currentSector = 1;
+    this.warpSpeedTimer = 0;
     this.kills = 0;
     this.score = 0;
     this.combo = 0;

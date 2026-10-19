@@ -24,3 +24,12 @@ Tàu rắn thức tỉnh khi đi với lõi tăng đuôi
 Chỉ có thể thức tỉnh khi có phụ trợ tương ứng và vũ khí đạt cấp tối đa
 ===================================================================
 
+===================================================================
+thêm một vài ý tưởng cho các phông nền chiến trường trong ván game. trong quá trình chơi qua các mốc thời gian các phông nền sẽ lần lượt thay đổi theo diễn biến của màn chơi làm ít nhất 3 phông nền, ví dụ 0-3p phông nền A 3p-7p phông nền B 7p-10p phông nền C, phông nền A chủ đề chiến đấu trong giải ngân hà với phônng nền là các chòm sao sáng phía sau, phông nền B là chiến đấu trong các hành tinh với nhiều vụ nổ, phông nền C là chiến đấu gần mặt trời với các hố đen và các vụ nổ lớn bao quanh
+===================================================================
+Tàu chọn skin như sau
+có các tàu cơ bản như khi vừa vào game nhưng nhiều skin hơn, mỗi khi đạt đủ 1 cột mốc nhất định sẽ mở khoá đc skin mới cho các tàu
+các skin mới có thể đổi màu, thay đổi hình dạng tàu các thứ, nhưng không thay đổi chỉ số cơ bản của các tàu, skin khác nhau chỉ đơn giản để tăng tính thẩm mỹ cho con tàu, còn có 1 ít % tăng %may mắn
+sau khi đủ điều kiện mở khoá skin thì vào mục kho tàu để trang bị cho từng tàu
+===================================================================
+

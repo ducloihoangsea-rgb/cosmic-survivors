@@ -16,6 +16,13 @@
   <div id="app-container">
     <canvas id="game-canvas"></canvas>
 
+    <!-- SECTOR WARP NOTIFICATION BANNER -->
+    <div id="sector-warp-banner" class="sector-warp-banner hidden">
+      <div id="warp-alert-label" class="warp-alert-label">⚡ BƯỚC NHẢY KHÔNG GIAN (WARP JUMP) ⚡</div>
+      <div id="warp-sector-name" class="warp-sector-name">SECTOR II: CHIẾN TRƯỜNG HÀNH TINH</div>
+      <div id="warp-sector-sub" class="warp-sector-sub">Vành đai tiểu hành tinh & hỏa lực pháo kích</div>
+    </div>
+
     <!-- TOP HUD -->
     <div id="hud">
       <!-- XP Bar -->
@@ -28,6 +35,10 @@
 
         <div class="stats-center">
           <div class="stat-item"><span id="timer-display">00:00</span></div>
+          <div class="stat-item sector-badge-item sector-1" id="sector-display" title="Khu vực chiến trường hiện tại">
+            <span id="sector-icon">🌌</span>
+            <span id="sector-badge-text">SECTOR I</span>
+          </div>
           <div class="stat-item"><span id="kills-display">0 💀</span></div>
         </div>
 
