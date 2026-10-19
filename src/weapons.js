@@ -1,6 +1,7 @@
 // Weapons, Companion Drones and Projectiles System with Evolutionary Progression
 import { sound } from './audio.js';
 import { FloatingText, Particle } from './particles.js';
+import { getCyberSkillIcon } from './cyberIcons.js';
 
 export class WeaponManager {
   constructor(game) {
@@ -11,7 +12,7 @@ export class WeaponManager {
         level: 1,
         maxLevel: 5,
         timer: 0,
-        icon: '⚡',
+        icon: getCyberSkillIcon('blaster'),
         rarity: 'Common'
       },
       orbs: {
@@ -19,7 +20,7 @@ export class WeaponManager {
         level: 0,
         maxLevel: 5,
         angle: 0,
-        icon: '🪐',
+        icon: getCyberSkillIcon('orbs'),
         rarity: 'Rare'
       },
       lightning: {
@@ -27,7 +28,7 @@ export class WeaponManager {
         level: 0,
         maxLevel: 5,
         timer: 0,
-        icon: '🌩️',
+        icon: getCyberSkillIcon('lightning'),
         rarity: 'Epic'
       },
       glaive: {
@@ -35,7 +36,7 @@ export class WeaponManager {
         level: 0,
         maxLevel: 5,
         timer: 0,
-        icon: '🌀',
+        icon: getCyberSkillIcon('glaive'),
         rarity: 'Rare'
       },
       missiles: {
@@ -43,7 +44,7 @@ export class WeaponManager {
         level: 0,
         maxLevel: 5,
         timer: 0,
-        icon: '🚀',
+        icon: getCyberSkillIcon('missiles'),
         rarity: 'Epic'
       },
       wingmen: {
@@ -52,7 +53,7 @@ export class WeaponManager {
         maxLevel: 5,
         timer: 0,
         angle: 0,
-        icon: '🛸',
+        icon: getCyberSkillIcon('wingmen'),
         rarity: 'Epic',
         isAwakened: false
       },
@@ -61,7 +62,7 @@ export class WeaponManager {
         level: 0,
         maxLevel: 5,
         timer: 0,
-        icon: '🔴',
+        icon: getCyberSkillIcon('laser'),
         rarity: 'Rare',
         isAwakened: false
       },
@@ -70,7 +71,7 @@ export class WeaponManager {
         level: 0,
         maxLevel: 5,
         timer: 0,
-        icon: '💣',
+        icon: getCyberSkillIcon('bombs'),
         rarity: 'Epic',
         isAwakened: false
       }

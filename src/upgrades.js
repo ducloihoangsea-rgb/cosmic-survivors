@@ -2,6 +2,7 @@
 import { sound } from './audio.js';
 import { i18n } from './i18n.js';
 import { FloatingText } from './particles.js';
+import { getCyberSkillIcon } from './cyberIcons.js';
 
 export class UpgradeSystem {
   constructor(game) {
@@ -36,7 +37,7 @@ export class UpgradeSystem {
         category: i18n.t('categorySupport'),
         rarityKey: 'Mythic',
         rarity: i18n.t('rarityMythic'),
-        icon: '⚡',
+        icon: getCyberSkillIcon('godpact'),
         title: i18n.t('godPactTitle'),
         desc: i18n.t('godPactDesc'),
         apply: () => {
@@ -54,7 +55,7 @@ export class UpgradeSystem {
         category: i18n.t('categoryOffense'),
         rarityKey: 'Mythic',
         rarity: i18n.t('rarityMythic'),
-        icon: '🕳️',
+        icon: getCyberSkillIcon('blackhole'),
         title: i18n.t('blackHoleTitle'),
         desc: i18n.t('blackHoleDesc'),
         apply: () => {
@@ -72,7 +73,7 @@ export class UpgradeSystem {
         category: i18n.t('categoryOffense'),
         rarityKey: 'Mythic',
         rarity: i18n.t('rarityMythic'),
-        icon: '🩸',
+        icon: getCyberSkillIcon('bloodfrenzy'),
         title: i18n.t('bloodFrenzyTitle'),
         desc: i18n.t('bloodFrenzyDesc'),
         apply: () => {
@@ -90,7 +91,7 @@ export class UpgradeSystem {
         category: i18n.t('categoryOffense'),
         rarityKey: 'Mythic',
         rarity: i18n.t('rarityMythic'),
-        icon: '💀',
+        icon: getCyberSkillIcon('reaper'),
         title: i18n.t('reaperTitle'),
         desc: i18n.t('reaperDesc'),
         apply: () => {
@@ -107,7 +108,7 @@ export class UpgradeSystem {
         category: i18n.t('categorySupport'),
         rarityKey: 'Mythic',
         rarity: i18n.t('rarityMythic'),
-        icon: '⏳',
+        icon: getCyberSkillIcon('chronos'),
         title: i18n.t('chronosTitle'),
         desc: i18n.t('chronosDesc'),
         apply: () => {
@@ -702,14 +703,14 @@ export class UpgradeSystem {
     // ==========================================
     const weaponKeys = ['blaster', 'orbs', 'lightning', 'glaive', 'missiles', 'wingmen', 'laser', 'bombs'];
     const weaponIcons = { 
-      blaster: '⚡', 
-      orbs: '🪐', 
-      lightning: '🌩️', 
-      glaive: '🌀', 
-      missiles: '🚀', 
-      wingmen: '🛸',
-      laser: '🔦',
-      bombs: '💣'
+      blaster: getCyberSkillIcon('blaster'), 
+      orbs: getCyberSkillIcon('orbs'), 
+      lightning: getCyberSkillIcon('lightning'), 
+      glaive: getCyberSkillIcon('glaive'), 
+      missiles: getCyberSkillIcon('missiles'), 
+      wingmen: getCyberSkillIcon('wingmen'),
+      laser: getCyberSkillIcon('laser'),
+      bombs: getCyberSkillIcon('bombs')
     };
 
     const activeWeaponsCount = weaponKeys.filter(k => wm.weapons[k] && wm.weapons[k].level > 0).length;
@@ -996,6 +997,12 @@ export class UpgradeSystem {
         }
       } else {
         break; // Pool exhausted
+      }
+    }
+
+    for (const card of selected) {
+      if (!card.icon || typeof card.icon !== 'string' || !card.icon.includes('<svg')) {
+        card.icon = getCyberSkillIcon(card.id, card.icon);
       }
     }
 

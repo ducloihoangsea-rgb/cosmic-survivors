@@ -7,6 +7,7 @@ import { meta } from './meta.js';
 import { art } from './art.js';
 import { SHIP_ROSTER, SHIP_KEYS } from './ships.js';
 import { skinManager } from './skins.js';
+import { getCyberSkillIcon, renderCyberIconHtml } from './cyberIcons.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('game-canvas');
@@ -150,22 +151,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Skill Catalog for Real-time Meter
   const skillCatalog = [
-    { id: 'blaster', key: 'skill_blaster', icon: '⚡', color: '#00f2fe' },
-    { id: 'orbs', key: 'skill_orbs', icon: '🪐', color: '#f43f5e' },
-    { id: 'lightning', key: 'skill_lightning', icon: '🌩️', color: '#38bdf8' },
-    { id: 'glaive', key: 'skill_glaive', icon: '🌀', color: '#a855f7' },
-    { id: 'missiles', key: 'skill_missiles', icon: '🚀', color: '#f97316' },
-    { id: 'wingmen', key: 'skill_wingmen', icon: '🛸', color: '#10b981' },
-    { id: 'emp', key: 'skill_emp', icon: '⚡', color: '#facc15' },
-    { id: 'nuke', key: 'skill_nuke', icon: '☢️', color: '#ef4444' },
-    { id: 'blackhole', key: 'skill_blackhole', icon: '🕳️', color: '#ec4899' },
-    { id: 'ram', key: 'skill_ram', icon: '🛡️', color: '#10b981' },
-    { id: 'novashield', key: 'skill_novashield', icon: '💥', color: '#eab308' },
-    { id: 'burnfield', key: 'skill_burnfield', icon: '🔥', color: '#f97316' },
-    { id: 'flame', key: 'skill_flame', icon: '☄️', color: '#ea580c' },
-    { id: 'serpent', key: 'skill_serpent', icon: '🐉', color: '#34d399' },
-    { id: 'thorns', key: 'skill_thorns', icon: '🌵', color: '#84cc16' },
-    { id: 'toxic', key: 'skill_toxic', icon: '☣️', color: '#22c55e' }
+    { id: 'blaster', key: 'skill_blaster', icon: getCyberSkillIcon('blaster'), color: '#00f2fe' },
+    { id: 'orbs', key: 'skill_orbs', icon: getCyberSkillIcon('orbs'), color: '#f43f5e' },
+    { id: 'lightning', key: 'skill_lightning', icon: getCyberSkillIcon('lightning'), color: '#38bdf8' },
+    { id: 'glaive', key: 'skill_glaive', icon: getCyberSkillIcon('glaive'), color: '#a855f7' },
+    { id: 'missiles', key: 'skill_missiles', icon: getCyberSkillIcon('missiles'), color: '#f97316' },
+    { id: 'wingmen', key: 'skill_wingmen', icon: getCyberSkillIcon('wingmen'), color: '#10b981' },
+    { id: 'emp', key: 'skill_emp', icon: getCyberSkillIcon('emp'), color: '#facc15' },
+    { id: 'nuke', key: 'skill_nuke', icon: getCyberSkillIcon('nuke'), color: '#ef4444' },
+    { id: 'blackhole', key: 'skill_blackhole', icon: getCyberSkillIcon('blackhole'), color: '#ec4899' },
+    { id: 'ram', key: 'skill_ram', icon: getCyberSkillIcon('ram'), color: '#10b981' },
+    { id: 'novashield', key: 'skill_novashield', icon: getCyberSkillIcon('novashield'), color: '#eab308' },
+    { id: 'burnfield', key: 'skill_burnfield', icon: getCyberSkillIcon('burnfield'), color: '#f97316' },
+    { id: 'flame', key: 'skill_flame', icon: getCyberSkillIcon('flame'), color: '#ea580c' },
+    { id: 'serpent', key: 'skill_serpent', icon: getCyberSkillIcon('serpent'), color: '#34d399' },
+    { id: 'thorns', key: 'skill_thorns', icon: getCyberSkillIcon('thorns'), color: '#84cc16' },
+    { id: 'toxic', key: 'skill_toxic', icon: getCyberSkillIcon('toxic'), color: '#22c55e' }
   ];
 
   function formatDmg(val) {
@@ -713,6 +714,7 @@ window.addEventListener('DOMContentLoaded', () => {
         color: '#38bdf8',
         items: [
           {
+            id: 'thrust',
             icon: '🚀',
             name: isVi ? 'Gia Tốc (Thrust)' : 'Thrust Accelerator',
             rarity: isVi ? 'Phổ thông' : 'Common',
@@ -722,6 +724,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Tốc độ bay +25%, tốc độ xoay tàu +15%. Giúp phi thuyền cơ động lướt húc mục tiêu chính xác.' : '+25% Flight Speed, +15% Ship Turn Rate. Enhances evasion and ramming accuracy.'
           },
           {
+            id: 'juggernaut',
             icon: '🛡️',
             name: isVi ? 'Khuếch Đại (Juggernaut)' : 'Juggernaut Hull',
             rarity: isVi ? 'Hiếm' : 'Rare',
@@ -731,6 +734,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Tăng 40% kích thước & khối lượng tàu, tăng 30% máu tối đa, giảm 15% tốc độ xoay. Đâm quái cực mạnh!' : '+40% Size & Mass, +30% Max HP, -15% Turn Rate. Massive collision impact.'
           },
           {
+            id: 'microcraft',
             icon: '🛸',
             name: isVi ? 'Thu Nhỏ (Micro-Craft)' : 'Micro-Craft',
             rarity: isVi ? 'Hiếm' : 'Rare',
@@ -740,6 +744,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Giảm 30% kích thước hitbox nhận đòn, tốc độ bay +35%. Luồn lách né biển đạn dễ như chơi.' : '-30% Hitbox Size, +35% Flight Speed. Easily weave through bullet hell.'
           },
           {
+            id: 'energycore',
             icon: '🔋',
             name: isVi ? 'Lõi Năng Lượng (Energy Core)' : 'Energy Core',
             rarity: isVi ? 'Hiếm' : 'Rare',
@@ -749,6 +754,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Tốc độ hồi khiên +40%, giảm thời gian kích nổ khiên. Tái tạo lá chắn liên tục sau mỗi đòn đánh.' : '+40% Shield Recharge Rate, faster burst delay. Essential for Nova barrier cycles.'
           },
           {
+            id: 'growsegments',
             icon: '🐉',
             name: isVi ? 'Mọc Đốt (Grow Segments)' : 'Segment Sprout',
             rarity: isVi ? 'Hiếm' : 'Rare',
@@ -758,6 +764,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Thêm 2 đốt thân bọc thép chặn đạn (Tàu Rắn) hoặc kéo dài vệt lửa phản lực gây cháy (Tàu khác).' : '+2 Armored Segments (Serpent) or extended burning flame trail (Other ships).'
           },
           {
+            id: 'nanorepair',
             icon: '💉',
             name: isVi ? 'Sửa Chữa Khẩn Cấp (Nanorepair)' : 'Nanorepair System',
             rarity: isVi ? 'Phổ thông' : 'Common',
@@ -767,6 +774,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Tăng 25 Max HP và lập tức phục hồi 60 HP. Giữ vững sinh mệnh khi bị quái vật cắn ép góc.' : '+25 Max HP and instantly restores 60 HP. Reliable survival sustain.'
           },
           {
+            id: 'cosmicscope',
             icon: '🔭',
             name: isVi ? 'Ống Kính Vũ Trụ (Cosmic Scope)' : 'Cosmic Scope Lens',
             rarity: isVi ? 'Hiếm' : 'Rare',
@@ -783,6 +791,7 @@ window.addEventListener('DOMContentLoaded', () => {
         color: '#c084fc',
         items: [
           {
+            id: 'drill',
             icon: '🌪️',
             name: isVi ? 'Đâm Xuyên (Drill)' : 'Drill Momentum',
             rarity: isVi ? 'Sử thi' : 'Epic',
@@ -792,6 +801,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Khi húc chết quái, tàu không bị khựng lại mà giữ nguyên vận tốc lao thẳng xuyên qua tiếp!' : 'When ramming kills an enemy, ship maintains velocity and continues piercing through!'
           },
           {
+            id: 'burnfield',
             icon: '🔥',
             name: isVi ? 'Khiên Lửa (Burn Field)' : 'Burn Field',
             rarity: isVi ? 'Sử thi' : 'Epic',
@@ -801,6 +811,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Khiên liên tục gây sát thương thiêu đốt toàn bộ quái trong bán kính xung quanh tàu.' : 'Shield constantly emits intense heat, incinerating all enemies in close proximity.'
           },
           {
+            id: 'ricochet',
             icon: '💫',
             name: isVi ? 'Đạn Nảy (Ricochet)' : 'Ricochet Kinetic',
             rarity: isVi ? 'Sử thi' : 'Epic',
@@ -810,6 +821,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Đạn hoặc mảnh vỡ khi va chạm lập tức dội nảy sang các mục tiêu lân cận.' : 'Projectiles ricochet upon impact toward nearby targets for cascading carnage.'
           },
           {
+            id: 'toxicexhaust',
             icon: '☣️',
             name: isVi ? 'Khí Độc Đuôi (Toxic Exhaust)' : 'Toxic Exhaust Trail',
             rarity: isVi ? 'Sử thi' : 'Epic',
@@ -819,6 +831,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Đuôi tàu hoặc các đốt rắn xả màn khói độc cực đặc làm chậm và rút cạn máu quái đi vào.' : 'Engine exhaust and body segments emit dense toxic fumes that slow & melt enemies.'
           },
           {
+            id: 'spikedthorns',
             icon: '🌵',
             name: isVi ? 'Gai Phản Đòn (Spiked Thorns)' : 'Spiked Thorns',
             rarity: isVi ? 'Hiếm' : 'Rare',
@@ -835,6 +848,7 @@ window.addEventListener('DOMContentLoaded', () => {
         color: '#facc15',
         items: [
           {
+            id: 'crashnova',
             icon: '💥',
             name: isVi ? 'Bom Quán Tính (Crash Nova)' : 'Crash Nova Shockwave',
             rarity: isVi ? 'Huyền thoại' : 'Legendary',
@@ -844,6 +858,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Mỗi khi húc trúng mục tiêu, lập tức phát nổ một luồng sóng xung kích nghiền nát bầy quái xung quanh!' : 'Every ramming hit detonates a kinetic shockwave blasting nearby clusters.'
           },
           {
+            id: 'irondragon',
             icon: '🐲',
             name: isVi ? 'Mãng Xà Bọc Thép (Iron Dragon)' : 'Iron Dragon Armor',
             rarity: isVi ? 'Huyền thoại' : 'Legendary',
@@ -853,6 +868,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Các đốt thân rắn nhận giáp & gai, quái chạm vào đốt thân bị đánh bật ngược ra xa và choáng váng.' : 'Serpent segments gain heavy armor & spikes, knocking monsters violently backward.'
           },
           {
+            id: 'immortality',
             icon: '⚚',
             name: isVi ? 'Bất Tử Hóa (Immortality)' : 'Overload Immortality',
             rarity: isVi ? 'Huyền thoại' : 'Legendary',
@@ -862,6 +878,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Toàn bộ thanh máu quy đổi thành khiên năng lượng, sát thương nổ sóng khiên tăng vọt gấp 3 lần!' : 'Converts all health into dynamic energy shields; shield rupture damage tripled!'
           },
           {
+            id: 'tacticalnuke',
             icon: '☢️',
             name: isVi ? 'Bom Hạt Nhân (Tactical Nuke)' : 'Tactical Nuke Bomb',
             rarity: isVi ? 'Huyền thoại' : 'Legendary',
@@ -878,6 +895,7 @@ window.addEventListener('DOMContentLoaded', () => {
         color: '#ef4444',
         items: [
           {
+            id: 'godpact',
             icon: '⚡',
             name: isVi ? 'Khế Ước Thần Mệnh (Destiny Pact)' : 'Divine Destiny Pact',
             rarity: isVi ? 'Thần thoại' : 'Mythic',
@@ -887,6 +905,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Lần lên cấp tiếp theo ép xuất hiện duy nhất 1 thẻ nhưng BẢO ĐẢM là Thần Thoại Đỏ cực mạnh!' : 'Forces your next level up to offer a guaranteed single God-Tier Mythic card!'
           },
           {
+            id: 'blackhole',
             icon: '🕳️',
             name: isVi ? 'Kỳ Điểm Vũ Trụ (Singularity)' : 'Cosmic Singularity',
             rarity: isVi ? 'Thần thoại' : 'Mythic',
@@ -896,6 +915,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Tạo hố đen mini kéo hút và nghiền nát toàn bộ kẻ địch mỗi 6 giây.' : 'Spawns gravitational singularities pulling & crushing swarms every 6s.'
           },
           {
+            id: 'bloodfrenzy',
             icon: '🩸',
             name: isVi ? 'Huyết Ma Cuồng Nộ (Blood God)' : 'Blood God Rampage',
             rarity: isVi ? 'Thần thoại' : 'Mythic',
@@ -905,6 +925,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Tăng gấp đôi toàn bộ sát thương (+100%), hạ gục quái lập tức phục hồi lượng máu dồi dào.' : 'Doubles all damage (+100%) and constantly regenerates health on monster kills.'
           },
           {
+            id: 'reaper',
             icon: '💀',
             name: isVi ? 'Lưỡi Hái Tử Thần (Reaper)' : 'Reaper Execution',
             rarity: isVi ? 'Thần thoại' : 'Mythic',
@@ -914,6 +935,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Lập tức trảm sát bất kỳ quái vật hoặc Boss nào có lượng máu tụt xuống dưới 25%.' : 'Instantly executes any monster or boss with health under 25%.'
           },
           {
+            id: 'chronos',
             icon: '⏳',
             name: isVi ? 'Ngưng Đọng Thời Không (Chronos)' : 'Chronos Stasis',
             rarity: isVi ? 'Thần thoại' : 'Mythic',
@@ -930,6 +952,7 @@ window.addEventListener('DOMContentLoaded', () => {
         color: '#10b981',
         items: [
           {
+            id: 'blaster',
             icon: '⚡',
             name: isVi ? 'Pháo Plasma Kép' : 'Plasma Blaster',
             rarity: isVi ? 'Vũ khí' : 'Weapon',
@@ -939,6 +962,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Bắn loạt tia năng lượng phía trước. Tiến hóa: Bắn 5 siêu tia xuyên thấu liên thanh.' : 'Frontal laser cannons. Evolution: 5 piercing hyper-lasers with rapid fire.'
           },
           {
+            id: 'orbs',
             icon: '🪐',
             name: isVi ? 'Quả Cầu Hộ Thể' : 'Orbiting Orbs',
             rarity: isVi ? 'Vũ khí' : 'Weapon',
@@ -948,6 +972,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Vòng xoay cầu plasma càn quét quái áp sát. Tiến hóa: 6 quả cầu tạo lá chắn bất tử.' : 'Rotating spheres shredding close swarms. Evolution: 6 impenetrable barrier spheres.'
           },
           {
+            id: 'lightning',
             icon: '🌩️',
             name: isVi ? 'Sét Chuỗi Lan' : 'Chain Lightning',
             rarity: isVi ? 'Vũ khí' : 'Weapon',
@@ -957,6 +982,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Phóng sét gián đoạn chuỗi địch. Tiến hóa: Sấm sét hủy diệt 12 mục tiêu cùng lúc.' : 'Zaps clusters of enemies. Evolution: Thunderbolts strike 12 targets simultaneously.'
           },
           {
+            id: 'glaive',
             icon: '🌀',
             name: isVi ? 'Phi Tiêu Nảy' : 'Bouncing Glaive',
             rarity: isVi ? 'Vũ khí' : 'Weapon',
@@ -966,6 +992,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Phi đao năng lượng tốc độ cao dội nảy liên tục qua nhiều tầng quái vật.' : 'High-velocity energy disc bouncing across multiple enemies.'
           },
           {
+            id: 'missiles',
             icon: '🚀',
             name: isVi ? 'Tên Lửa Tầm Nhiệt' : 'Heat-Seeking Missiles',
             rarity: isVi ? 'Vũ khí' : 'Weapon',
@@ -975,6 +1002,7 @@ window.addEventListener('DOMContentLoaded', () => {
             desc: isVi ? 'Tên lửa tự tìm và nổ diện rộng. Tiến hóa: Chùm 10 đầu đạn hủy diệt.' : 'Homing missiles with blast radius. Evolution: 10 cluster warheads.'
           },
           {
+            id: 'wingmen',
             icon: '🛸',
             name: isVi ? 'Drone Đồng Minh' : 'Wingmen Drones',
             rarity: isVi ? 'Vũ khí' : 'Weapon',
@@ -1000,7 +1028,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('div');
         card.className = `codex-card ${item.borderClass || ''}`;
         card.innerHTML = `
-          <div class="codex-icon">${item.icon}</div>
+          <div class="codex-icon">${renderCyberIconHtml(item.id, item.icon)}</div>
           <div class="codex-info">
             <div class="codex-header-row">
               <span class="codex-name">${item.name}</span>
@@ -1048,7 +1076,7 @@ window.addEventListener('DOMContentLoaded', () => {
       const item = document.createElement('div');
       item.className = 'hangar-item';
       item.innerHTML = `
-        <div class="hangar-item-icon">${u.icon}</div>
+        <div class="hangar-item-icon">${renderCyberIconHtml(u.id, u.icon)}</div>
         <div class="hangar-item-info">
           <div class="hangar-item-title">${i18n.t(u.titleKey)}</div>
           <div class="hangar-item-desc">${i18n.t(u.descKey)}</div>
@@ -1263,7 +1291,7 @@ window.addEventListener('DOMContentLoaded', () => {
           }
 
           cEl.innerHTML = `
-            <div class="card-icon">${card.icon}</div>
+            <div class="card-icon">${renderCyberIconHtml(card.id, card.icon)}</div>
             <div class="card-info">
               <div class="card-header-row">
                 <span class="card-name">${card.title}</span>
@@ -1340,7 +1368,7 @@ window.addEventListener('DOMContentLoaded', () => {
       }
 
       cardEl.innerHTML = `
-        <div class="card-icon">${card.icon}</div>
+        <div class="card-icon">${renderCyberIconHtml(card.id, card.icon)}</div>
         <div class="card-info">
           <div class="card-header-row">
             <span class="card-name">${card.title}</span>
@@ -1568,7 +1596,7 @@ window.addEventListener('DOMContentLoaded', () => {
               <div class="meter-skill-item">
                 <div class="meter-skill-info-row">
                   <div class="meter-skill-name-group">
-                    <span class="meter-skill-icon">${s.icon}</span>
+                    <span class="meter-skill-icon">${renderCyberIconHtml(s.id, s.icon, s.color)}</span>
                     <span class="meter-skill-name">${s.name}</span>
                   </div>
                   <div class="meter-skill-stats-group">
