@@ -43,9 +43,19 @@
         </div>
 
         <div class="hud-right-group">
-          <div class="hp-container">
-            <div class="hp-track">
-              <div id="hp-bar"></div>
+          <!-- Vitals: Shield (above) + HP (below) -->
+          <div class="vitals-bars-col">
+            <div id="shield-container" class="shield-container hidden">
+              <div class="shield-track">
+                <div id="shield-bar"></div>
+                <span id="shield-val" class="vitals-val">0 / 0</span>
+              </div>
+            </div>
+            <div class="hp-container">
+              <div class="hp-track">
+                <div id="hp-bar"></div>
+                <span id="hp-val" class="vitals-val">100 / 100</span>
+              </div>
             </div>
           </div>
           <!-- Mid-game settings button -->

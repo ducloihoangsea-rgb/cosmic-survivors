@@ -1064,7 +1064,7 @@ class Player {
     }
 
     // Nova Shield or Absolute Immortality Recharge logic
-    if (this.isNovaShield || this.hasImmortality) {
+    if (this.isNovaShield || this.hasImmortality || (this.shieldMaxHp > 0)) {
       if (this.shieldRechargeTimer > 0) {
         this.shieldRechargeTimer -= dt * (this.shieldRechargeSpeed || 1.0);
       } else if (this.shieldHp < this.shieldMaxHp) {
@@ -1157,7 +1157,7 @@ class Player {
     if (this.invulnerableTimer > 0) return;
 
     // Nova Shield barrier or Absolute Immortality absorbs damage first
-    if (this.hasImmortality || (this.isNovaShield && this.shieldHp > 0)) {
+    if (this.hasImmortality || (this.isNovaShield && this.shieldHp > 0) || (this.shieldMaxHp > 0 && this.shieldHp > 0)) {
       this.shieldHp -= amount;
       this.invulnerableTimer = 0.15;
       sound.playHit();

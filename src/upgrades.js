@@ -632,6 +632,8 @@ export class UpgradeSystem {
           apply: () => {
             player.hasImmortality = true;
             player.shieldEnergy = player.maxShieldEnergy || 120;
+            player.shieldMaxHp = (player.shieldMaxHp || 0) + 120;
+            player.shieldHp = player.shieldMaxHp;
             player.hp = 1;
             if (player.buffLevels) player.buffLevels.immortality = 1;
           }
@@ -756,6 +758,8 @@ export class UpgradeSystem {
         apply: () => {
           player.maxShieldEnergy = (player.maxShieldEnergy || 100) + 50;
           player.shieldEnergy = (player.shieldEnergy || 0) + 50;
+          player.shieldMaxHp = (player.shieldMaxHp || 0) + 50;
+          player.shieldHp = (player.shieldHp || 0) + 50;
           player.shieldRechargeSpeed = (player.shieldRechargeSpeed || 1.0) + 0.25;
           if (player.buffLevels) player.buffLevels.core_shield = (player.buffLevels.core_shield || 0) + 1;
         }
@@ -964,6 +968,8 @@ export class UpgradeSystem {
           player.isShieldAwakened = true;
           player.maxShieldEnergy = (player.maxShieldEnergy || 100) + 100;
           player.shieldEnergy = player.maxShieldEnergy;
+          player.shieldMaxHp = (player.shieldMaxHp || 0) + 100;
+          player.shieldHp = player.shieldMaxHp;
           this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 AEGIS OF ETERNITY! 🌟', '#facc15', 24, true));
           sound.playCrit();
         }

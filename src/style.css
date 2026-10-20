@@ -146,6 +146,7 @@ html, body {
   align-items: center;
   gap: 8px;
   width: 100%;
+  min-width: 0;
 }
 
 .level-badge {
@@ -158,11 +159,12 @@ html, body {
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.3);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .stats-center {
   display: flex;
-  gap: 14px;
+  gap: 12px;
   background: rgba(15, 23, 42, 0.65);
   backdrop-filter: blur(8px);
   padding: 5px 12px;
@@ -171,6 +173,9 @@ html, body {
   font-size: 13.5px;
   font-weight: 800;
   white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .stat-item {
@@ -330,54 +335,100 @@ html, body {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
   pointer-events: auto;
 }
 
 .hud-lang-toggle {
   display: flex;
   align-items: center;
-  gap: 4px;
+  flex-shrink: 0;
 }
 
 .hud-lang-badge {
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid rgba(56, 189, 248, 0.4);
   color: #38bdf8;
-  font-size: 11.5px;
+  font-size: 14px;
   font-weight: 900;
-  padding: 4px 8px;
-  border-radius: 12px;
+  padding: 4px;
+  border-radius: 10px;
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0, 242, 254, 0.2);
-  transition: transform 0.12s, border-color 0.12s;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
+  transition: transform 0.12s, border-color 0.12s, box-shadow 0.12s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 32px;
-  height: 32px;
+  min-width: 34px;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
 }
 
 .hud-lang-badge:hover, .hud-lang-badge:active {
   transform: scale(1.06);
   border-color: #38bdf8;
   color: #ffffff;
+  box-shadow: 0 0 14px rgba(0, 242, 254, 0.5);
+}
+
+/* Vitals Column: Shield Bar above HP Bar */
+.vitals-bars-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.shield-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  animation: fadeInShield 0.2s ease-out;
+}
+
+.shield-container.hidden {
+  display: none !important;
+}
+
+.shield-track {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 242, 254, 0.45);
+  box-shadow: 0 0 8px rgba(0, 242, 254, 0.25);
+}
+
+#shield-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #00f2fe, #38bdf8);
+  box-shadow: 0 0 10px #00f2fe;
+  border-radius: 999px;
+  transition: width 0.15s ease-out;
 }
 
 /* HP Bar */
 .hp-container {
   display: flex;
   align-items: center;
-  gap: 6px;
-  width: 120px;
+  width: 100%;
 }
 
 .hp-track {
-  flex: 1;
-  height: 8px;
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 4px;
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  border-radius: 999px;
   overflow: hidden;
-  border: 1px solid rgba(34, 197, 94, 0.3);
+  border: 1px solid rgba(34, 197, 94, 0.45);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.2);
 }
 
 #hp-bar {
@@ -385,38 +436,101 @@ html, body {
   height: 100%;
   background: linear-gradient(90deg, #22c55e, #86efac);
   box-shadow: 0 0 8px #22c55e;
+  border-radius: 999px;
   transition: width 0.15s ease-out;
 }
 
-/* Mobile HUD adjustments to prevent clipping */
-@media (max-width: 600px) {
+/* Numeric text over shield and HP bars */
+.vitals-val {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 8.5px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95), 0 1px 2px rgba(0, 0, 0, 0.95);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.3px;
+  z-index: 2;
+}
+
+@keyframes fadeInShield {
+  from { opacity: 0; transform: scaleY(0.7); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+
+/* Mobile HUD adjustments to prevent clipping across all aspect ratios */
+@media (max-width: 768px) {
   #hud {
     padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) 4px max(8px, env(safe-area-inset-left));
     gap: 4px;
   }
   .hud-top-row {
     gap: 4px;
+    justify-content: space-between;
   }
   .level-badge {
-    font-size: 11px;
+    font-size: 10.5px;
     padding: 3px 7px;
+    flex-shrink: 0;
   }
   .stats-center {
-    font-size: 11.5px;
-    padding: 3px 7px;
-    gap: 6px;
+    font-size: 11px;
+    padding: 3px 6px;
+    gap: 5px;
+    flex-shrink: 1;
+    min-width: 0;
   }
-  .hp-container {
-    width: 70px;
+  .sector-badge-item {
+    font-size: 10px;
+    padding: 1px 5px;
+  }
+  .vitals-bars-col {
+    width: 84px;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .shield-track, .hp-track {
+    height: 10px;
+  }
+  .vitals-val {
+    font-size: 7.5px;
   }
   .hud-right-group {
-    gap: 4px;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .hud-lang-badge {
+    min-width: 30px;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  #hud {
+    padding: max(4px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) 2px max(6px, env(safe-area-inset-left));
+  }
+  .vitals-bars-col {
+    width: 70px;
+  }
+  .stats-center {
+    gap: 3px;
+    padding: 2px 4px;
+    font-size: 10px;
+  }
+  .sector-badge-item #sector-badge-text {
+    display: none;
   }
   .hud-lang-badge {
     min-width: 28px;
+    width: 28px;
     height: 28px;
-    font-size: 10.5px;
-    padding: 2px 5px;
+    font-size: 12px;
   }
 }
 

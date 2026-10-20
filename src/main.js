@@ -124,6 +124,10 @@ window.addEventListener('DOMContentLoaded', () => {
   // HUD Elements
   const xpBar = document.getElementById('xp-bar');
   const hpBar = document.getElementById('hp-bar');
+  const hpVal = document.getElementById('hp-val');
+  const shieldContainer = document.getElementById('shield-container');
+  const shieldBar = document.getElementById('shield-bar');
+  const shieldVal = document.getElementById('shield-val');
   const levelBadge = document.getElementById('level-badge');
   const timerDisplay = document.getElementById('timer-display');
   const killsDisplay = document.getElementById('kills-display');
@@ -1666,8 +1670,27 @@ window.addEventListener('DOMContentLoaded', () => {
     const xpPct = Math.min(100, (p.xp / p.nextLevelXp) * 100);
     xpBar.style.width = `${xpPct}%`;
 
-    const hpPct = Math.max(0, (p.hp / p.maxHp) * 100);
+    // Update HUD: HP and Shield (Shield bar renders above HP bar when active)
+    const curHp = Math.max(0, Math.ceil(p.hp));
+    const maxHp = Math.round(p.maxHp);
+    const hpPct = Math.min(100, Math.max(0, (p.hp / p.maxHp) * 100));
     hpBar.style.width = `${hpPct}%`;
+    if (hpVal) {
+      hpVal.textContent = `${curHp} / ${maxHp}`;
+    }
+
+    const maxShield = p.shieldMaxHp || 0;
+    const curShield = Math.max(0, Math.ceil(p.shieldHp || 0));
+    if (shieldContainer) {
+      if (maxShield > 0) {
+        shieldContainer.classList.remove('hidden');
+        const shieldPct = Math.min(100, Math.max(0, (curShield / maxShield) * 100));
+        if (shieldBar) shieldBar.style.width = `${shieldPct}%`;
+        if (shieldVal) shieldVal.textContent = `${curShield} / ${maxShield}`;
+      } else {
+        shieldContainer.classList.add('hidden');
+      }
+    }
 
     const mins = Math.floor(game.gameTime / 60);
     const secs = Math.floor(game.gameTime % 60);
