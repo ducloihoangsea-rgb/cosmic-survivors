@@ -48,12 +48,9 @@
               <div id="hp-bar"></div>
             </div>
           </div>
-          <!-- Mid-game quick language, theme, and exit to menu switchers -->
+          <!-- Mid-game settings button -->
           <div class="hud-lang-toggle">
-            <button id="hud-home-btn" class="hud-lang-badge" title="Thoát ra Menu chính / Quit to Menu">🏠</button>
-            <button id="hud-settings-btn" class="hud-lang-badge" title="Cài đặt / Settings">⚙️</button>
-            <button id="hud-theme-btn" class="hud-lang-badge" title="Đổi giao diện Sáng / Tối">🌙</button>
-            <button id="hud-lang-btn" class="hud-lang-badge" title="Đổi ngôn ngữ / Change Language">🇻🇳 VI</button>
+            <button id="hud-settings-btn" class="hud-lang-badge" title="Cài đặt & Tạm dừng / Settings & Pause">⚙️</button>
           </div>
         </div>
       </div>
@@ -374,10 +371,29 @@
             </div>
             <div id="setting-sound-tip" class="setting-tip">Bật hoặc tắt toàn bộ hiệu ứng âm thanh và tiếng nhặt ngọc.</div>
           </div>
+
+          <!-- Setting 3: Language Toggle -->
+          <div class="setting-item">
+            <div class="setting-item-top">
+              <span id="setting-lang-label" class="setting-item-label">🌐 Ngôn Ngữ (Language)</span>
+              <button id="settings-lang-btn" class="setting-toggle-btn active" style="font-size: 12px; padding: 4px 14px;">🇻🇳 Tiếng Việt</button>
+            </div>
+            <div id="setting-lang-tip" class="setting-tip">Chuyển đổi ngôn ngữ hiển thị trong game.</div>
+          </div>
+
+          <!-- Setting 4: Theme Toggle -->
+          <div class="setting-item">
+            <div class="setting-item-top">
+              <span id="setting-theme-label" class="setting-item-label">🌓 Giao Diện (Theme)</span>
+              <button id="settings-theme-btn" class="setting-toggle-btn active" style="font-size: 12px; padding: 4px 14px;">🌙 Chế Độ Tối</button>
+            </div>
+            <div id="setting-theme-tip" class="setting-tip">Chuyển đổi giữa chế độ Tối và Sáng.</div>
+          </div>
         </div>
 
         <div class="settings-footer">
-          <button id="settings-close-btn" class="hangar-mini-close" style="height: 28px !important; min-height: unset !important; max-height: 28px !important; width: auto !important; max-width: 140px !important; padding: 4px 18px !important; font-size: 11.5px !important; font-weight: 800 !important; margin: 0 auto !important; border-radius: 999px !important; flex: 0 0 auto !important; background: rgba(30,41,59,0.85) !important; color: #94a3b8 !important; border: 1px solid rgba(255,255,255,0.2) !important; box-shadow: none !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important;">✕ ĐÓNG</button>
+          <button id="settings-home-btn" class="settings-quit-btn">🏠 THOÁT RA MENU</button>
+          <button id="settings-close-btn" class="settings-resume-btn">▶️ TIẾP TỤC</button>
         </div>
       </div>
     </div>

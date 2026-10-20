@@ -75,6 +75,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const settingsModal = document.getElementById('settings-modal');
   const settingsHeaderCloseBtn = document.getElementById('settings-header-close-btn');
   const settingsCloseBtn = document.getElementById('settings-close-btn');
+  const settingsHomeBtn = document.getElementById('settings-home-btn');
+  const settingsLangBtn = document.getElementById('settings-lang-btn');
+  const settingsThemeBtn = document.getElementById('settings-theme-btn');
   const panelOpacitySlider = document.getElementById('panel-opacity-slider');
   const opacityValBadge = document.getElementById('opacity-val-badge');
   const soundToggleBtn = document.getElementById('sound-toggle-btn');
@@ -84,6 +87,10 @@ window.addEventListener('DOMContentLoaded', () => {
   const settingOpacityTip = document.getElementById('setting-opacity-tip');
   const settingSoundLabel = document.getElementById('setting-sound-label');
   const settingSoundTip = document.getElementById('setting-sound-tip');
+  const settingLangLabel = document.getElementById('setting-lang-label');
+  const settingLangTip = document.getElementById('setting-lang-tip');
+  const settingThemeLabel = document.getElementById('setting-theme-label');
+  const settingThemeTip = document.getElementById('setting-theme-tip');
 
   // Translatable Labels
   const startTitle = document.getElementById('start-title');
@@ -217,11 +224,11 @@ window.addEventListener('DOMContentLoaded', () => {
     if (lang === 'vi') {
       langBtnVi.classList.add('active');
       langBtnEn.classList.remove('active');
-      hudLangBtn.textContent = '🇻🇳 VI';
+      if (hudLangBtn) hudLangBtn.textContent = '🇻🇳 VI';
     } else {
       langBtnEn.classList.add('active');
       langBtnVi.classList.remove('active');
-      hudLangBtn.textContent = '🇬🇧 EN';
+      if (hudLangBtn) hudLangBtn.textContent = '🇬🇧 EN';
     }
 
     if (shipSelectTitle) shipSelectTitle.textContent = i18n.t('shipSelectTitle');
@@ -236,7 +243,14 @@ window.addEventListener('DOMContentLoaded', () => {
     if (settingOpacityTip) settingOpacityTip.textContent = i18n.t('settingOpacityTip');
     if (settingSoundLabel) settingSoundLabel.textContent = i18n.t('settingSound');
     if (settingSoundTip) settingSoundTip.textContent = i18n.t('settingSoundTip');
-    if (settingsCloseBtn) settingsCloseBtn.textContent = '✕ ' + i18n.t('closeBtn');
+    if (settingLangLabel) settingLangLabel.textContent = i18n.t('settingLang');
+    if (settingLangTip) settingLangTip.textContent = i18n.t('settingLangTip');
+    if (settingThemeLabel) settingThemeLabel.textContent = i18n.t('settingTheme');
+    if (settingThemeTip) settingThemeTip.textContent = i18n.t('settingThemeTip');
+    if (settingsLangBtn) settingsLangBtn.textContent = lang === 'vi' ? '🇻🇳 Tiếng Việt' : '🇬🇧 English';
+    if (settingsThemeBtn) settingsThemeBtn.textContent = currentTheme === 'dark' ? i18n.t('themeDarkName') : i18n.t('themeLightName');
+    if (settingsHomeBtn) settingsHomeBtn.textContent = i18n.t('settingsQuitBtn');
+    if (settingsCloseBtn) settingsCloseBtn.textContent = i18n.t('settingsResumeBtn');
     updateSoundBtnUI();
 
     renderShipSelector();
@@ -440,12 +454,23 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Settings Modal Handlers (Mở và đóng bảng cài đặt)
+  // Settings Modal Handlers (Mở và đóng bảng cài đặt kèm Tạm Dừng trận chiến)
+  let wasPlayingBeforeSettings = false;
   function openSettings() {
     sound.playCardSelect();
     updateSoundBtnUI();
     const curOpacity = localStorage.getItem('dopamine_dock_opacity') || '45';
     applyDockOpacity(curOpacity);
+    if (settingsLangBtn) {
+      settingsLangBtn.textContent = i18n.current === 'vi' ? '🇻🇳 Tiếng Việt' : '🇬🇧 English';
+    }
+    if (settingsThemeBtn) {
+      settingsThemeBtn.textContent = currentTheme === 'dark' ? i18n.t('themeDarkName') : i18n.t('themeLightName');
+    }
+    if (game.state === 'playing') {
+      wasPlayingBeforeSettings = true;
+      game.state = 'paused';
+    }
     if (settingsModal) {
       settingsModal.classList.add('active');
       updateModalState();
@@ -456,6 +481,10 @@ window.addEventListener('DOMContentLoaded', () => {
     sound.playCardSelect();
     if (panelOpacitySlider) {
       applyDockOpacity(panelOpacitySlider.value);
+    }
+    if (wasPlayingBeforeSettings && game.state === 'paused') {
+      game.state = 'playing';
+      wasPlayingBeforeSettings = false;
     }
     if (settingsModal) {
       settingsModal.classList.remove('active');
@@ -486,27 +515,41 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // HUD Return to Main Menu Button
-  if (hudHomeBtn) {
-    hudHomeBtn.addEventListener('click', () => {
+  if (settingsLangBtn) {
+    settingsLangBtn.addEventListener('click', () => {
       sound.playCardSelect();
-      if (confirm(i18n.t('confirmQuit'))) {
-        game.state = 'start';
-        // Convert current score to gold vault
-        if (game.score > 0) {
-          const rawGold = Math.floor(game.score / 10);
-          meta.addGold(rawGold);
-        }
-        startScreen.classList.add('active');
-        levelUpModal.classList.remove('active');
-        gameOverModal.classList.remove('active');
-        chestModal.classList.remove('active');
-        if (settingsModal) settingsModal.classList.remove('active');
-        resetLeftDockState();
-        updateModalState();
-      }
+      applyLanguage(i18n.current === 'vi' ? 'en' : 'vi');
+      applyTheme(currentTheme);
     });
   }
+
+  if (settingsThemeBtn) {
+    settingsThemeBtn.addEventListener('click', toggleTheme);
+  }
+
+  // Quit to Main Menu Action (From Settings Modal or Legacy HUD)
+  function quitToMainMenu() {
+    sound.playCardSelect();
+    if (confirm(i18n.t('confirmQuit'))) {
+      game.state = 'start';
+      wasPlayingBeforeSettings = false;
+      // Convert current score to gold vault
+      if (game.score > 0) {
+        const rawGold = Math.floor(game.score / 10);
+        meta.addGold(rawGold);
+      }
+      startScreen.classList.add('active');
+      levelUpModal.classList.remove('active');
+      gameOverModal.classList.remove('active');
+      chestModal.classList.remove('active');
+      if (settingsModal) settingsModal.classList.remove('active');
+      resetLeftDockState();
+      updateModalState();
+    }
+  }
+
+  if (settingsHomeBtn) settingsHomeBtn.addEventListener('click', quitToMainMenu);
+  if (hudHomeBtn) hudHomeBtn.addEventListener('click', quitToMainMenu);
 
   // Render Hangar Ships & Detailed Stats
   const hangarShipPreviews = [];
@@ -1181,6 +1224,9 @@ window.addEventListener('DOMContentLoaded', () => {
       if (startThemeBtn) startThemeBtn.textContent = i18n.t('themeDark');
       if (hudThemeBtn) hudThemeBtn.textContent = '🌙';
     }
+    if (settingsThemeBtn) {
+      settingsThemeBtn.textContent = theme === 'dark' ? i18n.t('themeDarkName') : i18n.t('themeLightName');
+    }
   }
 
   function toggleTheme() {
@@ -1204,11 +1250,13 @@ window.addEventListener('DOMContentLoaded', () => {
     applyTheme(currentTheme);
   });
 
-  hudLangBtn.addEventListener('click', () => {
-    sound.playCardSelect();
-    applyLanguage(i18n.current === 'vi' ? 'en' : 'vi');
-    applyTheme(currentTheme);
-  });
+  if (hudLangBtn) {
+    hudLangBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      applyLanguage(i18n.current === 'vi' ? 'en' : 'vi');
+      applyTheme(currentTheme);
+    });
+  }
 
   // Screen Resizing
   function handleResize() {

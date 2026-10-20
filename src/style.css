@@ -2778,8 +2778,61 @@ body:not(.theme-light) .meter-total-val {
 
 .settings-footer {
   display: flex;
-  justify-content: center;
-  padding-top: 4px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.settings-quit-btn {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1.5px solid rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.settings-quit-btn:hover, .settings-quit-btn:active {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+  border-color: #ef4444;
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.45);
+  transform: scale(0.98);
+}
+
+.settings-resume-btn {
+  background: linear-gradient(135deg, #0284c7, #38bdf8);
+  border: none;
+  color: #ffffff;
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.settings-resume-btn:hover, .settings-resume-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.7);
+}
+
+body.theme-light .settings-footer {
+  border-top-color: rgba(148, 163, 184, 0.3);
 }
 
 /* ==========================================================================
