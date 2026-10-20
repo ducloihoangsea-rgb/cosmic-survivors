@@ -197,37 +197,37 @@ window.addEventListener('DOMContentLoaded', () => {
   function applyLanguage(lang) {
     i18n.setLanguage(lang);
 
-    startTitle.innerHTML = i18n.t('gameTitle');
-    startSub.innerHTML = i18n.t('subTagline');
-    startBtn.textContent = i18n.t('startBtn');
-    startHangarBtn.textContent = i18n.t('hangarBtn');
-    overHangarBtn.textContent = i18n.t('hangarBtn');
-    tipMobile.textContent = i18n.t('tipMobile');
-    tipPc.textContent = i18n.t('tipPc');
+    if (startTitle) startTitle.innerHTML = i18n.t('gameTitle');
+    if (startSub) startSub.innerHTML = i18n.t('subTagline');
+    if (startBtn) startBtn.textContent = i18n.t('startBtn');
+    if (startHangarBtn) startHangarBtn.textContent = i18n.t('hangarBtn');
+    if (overHangarBtn) overHangarBtn.textContent = i18n.t('hangarBtn');
+    if (tipMobile) tipMobile.textContent = i18n.t('tipMobile');
+    if (tipPc) tipPc.textContent = i18n.t('tipPc');
 
-    hordeAlert.textContent = i18n.t('hordeAlert');
-    levelupTitle.textContent = i18n.t('levelUpTitle');
-    levelupSub.textContent = i18n.t('levelUpSubtitle');
+    if (hordeAlert) hordeAlert.textContent = i18n.t('hordeAlert');
+    if (levelupTitle) levelupTitle.textContent = i18n.t('levelUpTitle');
+    if (levelupSub) levelupSub.textContent = i18n.t('levelUpSubtitle');
 
-    hangarTitle.textContent = i18n.t('hangarTitle');
-    hangarSub.textContent = i18n.t('hangarSubtitle');
-    hangarCloseBtn.textContent = i18n.t('closeBtn');
+    if (hangarTitle) hangarTitle.textContent = i18n.t('hangarTitle');
+    if (hangarSub) hangarSub.textContent = i18n.t('hangarSubtitle');
+    if (hangarCloseBtn) hangarCloseBtn.textContent = i18n.t('closeBtn');
 
-    chestTitle.textContent = i18n.t('chestTitle');
-    chestClaimBtn.textContent = i18n.t('claimBtn');
+    if (chestTitle) chestTitle.textContent = i18n.t('chestTitle');
+    if (chestClaimBtn) chestClaimBtn.textContent = i18n.t('claimBtn');
 
-    meterTitle.textContent = i18n.t('damageMeterTitle');
-    meterTotalLabel.textContent = i18n.t('totalDamageLabel');
+    if (meterTitle) meterTitle.textContent = i18n.t('damageMeterTitle');
+    if (meterTotalLabel) meterTotalLabel.textContent = i18n.t('totalDamageLabel');
     if (statsBtnLabel) statsBtnLabel.textContent = i18n.t('shipStatsBtn');
     if (shipStatsTitle) shipStatsTitle.textContent = i18n.t('shipStatsTitle');
 
-    gameoverTitle.textContent = i18n.t('gameOverTitle');
-    gameoverSub.textContent = i18n.t('gameOverSubtitle');
-    statLblSurvive.textContent = i18n.t('statSurvive');
-    statLblKills.textContent = i18n.t('statKills');
-    statLblScore.textContent = i18n.t('statScore');
-    statLblGold.textContent = i18n.t('statGold');
-    retryBtn.textContent = i18n.t('retryBtn');
+    if (gameoverTitle) gameoverTitle.textContent = i18n.t('gameOverTitle');
+    if (gameoverSub) gameoverSub.textContent = i18n.t('gameOverSubtitle');
+    if (statLblSurvive) statLblSurvive.textContent = i18n.t('statSurvive');
+    if (statLblKills) statLblKills.textContent = i18n.t('statKills');
+    if (statLblScore) statLblScore.textContent = i18n.t('statScore');
+    if (statLblGold) statLblGold.textContent = i18n.t('statGold');
+    if (retryBtn) retryBtn.textContent = i18n.t('retryBtn');
 
     if (victoryTitle) victoryTitle.textContent = i18n.t('victoryTitle');
     if (victorySub) victorySub.textContent = i18n.t('victorySubtitle');
@@ -605,6 +605,7 @@ window.addEventListener('DOMContentLoaded', () => {
       chestModal.classList.remove('active');
       if (settingsModal) settingsModal.classList.remove('active');
       resetLeftDockState();
+      renderShipSelector();
       updateModalState();
     }
   }
@@ -1298,18 +1299,22 @@ window.addEventListener('DOMContentLoaded', () => {
   if (startThemeBtn) startThemeBtn.addEventListener('click', toggleTheme);
   if (hudThemeBtn) hudThemeBtn.addEventListener('click', toggleTheme);
 
-  // Language selectors
-  langBtnVi.addEventListener('click', () => {
-    sound.playCardSelect();
-    applyLanguage('vi');
-    applyTheme(currentTheme);
-  });
+  // Language selectors (guarded if present)
+  if (langBtnVi) {
+    langBtnVi.addEventListener('click', () => {
+      sound.playCardSelect();
+      applyLanguage('vi');
+      applyTheme(currentTheme);
+    });
+  }
 
-  langBtnEn.addEventListener('click', () => {
-    sound.playCardSelect();
-    applyLanguage('en');
-    applyTheme(currentTheme);
-  });
+  if (langBtnEn) {
+    langBtnEn.addEventListener('click', () => {
+      sound.playCardSelect();
+      applyLanguage('en');
+      applyTheme(currentTheme);
+    });
+  }
 
   if (hudLangBtn) {
     hudLangBtn.addEventListener('click', () => {
@@ -1334,13 +1339,15 @@ window.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('click', unlockAudio, { once: true });
 
   // Touch Ultimate EMP Button
-  btnUltimate.addEventListener('click', () => {
-    game.triggerUltimate();
-  });
-  btnUltimate.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    game.triggerUltimate();
-  }, { passive: false });
+  if (btnUltimate) {
+    btnUltimate.addEventListener('click', () => {
+      game.triggerUltimate();
+    });
+    btnUltimate.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      game.triggerUltimate();
+    }, { passive: false });
+  }
 
   // Horde Alert Handler
   game.onHordeAlertCallback = () => {
@@ -1453,12 +1460,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 75);
   };
 
-  chestClaimBtn.addEventListener('click', () => {
-    sound.playCardSelect();
-    chestModal.classList.remove('active');
-    game.state = 'playing';
-    updateModalState();
-  });
+  if (chestClaimBtn) {
+    chestClaimBtn.addEventListener('click', () => {
+      sound.playCardSelect();
+      chestModal.classList.remove('active');
+      game.state = 'playing';
+      updateModalState();
+    });
+  }
 
   // Level Up Modal Handler
   game.onLevelUpCallback = () => {
@@ -1597,27 +1606,31 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   // Start Button Click (Vào trận đấu chỉ hiển thị chỉ số cơ bản & khởi động nhạc nền)
-  startBtn.addEventListener('click', () => {
-    sound.resume();
-    sound.playCardSelect();
-    sound.startMusic(game.currentSector || 1);
-    startScreen.classList.remove('active');
-    resetLeftDockState();
-    game.state = 'playing';
-    updateModalState();
-  });
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      sound.resume();
+      sound.playCardSelect();
+      sound.startMusic(game.currentSector || 1);
+      startScreen.classList.remove('active');
+      resetLeftDockState();
+      game.state = 'playing';
+      updateModalState();
+    });
+  }
 
   // Retry Button Click -> Goes to Start Screen with Ship & Skin Selection
-  retryBtn.addEventListener('click', () => {
-    sound.stopMusic();
-    sound.playCardSelect();
-    gameOverModal.classList.remove('active');
-    resetLeftDockState();
-    game.state = 'start';
-    startScreen.classList.add('active');
-    renderShipSelector();
-    updateModalState();
-  });
+  if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+      sound.stopMusic();
+      sound.playCardSelect();
+      gameOverModal.classList.remove('active');
+      resetLeftDockState();
+      game.state = 'start';
+      startScreen.classList.add('active');
+      renderShipSelector();
+      updateModalState();
+    });
+  }
 
   // Initial language & theme application
   applyLanguage(i18n.current);
