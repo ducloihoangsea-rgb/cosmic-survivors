@@ -151,8 +151,6 @@
         <div class="lang-selector-bar">
           <button id="start-settings-btn" class="lang-pill" title="Cài đặt / Settings">⚙️ CÀI ĐẶT</button>
           <button id="start-theme-btn" class="lang-pill" title="Chuyển chế độ Sáng / Tối">🌙 TỐI</button>
-          <button id="lang-btn-vi" class="lang-pill active">🇻🇳 Tiếng Việt</button>
-          <button id="lang-btn-en" class="lang-pill">🇬🇧 English</button>
         </div>
 
         <div class="logo-container">
@@ -363,13 +361,36 @@
             <div id="setting-opacity-tip" class="setting-tip">Kéo sang trái để kính trong suốt hơn, kéo sang phải để đậm rõ hơn.</div>
           </div>
 
-          <!-- Setting 2: Sound Toggle -->
+          <!-- Setting 2: SFX Sound Effects & Volume -->
           <div class="setting-item">
             <div class="setting-item-top">
-              <span id="setting-sound-label" class="setting-item-label">🔊 Âm Thanh & Nhạc Game</span>
-              <button id="sound-toggle-btn" class="setting-toggle-btn active">BẬT</button>
+              <span id="setting-sfx-label" class="setting-item-label">💥 Hiệu Ứng Âm Thanh (SFX)</span>
+              <button id="sfx-toggle-btn" class="setting-toggle-btn active">BẬT</button>
             </div>
-            <div id="setting-sound-tip" class="setting-tip">Bật hoặc tắt toàn bộ hiệu ứng âm thanh và tiếng nhặt ngọc.</div>
+            <div class="setting-slider-wrap">
+              <div class="setting-slider-row">
+                <span id="setting-sfx-vol-label" class="setting-slider-sublabel">Âm lượng</span>
+                <span id="sfx-volume-val" class="setting-val-badge">80%</span>
+              </div>
+              <input type="range" id="sfx-volume-slider" min="0" max="100" step="5" value="80" class="setting-range-slider">
+            </div>
+            <div id="setting-sfx-tip" class="setting-tip">Tiếng bắn laser, cháy nổ, nhặt ngọc dopamine.</div>
+          </div>
+
+          <!-- Setting 3: Background Music (BGM) & Volume -->
+          <div class="setting-item">
+            <div class="setting-item-top">
+              <span id="setting-music-label" class="setting-item-label">🎵 Nhạc Nền Game (BGM)</span>
+              <button id="music-toggle-btn" class="setting-toggle-btn active">BẬT</button>
+            </div>
+            <div class="setting-slider-wrap">
+              <div class="setting-slider-row">
+                <span id="setting-music-vol-label" class="setting-slider-sublabel">Âm lượng</span>
+                <span id="music-volume-val" class="setting-val-badge">70%</span>
+              </div>
+              <input type="range" id="music-volume-slider" min="0" max="100" step="5" value="70" class="setting-range-slider">
+            </div>
+            <div id="setting-music-tip" class="setting-tip">Nhạc nền biến chuyển sống động theo từng khu vực chiến trường.</div>
           </div>
 
           <!-- Setting 3: Language Toggle -->

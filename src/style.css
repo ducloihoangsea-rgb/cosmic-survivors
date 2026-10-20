@@ -2663,15 +2663,17 @@ body:not(.theme-light) .meter-total-val {
   background: var(--card-bg, rgba(15, 23, 42, 0.95));
   border: 1.5px solid rgba(56, 189, 248, 0.35);
   border-radius: 24px;
-  padding: 22px 26px;
+  padding: 20px 22px;
   width: 440px;
   max-width: 92vw;
+  max-height: 90vh;
+  max-height: 90dvh;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(56, 189, 248, 0.2);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
   animation: modal-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
 }
@@ -2682,6 +2684,7 @@ body:not(.theme-light) .meter-total-val {
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: 12px;
+  flex-shrink: 0;
 }
 
 .settings-title-group {
@@ -2693,7 +2696,24 @@ body:not(.theme-light) .meter-total-val {
 .settings-content-body {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
+  overflow-y: auto;
+  max-height: calc(88dvh - 140px);
+  padding-right: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.setting-slider-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.setting-slider-sublabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-sub, #94a3b8);
 }
 
 .setting-item {

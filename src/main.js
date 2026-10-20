@@ -80,13 +80,24 @@ window.addEventListener('DOMContentLoaded', () => {
   const settingsThemeBtn = document.getElementById('settings-theme-btn');
   const panelOpacitySlider = document.getElementById('panel-opacity-slider');
   const opacityValBadge = document.getElementById('opacity-val-badge');
-  const soundToggleBtn = document.getElementById('sound-toggle-btn');
+  const sfxToggleBtn = document.getElementById('sfx-toggle-btn');
+  const sfxVolumeSlider = document.getElementById('sfx-volume-slider');
+  const sfxVolumeVal = document.getElementById('sfx-volume-val');
+  const settingSfxLabel = document.getElementById('setting-sfx-label');
+  const settingSfxVolLabel = document.getElementById('setting-sfx-vol-label');
+  const settingSfxTip = document.getElementById('setting-sfx-tip');
+
+  const musicToggleBtn = document.getElementById('music-toggle-btn');
+  const musicVolumeSlider = document.getElementById('music-volume-slider');
+  const musicVolumeVal = document.getElementById('music-volume-val');
+  const settingMusicLabel = document.getElementById('setting-music-label');
+  const settingMusicVolLabel = document.getElementById('setting-music-vol-label');
+  const settingMusicTip = document.getElementById('setting-music-tip');
+
   const settingsTitle = document.getElementById('settings-title');
   const settingsSub = document.getElementById('settings-sub');
   const settingOpacityLabel = document.getElementById('setting-opacity-label');
   const settingOpacityTip = document.getElementById('setting-opacity-tip');
-  const settingSoundLabel = document.getElementById('setting-sound-label');
-  const settingSoundTip = document.getElementById('setting-sound-tip');
   const settingLangLabel = document.getElementById('setting-lang-label');
   const settingLangTip = document.getElementById('setting-lang-tip');
   const settingThemeLabel = document.getElementById('setting-theme-label');
@@ -221,15 +232,16 @@ window.addEventListener('DOMContentLoaded', () => {
     if (victoryTitle) victoryTitle.textContent = i18n.t('victoryTitle');
     if (victorySub) victorySub.textContent = i18n.t('victorySubtitle');
 
-    if (lang === 'vi') {
-      langBtnVi.classList.add('active');
-      langBtnEn.classList.remove('active');
-      if (hudLangBtn) hudLangBtn.textContent = '🇻🇳 VI';
-    } else {
-      langBtnEn.classList.add('active');
-      langBtnVi.classList.remove('active');
-      if (hudLangBtn) hudLangBtn.textContent = '🇬🇧 EN';
+    if (langBtnVi && langBtnEn) {
+      if (lang === 'vi') {
+        langBtnVi.classList.add('active');
+        langBtnEn.classList.remove('active');
+      } else {
+        langBtnEn.classList.add('active');
+        langBtnVi.classList.remove('active');
+      }
     }
+    if (hudLangBtn) hudLangBtn.textContent = lang === 'vi' ? '🇻🇳 VI' : '🇬🇧 EN';
 
     if (shipSelectTitle) shipSelectTitle.textContent = i18n.t('shipSelectTitle');
     if (shipSelectSub) shipSelectSub.textContent = i18n.t('shipSelectSubtitle');
@@ -241,8 +253,12 @@ window.addEventListener('DOMContentLoaded', () => {
     if (settingsSub) settingsSub.textContent = i18n.t('settingsSub');
     if (settingOpacityLabel) settingOpacityLabel.textContent = i18n.t('settingOpacity');
     if (settingOpacityTip) settingOpacityTip.textContent = i18n.t('settingOpacityTip');
-    if (settingSoundLabel) settingSoundLabel.textContent = i18n.t('settingSound');
-    if (settingSoundTip) settingSoundTip.textContent = i18n.t('settingSoundTip');
+    if (settingSfxLabel) settingSfxLabel.textContent = i18n.t('settingSfx');
+    if (settingSfxVolLabel) settingSfxVolLabel.textContent = i18n.t('settingVolLabel');
+    if (settingSfxTip) settingSfxTip.textContent = i18n.t('settingSfxTip');
+    if (settingMusicLabel) settingMusicLabel.textContent = i18n.t('settingMusic');
+    if (settingMusicVolLabel) settingMusicVolLabel.textContent = i18n.t('settingVolLabel');
+    if (settingMusicTip) settingMusicTip.textContent = i18n.t('settingMusicTip');
     if (settingLangLabel) settingLangLabel.textContent = i18n.t('settingLang');
     if (settingLangTip) settingLangTip.textContent = i18n.t('settingLangTip');
     if (settingThemeLabel) settingThemeLabel.textContent = i18n.t('settingTheme');
@@ -251,21 +267,32 @@ window.addEventListener('DOMContentLoaded', () => {
     if (settingsThemeBtn) settingsThemeBtn.textContent = currentTheme === 'dark' ? i18n.t('themeDarkName') : i18n.t('themeLightName');
     if (settingsHomeBtn) settingsHomeBtn.textContent = i18n.t('settingsQuitBtn');
     if (settingsCloseBtn) settingsCloseBtn.textContent = i18n.t('settingsResumeBtn');
-    updateSoundBtnUI();
+    updateAudioUI();
 
     renderShipSelector();
     renderHangar();
   }
 
-  // Sound toggle button UI updater
-  function updateSoundBtnUI() {
-    if (!soundToggleBtn) return;
-    if (sound.enabled) {
-      soundToggleBtn.textContent = i18n.t('soundOn');
-      soundToggleBtn.classList.add('active');
-    } else {
-      soundToggleBtn.textContent = i18n.t('soundOff');
-      soundToggleBtn.classList.remove('active');
+  // Audio UI synchronizer for SFX and Music controls
+  function updateAudioUI() {
+    if (sfxToggleBtn) {
+      sfxToggleBtn.textContent = sound.sfxEnabled ? i18n.t('soundOn') : i18n.t('soundOff');
+      if (sound.sfxEnabled) sfxToggleBtn.classList.add('active');
+      else sfxToggleBtn.classList.remove('active');
+    }
+    if (sfxVolumeSlider && sfxVolumeVal) {
+      sfxVolumeSlider.value = sound.sfxVolume;
+      sfxVolumeVal.textContent = `${sound.sfxVolume}%`;
+    }
+
+    if (musicToggleBtn) {
+      musicToggleBtn.textContent = sound.musicEnabled ? i18n.t('soundOn') : i18n.t('soundOff');
+      if (sound.musicEnabled) musicToggleBtn.classList.add('active');
+      else musicToggleBtn.classList.remove('active');
+    }
+    if (musicVolumeSlider && musicVolumeVal) {
+      musicVolumeSlider.value = sound.musicVolume;
+      musicVolumeVal.textContent = `${sound.musicVolume}%`;
     }
   }
 
@@ -458,7 +485,7 @@ window.addEventListener('DOMContentLoaded', () => {
   let wasPlayingBeforeSettings = false;
   function openSettings() {
     sound.playCardSelect();
-    updateSoundBtnUI();
+    updateAudioUI();
     const curOpacity = localStorage.getItem('dopamine_dock_opacity') || '45';
     applyDockOpacity(curOpacity);
     if (settingsLangBtn) {
@@ -470,6 +497,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (game.state === 'playing') {
       wasPlayingBeforeSettings = true;
       game.state = 'paused';
+      sound.pauseMusic();
     }
     if (settingsModal) {
       settingsModal.classList.add('active');
@@ -485,6 +513,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (wasPlayingBeforeSettings && game.state === 'paused') {
       game.state = 'playing';
       wasPlayingBeforeSettings = false;
+      sound.resumeMusic();
     }
     if (settingsModal) {
       settingsModal.classList.remove('active');
@@ -505,13 +534,44 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (soundToggleBtn) {
-    soundToggleBtn.addEventListener('click', () => {
-      const active = sound.toggleMute();
-      updateSoundBtnUI();
-      if (active) {
-        sound.playCardSelect();
-      }
+  // SFX Controls Event Handlers
+  if (sfxToggleBtn) {
+    sfxToggleBtn.addEventListener('click', () => {
+      sound.toggleSfx();
+      updateAudioUI();
+      if (sound.sfxEnabled) sound.playCardSelect();
+    });
+  }
+
+  if (sfxVolumeSlider) {
+    sfxVolumeSlider.addEventListener('input', (e) => {
+      sound.setSfxVolume(e.target.value);
+      if (sfxVolumeVal) sfxVolumeVal.textContent = `${e.target.value}%`;
+    });
+    sfxVolumeSlider.addEventListener('change', (e) => {
+      sound.setSfxVolume(e.target.value);
+      if (sfxVolumeVal) sfxVolumeVal.textContent = `${e.target.value}%`;
+      sound.playLaser();
+    });
+  }
+
+  // Music Controls Event Handlers
+  if (musicToggleBtn) {
+    musicToggleBtn.addEventListener('click', () => {
+      sound.toggleMusic();
+      updateAudioUI();
+      if (sound.sfxEnabled) sound.playCardSelect();
+    });
+  }
+
+  if (musicVolumeSlider) {
+    musicVolumeSlider.addEventListener('input', (e) => {
+      sound.setMusicVolume(e.target.value);
+      if (musicVolumeVal) musicVolumeVal.textContent = `${e.target.value}%`;
+    });
+    musicVolumeSlider.addEventListener('change', (e) => {
+      sound.setMusicVolume(e.target.value);
+      if (musicVolumeVal) musicVolumeVal.textContent = `${e.target.value}%`;
     });
   }
 
@@ -530,6 +590,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Quit to Main Menu Action (From Settings Modal or Legacy HUD)
   function quitToMainMenu() {
     sound.playCardSelect();
+    sound.stopMusic();
     if (confirm(i18n.t('confirmQuit'))) {
       game.state = 'start';
       wasPlayingBeforeSettings = false;
@@ -1292,9 +1353,10 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Sector Warp Announcement Handler
+  // Sector Warp Announcement Handler & Dynamic BGM Transition
   let warpBannerTimeout = null;
   game.onSectorChangeCallback = (newSector) => {
+    sound.setMusicSector(newSector);
     if (!sectorWarpBanner) return;
     if (warpBannerTimeout) clearTimeout(warpBannerTimeout);
 
@@ -1482,6 +1544,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Game Over Handler
   game.onGameOverCallback = () => {
+    sound.stopMusic();
     const mins = Math.floor(game.gameTime / 60);
     const secs = Math.floor(game.gameTime % 60);
     const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -1498,6 +1561,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // 10-Minute Survival Victory Handler
   game.onVictoryCallback = (stats) => {
+    sound.stopMusic();
     sound.playJackpot();
     if (vicStatSurvive) vicStatSurvive.textContent = '10:00 (TỐI ĐA)';
     if (vicStatKills) vicStatKills.textContent = game.kills.toString();
@@ -1532,10 +1596,11 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Start Button Click (Vào trận đấu chỉ hiển thị chỉ số cơ bản)
+  // Start Button Click (Vào trận đấu chỉ hiển thị chỉ số cơ bản & khởi động nhạc nền)
   startBtn.addEventListener('click', () => {
     sound.resume();
     sound.playCardSelect();
+    sound.startMusic(game.currentSector || 1);
     startScreen.classList.remove('active');
     resetLeftDockState();
     game.state = 'playing';
@@ -1544,6 +1609,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Retry Button Click -> Goes to Start Screen with Ship & Skin Selection
   retryBtn.addEventListener('click', () => {
+    sound.stopMusic();
     sound.playCardSelect();
     gameOverModal.classList.remove('active');
     resetLeftDockState();
