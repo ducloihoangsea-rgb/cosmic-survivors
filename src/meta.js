@@ -48,40 +48,17 @@ export class MetaManager {
 
   getCost(type) {
     const rank = this.ranks[type] || 0;
-    // 15 progressive rank cost curves
-    const standardCosts = [
-      40, 75, 120, 180, 260, 360, 490, 650, 850, 1100, 1400, 1800, 2300, 3000, 4000
-    ];
-    const premiumCosts = [
-      60, 110, 180, 280, 420, 600, 820, 1100, 1450, 1900, 2500, 3300, 4400, 5800, 7800
-    ];
+    if (rank >= 20) return null; // Tối đa 20 cấp nâng cấp (Mục 16)
 
-    const baseCosts = {
-      hull: standardCosts,
-      reactor: premiumCosts,
-      firerate: standardCosts,
-      speed: standardCosts,
-      shield: standardCosts,
-      crit: premiumCosts,
-      regen: standardCosts,
-      magnet: standardCosts,
-      luck: standardCosts,
-      cooldown: premiumCosts,
-      greed: standardCosts,
-      revive: premiumCosts,
-      corepower: premiumCosts,
-      coredrop: premiumCosts,
-      area: standardCosts,
-      lifesteal: premiumCosts
-    };
-
-    const costs = baseCosts[type] || standardCosts;
-    if (rank >= costs.length) return null; // Max rank reached
-    return costs[rank];
+    // Chi phí tăng theo cấp số nhân (Mục 1 & 16: Cần ít nhất ~40h cày cuốc để max toàn bộ)
+    const isPremium = ['reactor', 'crit', 'cooldown', 'revive', 'corepower', 'coredrop', 'lifesteal'].includes(type);
+    const base = isPremium ? 75 : 50;
+    const mult = isPremium ? 1.42 : 1.38;
+    return Math.round(base * Math.pow(mult, rank));
   }
 
   getMaxRank(type) {
-    return 15;
+    return 20;
   }
 
   upgrade(type) {

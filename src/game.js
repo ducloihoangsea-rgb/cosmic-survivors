@@ -312,8 +312,12 @@ export class Game {
       this.activateFrenzy();
     }
 
-    // Drop gems
+    // Drop gems (Mục 1: Tăng số lượng mảnh rơi ra trong quá trình chơi)
     this.gems.push(new Gem(enemy.x, enemy.y, enemy.gemValue));
+    if (Math.random() < 0.65 || enemy.isElite) {
+      // 65% rơi thêm mảnh năng lượng thứ 2
+      this.gems.push(new Gem(enemy.x + (Math.random() - 0.5) * 16, enemy.y + (Math.random() - 0.5) * 16, Math.max(1, Math.round(enemy.gemValue * 0.75))));
+    }
 
     // Death burst
     for (let i = 0; i < 10; i++) {
@@ -329,8 +333,9 @@ export class Game {
       // Drop Lucky Golden Chest
       this.chests.push(new LuckyChest(enemy.x, enemy.y));
 
-      for (let i = 0; i < 8; i++) {
-        this.gems.push(new Gem(enemy.x + (Math.random() - 0.5) * 40, enemy.y + (Math.random() - 0.5) * 40, 25));
+      // Boss rơi bão mảnh ngọc 16 viên
+      for (let i = 0; i < 16; i++) {
+        this.gems.push(new Gem(enemy.x + (Math.random() - 0.5) * 60, enemy.y + (Math.random() - 0.5) * 60, 25));
       }
     }
   }
@@ -638,7 +643,8 @@ export class Game {
     sound.playJackpot();
     this.addScreenShake(20);
     this.triggerNuke();
-    const rawGold = Math.floor(this.score / 5); // x2 Gold Bonus
+    // Vàng chiến thắng 10 phút: Cân bằng kinh tế 40h (~250 - 450 vàng)
+    const rawGold = Math.max(50, Math.floor(this.kills * 1.2 + (this.gameTime / 60) * 30 + this.score / 500));
     this.earnedGold = meta.addGold(rawGold);
 
     // Record Persistent Milestones for Skin Unlocks
@@ -651,7 +657,8 @@ export class Game {
 
   gameOver() {
     this.state = 'gameover';
-    const rawGold = Math.floor(this.score / 10);
+    // Vàng khi thua: Cân bằng kinh tế 40h (~30 - 200 vàng tùy thời gian sống và số quái hạ)
+    const rawGold = Math.max(10, Math.floor(this.kills * 0.75 + (this.gameTime / 60) * 15 + this.score / 1000));
     this.earnedGold = meta.addGold(rawGold);
 
     // Record Persistent Milestones for Skin Unlocks
@@ -1223,6 +1230,18 @@ class Player {
     sound.playLevelUp();
     this.game.state = 'levelup';
     this.game.addScreenShake(8);
+
+    // Mục 14: Tàu chiến lũy tiến theo cấp độ (100 -> 150 -> 200)
+    // Tốc độ bắn, Sát thương, Máu, Giáp tăng dần theo từng mốc cấp độ
+    const progressFactor = Math.min(1.0, (this.level - 1) / 19); // Cấp 1 = 0, Cấp 20 = 1.0
+    const statGrowth = 1.0 + progressFactor * 1.0; // 100% -> 150% (cấp 10) -> 200% (cấp 20)
+    this.stats.fireRateMult = (this.baseStats.fireRateMult || 1.0) * statGrowth;
+    this.stats.damageMult = (this.baseStats.damageMult || 1.0) * statGrowth;
+    const newMaxHp = Math.round((this.baseStats.maxHp || 200) * statGrowth);
+    const hpGain = newMaxHp - this.maxHp;
+    this.maxHp = newMaxHp;
+    this.hp = Math.min(this.maxHp, this.hp + Math.max(15, hpGain));
+    this.stats.armor = (this.stats.armor || 0) + (progressFactor * 0.05);
 
     for (let i = 0; i < 35; i++) {
       this.game.particles.push(new Particle(this.x, this.y, '#facc15', 7, 5, 1.2));
