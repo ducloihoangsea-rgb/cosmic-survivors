@@ -220,6 +220,63 @@ export const SHIP_ROSTER = {
       vi: ['Quân Đoàn Drone (Tiến Hóa: 3 Drone 18s)', 'Gia Tốc Hồi Chiêu (-0.2s/cấp)', 'Drone Bọc Thép (+Máu & Sát Thương)'],
       en: ['Swarm Fleet (Evolved: 3 Drones 18s)', 'Rapid Deployment (-0.2s CD/rank)', 'Armored Drones (+HP & Damage)']
     }
+  },
+  vanguard: {
+    id: 'vanguard',
+    nameKey: 'shipVanguardName',
+    roleKey: 'shipVanguardRole',
+    descKey: 'shipVanguardDesc',
+    traitNameKey: 'shipVanguardTrait',
+    traitDescKey: 'shipVanguardTraitDesc',
+    icon: '⚡',
+    color: '#00f2fe',
+    accentColor: '#38bdf8',
+    glowColor: '#0284c7',
+    stats: {
+      hp: 85,
+      dmg: 100,
+      spd: 90,
+      range: 100
+    },
+    baseStats: {
+      maxHp: 220,
+      baseSpeed: 230,
+      damageMult: 1.1,
+      fireRateMult: 1.1,
+      critChance: 0.18,
+      critMult: 2.2,
+      magnetRadius: 150,
+      droneSpawnInterval: 6.0,
+      droneSpawnCount: 2,
+      droneDuration: 14.0,
+      droneMaxHp: 150,
+      droneDamage: 40,
+      canRotate360: true
+    },
+    startingWeapon: 'blaster',
+    trait: 'vanguard',
+    specs: {
+      vi: [
+        { label: 'Xoay 360 độ tự do', val: 'Thân tàu xoay linh hoạt theo hướng ngắm bắn' },
+        { label: 'Trang bị 2 Drone hộ tống', val: 'Tự động xuất trận 2 Mini Drone chiến đấu' },
+        { label: 'Kho vũ khí mở rộng', val: 'Trang bị tối đa 2 súng phụ tác chiến' },
+        { label: 'Cơ chế chiến đấu', val: 'Cơ động cực đỉnh, hỏa lực quét mọi góc chết' },
+        { label: 'Vũ khí khởi đầu', val: 'Súng Plasma 2 Nòng' },
+        { label: 'Kỹ năng Nộ (Space / EMP)', val: 'Bão Lửa 360° (Quét vòng tròn hủy diệt)' }
+      ],
+      en: [
+        { label: '360° Free Turret Turn', val: 'Chassis aims freely towards movement/aim vector' },
+        { label: 'Twin Escort Drones', val: 'Deploys 2 combat Mini Drones continuously' },
+        { label: 'Dual Secondary Arsenal', val: 'Equips up to 2 secondary heavy weapons' },
+        { label: 'Combat Style', val: 'Ultra-agile omnidirectional firing matrix' },
+        { label: 'Starting Weapon', val: 'Dual Plasma Blaster' },
+        { label: 'Ultimate (Space / EMP)', val: '360° Nova Storm (Full screen barrage)' }
+      ]
+    },
+    synergies: {
+      vi: ['Thức Tỉnh Súng Phụ (Bão Đạn Xuyên)', 'Đồng Bộ Hóa Drone (Thần Mẫu Tự Hành)', 'Quay Gia Tốc (Pháo Đài Di Động)'],
+      en: ['Awakened Arsenal (Piercing Storm)', 'Drone Sync (Autonomous Mothership)', 'Turret Overdrive (Mobile Fortress)']
+    }
   }
 };
 

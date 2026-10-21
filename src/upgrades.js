@@ -926,11 +926,14 @@ export class UpgradeSystem {
         apply: () => {
           wm.weapons.wingmen.isAwakened = true;
           player.isDroneAwakened = true;
-          if (player.isCarrier) {
+          // Mục 5: Thức tỉnh hạm đội tăng cho 2 tàu cơ bản thêm giáp và sát thương cơ bản
+          player.stats.armor = (player.stats.armor || 0) + 0.15;
+          player.stats.damageMult += 0.35;
+          if (player.isCarrier || player.isVanguard) {
             player.droneSpawnCount = 5;
             player.droneDuration = 999;
           }
-          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 MOTHERSHIP ARMADA! 🌟', '#facc15', 24, true));
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 MOTHERSHIP ARMADA (+15% GIÁP, +35% DAME)! 🌟', '#facc15', 24, true));
           sound.playCrit();
         }
       });

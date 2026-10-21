@@ -140,6 +140,20 @@ export class Game {
     if (shipDef.secondaryWeapon && this.weaponManager.weapons[shipDef.secondaryWeapon]) {
       this.weaponManager.weapons[shipDef.secondaryWeapon].level = 1;
     }
+
+    // Mục 6 & 12: Trang bị tối đa 2 súng phụ từ Kho Vũ Khí
+    if (!this.player.noGuns && meta.equippedSecondaryWeapons) {
+      for (const wKey of meta.equippedSecondaryWeapons) {
+        if (this.weaponManager.weapons[wKey] && this.weaponManager.weapons[wKey].level === 0) {
+          this.weaponManager.weapons[wKey].level = 1;
+        }
+      }
+    }
+
+    // Mục 9 & 12: Trang bị Drone từ Kho Drone
+    if (meta.equippedDrones && meta.equippedDrones.length > 0) {
+      this.player.droneSpawnCount = Math.max(this.player.droneSpawnCount || 0, meta.equippedDrones.length);
+    }
   }
 
   resize(w, h) {

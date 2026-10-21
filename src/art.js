@@ -218,6 +218,39 @@ export class ArtEngine {
       ctx.arc(8, 18, 2.5, 0, Math.PI * 2);
       ctx.fill();
 
+    } else if (shipId === 'vanguard') {
+      // ⚡ VANGUARD: 360° Omnidirectional Interceptor Chassis
+      ctx.beginPath();
+      ctx.moveTo(26, 0);          // Needle prow
+      ctx.lineTo(14, -8);
+      ctx.lineTo(8, -22);         // Left weapon wing
+      ctx.lineTo(-6, -20);
+      ctx.lineTo(-14, -12);       // Left flank engine
+      ctx.lineTo(-10, 0);         // Central vector thruster
+      ctx.lineTo(-14, 12);        // Right flank engine
+      ctx.lineTo(-6, 20);
+      ctx.lineTo(8, 22);          // Right weapon wing
+      ctx.lineTo(14, 8);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Dual Wing Cannons
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(8, -23, 10, 3);
+      ctx.fillRect(8, 20, 10, 3);
+
+      // 360° Rotating Turret Core Ring
+      ctx.strokeStyle = '#00f2fe';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 8, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.fillStyle = isFrenzy ? '#f43f5e' : '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(0, 0, 4, 0, Math.PI * 2);
+      ctx.fill();
+
     } else {
       // 🛡️ NOVA SHIELD: Circular High-Tech Barrier Emitter Hull
       ctx.beginPath();

@@ -24,11 +24,17 @@ window.addEventListener('DOMContentLoaded', () => {
   const chestModal = document.getElementById('chest-modal');
   const hangarTabShipsBtn = document.getElementById('hangar-tab-ships-btn');
   const hangarTabTechBtn = document.getElementById('hangar-tab-tech-btn');
+  const hangarTabArsenalBtn = document.getElementById('hangar-tab-arsenal-btn');
+  const hangarTabDronesBtn = document.getElementById('hangar-tab-drones-btn');
   const hangarTabCodexBtn = document.getElementById('hangar-tab-codex-btn');
   const hangarShipsView = document.getElementById('hangar-ships-view');
   const hangarTechView = document.getElementById('hangar-tech-view');
+  const hangarArsenalView = document.getElementById('hangar-arsenal-view');
+  const hangarDronesView = document.getElementById('hangar-drones-view');
   const hangarCodexView = document.getElementById('hangar-codex-view');
   const hangarShipsList = document.getElementById('hangar-ships-list');
+  const hangarArsenalList = document.getElementById('hangar-arsenal-list');
+  const hangarDronesList = document.getElementById('hangar-drones-list');
   const hangarCodexList = document.getElementById('hangar-codex-list');
 
   // Starship Selection Elements
@@ -766,15 +772,19 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Hangar Tabs Switching (3 tabs)
+  // Hangar Tabs Switching (5 tabs: ships, tech, arsenal, drones, codex)
   function switchHangarTab(activeTab) {
     sound.playCardSelect();
     hangarTabShipsBtn?.classList.remove('active');
     hangarTabTechBtn?.classList.remove('active');
+    hangarTabArsenalBtn?.classList.remove('active');
+    hangarTabDronesBtn?.classList.remove('active');
     hangarTabCodexBtn?.classList.remove('active');
 
     hangarShipsView?.classList.add('hidden');
     hangarTechView?.classList.add('hidden');
+    hangarArsenalView?.classList.add('hidden');
+    hangarDronesView?.classList.add('hidden');
     hangarCodexView?.classList.add('hidden');
 
     if (activeTab === 'ships') {
@@ -785,6 +795,14 @@ window.addEventListener('DOMContentLoaded', () => {
       hangarTabTechBtn?.classList.add('active');
       hangarTechView?.classList.remove('hidden');
       renderHangar();
+    } else if (activeTab === 'arsenal') {
+      hangarTabArsenalBtn?.classList.add('active');
+      hangarArsenalView?.classList.remove('hidden');
+      renderHangarArsenal();
+    } else if (activeTab === 'drones') {
+      hangarTabDronesBtn?.classList.add('active');
+      hangarDronesView?.classList.remove('hidden');
+      renderHangarDrones();
     } else if (activeTab === 'codex') {
       hangarTabCodexBtn?.classList.add('active');
       hangarCodexView?.classList.remove('hidden');
@@ -794,7 +812,96 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (hangarTabShipsBtn) hangarTabShipsBtn.addEventListener('click', () => switchHangarTab('ships'));
   if (hangarTabTechBtn) hangarTabTechBtn.addEventListener('click', () => switchHangarTab('tech'));
+  if (hangarTabArsenalBtn) hangarTabArsenalBtn.addEventListener('click', () => switchHangarTab('arsenal'));
+  if (hangarTabDronesBtn) hangarTabDronesBtn.addEventListener('click', () => switchHangarTab('drones'));
   if (hangarTabCodexBtn) hangarTabCodexBtn.addEventListener('click', () => switchHangarTab('codex'));
+
+  // TAB KHO VŨ KHÍ (Mục 6 & 12: Trang bị tối đa 2 vũ khí phụ)
+  function renderHangarArsenal() {
+    if (!hangarArsenalList) return;
+    hangarArsenalList.innerHTML = '';
+    const isVi = i18n.current === 'vi';
+    const arsenalWeapons = [
+      { id: 'laser', name: isVi ? 'Pháo Lăng Kính (Prism Laser)' : 'Prism Laser Beam', icon: 'laser', desc: isVi ? 'Quét tia năng lượng xuyên thẳng qua hàng loạt quái vật.' : 'Piercing high-energy beam sweeping across enemies.' },
+      { id: 'missiles', name: isVi ? 'Bệ Phóng Tên Lửa (Micro-Missiles)' : 'Heat-Seeking Missiles', icon: 'missiles', desc: isVi ? 'Phóng tên lửa tự tìm mục tiêu và nổ diện rộng.' : 'Auto-homing missiles detonating with explosive force.' },
+      { id: 'lightning', name: isVi ? 'Sấm Sét Lượng Tử (Quantum Lightning)' : 'Quantum Lightning', icon: 'lightning', desc: isVi ? 'Giật điện ngẫu nhiên và lan truyền chuỗi sang các kẻ địch lân cận.' : 'Strikes random enemies and chains lightning to nearby foes.' },
+      { id: 'bombs', name: isVi ? 'Máy Rải Bom Không Gian (Space Mines)' : 'Space Mine Dropper', icon: 'bombs', desc: isVi ? 'Rải mìn từ trường phía sau đuôi, nổ dây chuyền cực mạnh.' : 'Drops proxy mines behind ship tail causing chain blasts.' },
+      { id: 'orbs', name: isVi ? 'Quả Cầu Hộ Thể (Orbital Orbs)' : 'Orbital Shield Orbs', icon: 'orbs', desc: isVi ? 'Cầu năng lượng xoay quanh bảo vệ thân tàu và đẩy lùi quái.' : 'Energy spheres rotating around ship deflecting incoming swarms.' }
+    ];
+
+    const equipped = meta.equippedSecondaryWeapons || [];
+
+    arsenalWeapons.forEach(w => {
+      const isEquipped = equipped.includes(w.id);
+      const card = document.createElement('div');
+      card.className = `codex-card ${isEquipped ? 'card-border-mythic' : 'card-border-common'}`;
+      card.innerHTML = `
+        <div class="codex-card-header">
+          <div class="codex-icon-wrap">${renderCyberIconHtml(w.id, w.icon)}</div>
+          <div class="codex-card-titles">
+            <span class="codex-card-name">${w.name}</span>
+            <span class="codex-badge ${isEquipped ? 'badge-mythic' : 'badge-common'}">${isEquipped ? (isVi ? 'ĐÃ TRANG BỊ' : 'EQUIPPED') : (isVi ? 'KHO VŨ KHÍ' : 'ARSENAL')}</span>
+          </div>
+        </div>
+        <div class="codex-card-desc">${w.desc}</div>
+        <div class="hangar-item-action" style="margin-top: 10px;">
+          <button class="btn-upgrade ${isEquipped ? 'maxed' : 'affordable'}" style="width: 100%; border-radius: 999px;">
+            ${isEquipped ? (isVi ? '✓ ĐANG TRANG BỊ' : '✓ EQUIPPED') : (isVi ? '⚡ TRANG BỊ VŨ KHÍ' : '⚡ EQUIP')}
+          </button>
+        </div>
+      `;
+      const btn = card.querySelector('.btn-upgrade');
+      btn.addEventListener('click', () => {
+        sound.playCardSelect();
+        meta.toggleEquipWeapon(w.id);
+        renderHangarArsenal();
+      });
+      hangarArsenalList.appendChild(card);
+    });
+  }
+
+  // TAB KHO DRONE (Mục 9 & 12: Trang bị tối đa 2 drone tác chiến)
+  function renderHangarDrones() {
+    if (!hangarDronesList) return;
+    hangarDronesList.innerHTML = '';
+    const isVi = i18n.current === 'vi';
+    const drones = [
+      { id: 'drone_scout', name: isVi ? 'Mini Drone Trinh Sát' : 'Scout Recon Drone', icon: '🛸', desc: isVi ? 'Tốc độ bay cực nhanh, tự động săn lùng và xả đạn plasma tốc độ cao.' : 'High-speed autonomous flight, rapid plasma fire.' },
+      { id: 'drone_strike', name: isVi ? 'Drone Tấn Công Hạng Nặng' : 'Heavy Strike Drone', icon: '🤖', desc: isVi ? 'Trang bị tên lửa mini nổ chùm gây sát thương diện rộng.' : 'Equipped with micro-missiles dealing devastating blast damage.' },
+      { id: 'drone_shield', name: isVi ? 'Drone Khiên Hộ Vệ' : 'Aegis Shield Drone', icon: '🛡️', desc: isVi ? 'Bay kèm bên cạnh, tạo trường lực đỡ đạn và hấp thụ sát thương cho tàu mẹ.' : 'Escorts flagship and absorbs incoming attacks.' },
+      { id: 'drone_emp', name: isVi ? 'Drone Xung Điện EMP' : 'EMP Shock Drone', icon: '⚡', desc: isVi ? 'Phóng sóng điện từ làm chậm và làm tê liệt các bầy quái áp sát.' : 'Discharges EMP waves slowing and paralyzing surrounding swarms.' }
+    ];
+
+    const equipped = meta.equippedDrones || [];
+
+    drones.forEach(d => {
+      const isEquipped = equipped.includes(d.id);
+      const card = document.createElement('div');
+      card.className = `codex-card ${isEquipped ? 'card-border-legendary' : 'card-border-common'}`;
+      card.innerHTML = `
+        <div class="codex-card-header">
+          <div class="codex-icon-wrap"><span style="font-size: 26px;">${d.icon}</span></div>
+          <div class="codex-card-titles">
+            <span class="codex-card-name">${d.name}</span>
+            <span class="codex-badge ${isEquipped ? 'badge-legendary' : 'badge-common'}">${isEquipped ? (isVi ? 'ĐÃ TRIỆU HỒI' : 'DEPLOYED') : (isVi ? 'KHO DRONE' : 'DRONE BAY')}</span>
+          </div>
+        </div>
+        <div class="codex-card-desc">${d.desc}</div>
+        <div class="hangar-item-action" style="margin-top: 10px;">
+          <button class="btn-upgrade ${isEquipped ? 'maxed' : 'affordable'}" style="width: 100%; border-radius: 999px;">
+            ${isEquipped ? (isVi ? '✓ ĐANG ĐIỀU ĐỘNG' : '✓ DEPLOYED') : (isVi ? '🚀 ĐIỀU ĐỘNG DRONE' : '🚀 DEPLOY')}
+          </button>
+        </div>
+      `;
+      const btn = card.querySelector('.btn-upgrade');
+      btn.addEventListener('click', () => {
+        sound.playCardSelect();
+        meta.toggleEquipDrone(d.id);
+        renderHangarDrones();
+      });
+      hangarDronesList.appendChild(card);
+    });
+  }
 
   // Filtered Render for Hangar Upgrades & Weapons Codex Vault
   let currentCodexFilter = 'all';

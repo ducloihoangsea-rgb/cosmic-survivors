@@ -393,27 +393,48 @@ export class WeaponManager {
   fireWingmen(player, enemies) {
     if (enemies.length === 0) return;
     const wm = this.weapons.wingmen;
-    const droneCount = wm.isAwakened ? 6 : (wm.level >= 5 ? 4 : 2);
-    const radius = wm.isAwakened ? 65 : 50;
+    const isFleet4 = wm.isAwakened || wm.level >= 5;
+    const droneCount = isFleet4 ? 4 : 2;
     const summonMult = player.stats?.summonDmgMult || 1.0;
-    const damage = (16 + wm.level * 7) * player.stats.damageMult * summonMult * (wm.isAwakened ? 1.6 : 1.0);
+    const damage = (20 + wm.level * 8) * player.stats.damageMult * summonMult * (wm.isAwakened ? 1.6 : 1.0);
+
+    // Mục 5 & 15: Hạm đội 2 tàu và 4 tàu bay bám theo hướng người chơi với vũ khí khác nhau
+    const formationOffsets = isFleet4
+      ? [
+          { angleOffset: -2.3, dist: 54 }, // Tàu 1: Cánh trái ngoài
+          { angleOffset: 2.3, dist: 54 },  // Tàu 2: Cánh phải ngoài
+          { angleOffset: -2.6, dist: 40 }, // Tàu 3: Cánh trái trong
+          { angleOffset: 2.6, dist: 40 }   // Tàu 4: Cánh phải trong
+        ]
+      : [
+          { angleOffset: -2.3, dist: 48 }, // Hạm đội 2 tàu: Trái
+          { angleOffset: 2.3, dist: 48 }   // Hạm đội 2 tàu: Phải
+        ];
 
     for (let i = 0; i < droneCount; i++) {
-      const a = wm.angle + (i * Math.PI * 2) / droneCount;
-      const dx = player.x + Math.cos(a) * radius;
-      const dy = player.y + Math.sin(a) * radius;
+      const f = formationOffsets[i];
+      const shipAngle = player.facingAngle + f.angleOffset;
+      const dx = player.x + Math.cos(shipAngle) * f.dist;
+      const dy = player.y + Math.sin(shipAngle) * f.dist;
 
-      // Find nearest enemy to drone
-      const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(dx, dy, wm.isAwakened ? 500 : 380) : enemies[0];
-
+      const target = this.game.spatialGrid ? this.game.spatialGrid.getNearest(dx, dy, wm.isAwakened ? 520 : 400) : enemies[0];
       if (target) {
         const aimAngle = Math.atan2(target.y - dy, target.x - dx);
-        if (wm.isAwakened) {
-          // Bắn 2 nòng đạn song song + thi thoảng phóng mini missile
-          this.projectiles.push(new BlasterBullet(dx - 3, dy, aimAngle, damage, 2, true, '#38bdf8', 'wingmen'));
-          this.projectiles.push(new BlasterBullet(dx + 3, dy, aimAngle, damage, 2, true, '#38bdf8', 'wingmen'));
+        if (i === 0) {
+          // Tàu 1: Plasma Blaster đạn xuyên
+          this.projectiles.push(new BlasterBullet(dx, dy, aimAngle, damage * 1.25, 2, wm.isAwakened, '#38bdf8', 'wingmen'));
+        } else if (i === 1) {
+          // Tàu 2: Heat-seeking Micro Missile
+          this.projectiles.push(new HeatSeekingMissile(dx, dy, aimAngle, damage * 1.5, enemies, wm.isAwakened));
+        } else if (i === 2) {
+          // Tàu 3: Focused Prism Laser Beam
+          const lx = dx + Math.cos(aimAngle) * 240;
+          const ly = dy + Math.sin(aimAngle) * 240;
+          this.laserBeams.push(new LaserBeamVisual(dx, dy, lx, ly, 7, '#f43f5e', wm.isAwakened));
+          this.game.damageEnemy(target, damage * 1.3, wm.isAwakened, 'wingmen');
         } else {
-          this.projectiles.push(new BlasterBullet(dx, dy, aimAngle, damage, 1, false, '#38bdf8', 'wingmen'));
+          // Tàu 4: EMP Electro Bolt giật điện
+          this.projectiles.push(new BlasterBullet(dx, dy, aimAngle, damage * 1.4, 3, true, '#a855f7', 'wingmen'));
         }
       }
     }
@@ -528,32 +549,45 @@ export class WeaponManager {
       }
     }
 
-    // Draw Wingmen Companion Drones
+    // Draw Wingmen Companion Fleet (Mục 5 & 15: Hạm đội 2 và 4 tàu bay bám theo người chơi)
     const wm = this.weapons.wingmen;
     if (wm.level > 0) {
-      const droneCount = wm.level >= 5 ? 4 : 2;
-      const radius = 50;
+      const isFleet4 = wm.isAwakened || wm.level >= 5;
+      const droneCount = isFleet4 ? 4 : 2;
+      const colors = ['#38bdf8', '#f59e0b', '#f43f5e', '#a855f7'];
+      const formationOffsets = isFleet4
+        ? [
+            { angleOffset: -2.3, dist: 54 },
+            { angleOffset: 2.3, dist: 54 },
+            { angleOffset: -2.6, dist: 40 },
+            { angleOffset: 2.6, dist: 40 }
+          ]
+        : [
+            { angleOffset: -2.3, dist: 48 },
+            { angleOffset: 2.3, dist: 48 }
+          ];
 
       for (let i = 0; i < droneCount; i++) {
-        const a = wm.angle + (i * Math.PI * 2) / droneCount;
-        const dx = player.x + Math.cos(a) * radius;
-        const dy = player.y + Math.sin(a) * radius;
+        const f = formationOffsets[i];
+        const shipAngle = player.facingAngle + f.angleOffset;
+        const dx = player.x + Math.cos(shipAngle) * f.dist;
+        const dy = player.y + Math.sin(shipAngle) * f.dist;
 
         ctx.save();
         ctx.translate(dx, dy);
-        ctx.rotate(a + Math.PI / 2);
-        ctx.fillStyle = '#0284c7';
+        ctx.rotate(player.facingAngle);
+        ctx.fillStyle = colors[i % colors.length];
         ctx.beginPath();
-        ctx.moveTo(9, 0);
-        ctx.lineTo(-7, -6);
+        ctx.moveTo(11, 0);
+        ctx.lineTo(-7, -7);
         ctx.lineTo(-4, 0);
-        ctx.lineTo(-7, 6);
+        ctx.lineTo(-7, 7);
         ctx.closePath();
         ctx.fill();
 
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
-        ctx.arc(1, 0, 2, 0, Math.PI * 2);
+        ctx.arc(2, 0, 2.5, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
       }

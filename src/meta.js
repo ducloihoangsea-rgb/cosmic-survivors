@@ -39,6 +39,36 @@ export class MetaManager {
     } else {
       this.ranks = defaults;
     }
+
+    // Kho Vũ Khí Phụ & Kho Drone (Mục 6 & 12)
+    const savedArsenal = localStorage.getItem('dopamine_arsenal');
+    this.equippedSecondaryWeapons = savedArsenal ? JSON.parse(savedArsenal) : ['laser'];
+    const savedDrones = localStorage.getItem('dopamine_drones');
+    this.equippedDrones = savedDrones ? JSON.parse(savedDrones) : ['drone_scout', 'drone_strike'];
+  }
+
+  toggleEquipWeapon(id) {
+    if (this.equippedSecondaryWeapons.includes(id)) {
+      this.equippedSecondaryWeapons = this.equippedSecondaryWeapons.filter(w => w !== id);
+    } else {
+      if (this.equippedSecondaryWeapons.length >= 2) {
+        this.equippedSecondaryWeapons.shift(); // Tối đa 2 vũ khí phụ
+      }
+      this.equippedSecondaryWeapons.push(id);
+    }
+    localStorage.setItem('dopamine_arsenal', JSON.stringify(this.equippedSecondaryWeapons));
+  }
+
+  toggleEquipDrone(id) {
+    if (this.equippedDrones.includes(id)) {
+      this.equippedDrones = this.equippedDrones.filter(d => d !== id);
+    } else {
+      if (this.equippedDrones.length >= 2) {
+        this.equippedDrones.shift(); // Tối đa 2 drone hộ tống
+      }
+      this.equippedDrones.push(id);
+    }
+    localStorage.setItem('dopamine_drones', JSON.stringify(this.equippedDrones));
   }
 
   save() {

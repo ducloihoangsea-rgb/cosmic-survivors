@@ -210,17 +210,19 @@
           </div>
         </div>
 
-        <!-- 3 HANGAR TABS -->
+        <!-- 5 HANGAR TABS (Mục 12: Thêm Tab Kho Vũ Khí và Tab Kho Drone) -->
         <div class="hangar-tabs-bar">
           <button id="hangar-tab-ships-btn" class="hangar-tab-btn active">🚀 CHI HẠM & KỸ NĂNG</button>
           <button id="hangar-tab-tech-btn" class="hangar-tab-btn">⚙️ NÂNG CẤP VĨNH VIỄN</button>
+          <button id="hangar-tab-arsenal-btn" class="hangar-tab-btn">🔫 KHO VŨ KHÍ</button>
+          <button id="hangar-tab-drones-btn" class="hangar-tab-btn">🛸 KHO DRONE</button>
           <button id="hangar-tab-codex-btn" class="hangar-tab-btn">📚 KHO BỂ NÂNG CẤP</button>
         </div>
 
-        <!-- TAB 1: 3 SHIPS & STATS DETAILS -->
+        <!-- TAB 1: 4 SHIPS & STATS DETAILS -->
         <div id="hangar-ships-view" class="hangar-tab-content active">
           <div id="hangar-ships-list" class="hangar-ships-grid">
-            <!-- Dynamically populated with 3 ships, detailed stats, synergies, and Deploy button -->
+            <!-- Dynamically populated with ships, detailed stats, synergies, and Deploy button -->
           </div>
         </div>
 
@@ -231,7 +233,21 @@
           </div>
         </div>
 
-        <!-- TAB 3: WEAPONS & UPGRADES CODEX VAULT -->
+        <!-- TAB 3: WEAPONS ARSENAL (Mục 6 & 12: Trang bị tối đa 2 vũ khí phụ) -->
+        <div id="hangar-arsenal-view" class="hangar-tab-content hidden">
+          <div id="hangar-arsenal-list" class="hangar-codex-grid">
+            <!-- Rendered dynamically with equipped secondary weapons -->
+          </div>
+        </div>
+
+        <!-- TAB 4: DRONE HANGAR (Mục 9 & 12: Trang bị tối đa 2 drone tác chiến) -->
+        <div id="hangar-drones-view" class="hangar-tab-content hidden">
+          <div id="hangar-drones-list" class="hangar-codex-grid">
+            <!-- Rendered dynamically with equipped drones -->
+          </div>
+        </div>
+
+        <!-- TAB 5: WEAPONS & UPGRADES CODEX VAULT -->
         <div id="hangar-codex-view" class="hangar-tab-content hidden">
           <div class="codex-filters-bar">
             <button class="codex-filter-btn active" data-filter="all">TẤT CẢ</button>
