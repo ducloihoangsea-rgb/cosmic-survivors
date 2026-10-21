@@ -364,9 +364,15 @@ export class WaveSpawner {
     this.bossTimer += dt;
 
     const lvl = Math.max(1, player?.level || 1);
-    const waveMult = 1.0 + (this.gameTime / 60) * 0.20 + (lvl - 1) * 0.08;
+    const minute = this.gameTime / 60;
+    // Mục 10: Quái vật tăng máu tự động theo thời gian (HP Scaling +18% mỗi 90s)
+    const timeHpScale = Math.pow(1.18, Math.floor(this.gameTime / 90));
+    const waveMult = (1.0 + minute * 0.22 + (lvl - 1) * 0.08) * timeHpScale;
     const baseInterval = 0.85;
-    const spawnInterval = Math.max(0.18, baseInterval / (1 + (lvl - 1) * 0.14 + (this.gameTime / 60) * 0.10));
+
+    // Mục 11: Khi vào Quá Tải (Overdrive / Frenzy), quái vật tràn vào đông gấp đôi!
+    const frenzySpawnMult = this.game?.isFrenzy ? 0.50 : 1.0;
+    const spawnInterval = Math.max(0.12, (baseInterval / (1 + (lvl - 1) * 0.14 + minute * 0.12)) * frenzySpawnMult);
 
     // Regular Spawning
     if (this.spawnTimer >= spawnInterval) {
@@ -388,21 +394,22 @@ export class WaveSpawner {
       this.spawnBoss(player, waveMult, lvl);
     }
 
-    // 🌟 Quái Tinh Anh Xuất Hiện Chính Xác Tại Các Mốc 3, 5, 7 Phút
-    // Mốc 3 Phút (180s)
-    if (this.gameTime >= 180 && !this.spawnedElites.has(3)) {
-      this.spawnedElites.add(3);
-      this.spawnElite(player, 'elite_void', waveMult, lvl);
+    // 🌟 Quái Tinh Anh Xuất Hiện Định Kỳ (Mỗi 2 phút: 120s, 240s, 360s, 480s)
+    if (this.gameTime >= 120 && !this.spawnedElites.has(2)) {
+      this.spawnedElites.add(2);
+      this.spawnElite(player, 'elite_void', waveMult * 1.15, lvl);
     }
-    // Mốc 5 Phút (300s)
-    if (this.gameTime >= 300 && !this.spawnedElites.has(5)) {
-      this.spawnedElites.add(5);
-      this.spawnElite(player, 'elite_behemoth', waveMult, lvl);
+    if (this.gameTime >= 240 && !this.spawnedElites.has(4)) {
+      this.spawnedElites.add(4);
+      this.spawnElite(player, 'elite_behemoth', waveMult * 1.25, lvl);
     }
-    // Mốc 7 Phút (420s)
-    if (this.gameTime >= 420 && !this.spawnedElites.has(7)) {
-      this.spawnedElites.add(7);
-      this.spawnElite(player, 'elite_harbinger', waveMult, lvl);
+    if (this.gameTime >= 360 && !this.spawnedElites.has(6)) {
+      this.spawnedElites.add(6);
+      this.spawnElite(player, 'elite_harbinger', waveMult * 1.35, lvl);
+    }
+    if (this.gameTime >= 480 && !this.spawnedElites.has(8)) {
+      this.spawnedElites.add(8);
+      this.spawnElite(player, 'elite_behemoth', waveMult * 1.5, lvl);
     }
   }
 

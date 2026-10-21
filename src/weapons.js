@@ -91,7 +91,8 @@ export class WeaponManager {
 
   update(dt, player, enemies) {
     const cdMult = Math.max(0.35, 1.0 - (player.cooldownReduction || 0));
-    const fireMult = player.stats.fireRateMult * (1 + (player.berserkerAtkSpdBonus || 0)) * (player.isCarrier ? 1.15 : 1.0);
+    const frenzyMult = this.game?.isFrenzy ? 2.0 : 1.0;
+    const fireMult = player.stats.fireRateMult * (1 + (player.berserkerAtkSpdBonus || 0)) * (player.isCarrier ? 1.15 : 1.0) * frenzyMult;
 
     // 1. Blaster logic
     const b = this.weapons.blaster;

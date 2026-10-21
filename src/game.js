@@ -353,6 +353,23 @@ export class Game {
     }
   }
 
+  // Mục 11: Cơ chế Quá Tải Động Cơ (Overdrive / Frenzy)
+  activateOverdrive(title = '🔥 QUÁ TẢI ĐỘNG CƠ (OVERDRIVE)! 🔥') {
+    this.isFrenzy = true;
+    this.frenzyTimer = 9.0;
+    this.overdriveCooldown = 55.0; // Định kỳ sau 55s có thể bùng nổ tiếp
+    sound.playFrenzy();
+    this.addScreenShake(14);
+    this.floatingTexts.push(new FloatingText(this.player.x, this.player.y - 50, title, '#ff0077', 24, true));
+    if (this.triggerHordeAlert) {
+      this.triggerHordeAlert('🔥 QUÁ TẢI ĐỘNG CƠ: HỎA LỰC BÙNG NỔ X2 • BẦY QUÁI ĐIÊN CUỒNG! 🔥');
+    }
+    for (const gem of this.gems) {
+      gem.isAttracted = true;
+      gem.speed = 14;
+    }
+  }
+
   openLuckyChest() {
     sound.playJackpot();
     this.state = 'chest';
@@ -429,13 +446,34 @@ export class Game {
     // Frenzy meter decay / update
     if (this.isFrenzy) {
       this.frenzyTimer -= dt;
-      this.dopamineMeter = (this.frenzyTimer / 7.5) * 100;
+      this.dopamineMeter = (this.frenzyTimer / 9.0) * 100;
       if (this.frenzyTimer <= 0) {
         this.isFrenzy = false;
         this.dopamineMeter = 0;
       }
     } else if (this.dopamineMeter > 0) {
       this.dopamineMeter = Math.max(0, this.dopamineMeter - dt * 2.2);
+    }
+
+    // Mục 10 & 11: Cường Hóa Bùng Nổ Dopamine theo thời gian sống sót
+    if (this.state === 'playing') {
+      this.player.stats.projectileSpeedMult = 1.0 + (this.gameTime / 60) * 0.08;
+      this.player.stats.blastRadiusMult = (this.player.stats.blastRadiusMult || 1.0) + dt * 0.0012;
+      this.player.cooldownReduction = Math.min(0.40, (this.player.cooldownReduction || 0) + dt * 0.0007);
+      this.player.stats.critChance = Math.min(0.70, (this.player.stats.critChance || 0.15) + dt * 0.0009);
+      this.player.luckBonus = (this.player.luckBonus || 0) + dt * 0.02;
+
+      // Quá Tải Động Cơ: Kích hoạt khi combo >= 40 hoặc sống qua phút 5 (300s)
+      if (!this.isFrenzy) {
+        if (this.combo >= 40 && (this.overdriveCooldown || 0) <= 0) {
+          this.activateOverdrive('🔥 CHUỖI COMBO: QUÁ TẢI ĐỘNG CƠ! 🔥');
+        } else if (this.gameTime >= 300 && (this.overdriveCooldown || 0) <= 0) {
+          this.activateOverdrive('⚡ PHÚT THỨ 5: QUÁ TẢI ĐỘNG CƠ! ⚡');
+        }
+      }
+      if (this.overdriveCooldown > 0) {
+        this.overdriveCooldown -= dt;
+      }
     }
 
     // 1. Update Player
