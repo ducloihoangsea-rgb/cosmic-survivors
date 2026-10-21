@@ -1,0 +1,38 @@
+1. Tăng số lượng mảnh rơi ra trong quá trình chơi, vàng trong 1 ván game hiện tại kiếm nhiều quá chơi 1 ván là nâng cấp được hết cả kho đồ vĩnh viễn rồi nên cân bằng lại số vàng có thế nhập được để tạo cho người chơi có động lực cày cuốc giữ chân người chơi lại lâu hơn với game. lượng tiền dùng để nâng cấp tăng theo cấp số nhân. ước tính cần phải chơi ít nhất 40h chơi để có thể kiếm đủ tiền nâng cấp tất cả mọi thứ
+===================================================================
+2. tàu khiên có một lõi khiên bị lỗi khi tôi thức tỉnh lõi khiên thì tàu không được cộng thêm giáp mà còn bị mất đi giáp. Hãy sửa lỗi và thay đổi hiệu ứng khi thức tỉnh lõi khiên: tăng thêm 50% khiên và thêm 10% giáp. Khiên tự động kích hoạt khiên mỗi khiên bị đánh vỡ
+===================================================================
+3. Tàu chiến có lõi là radar khi tôi thức tỉnh radar thì tàu chiến nhận thêm sát thương chí mạng. Hãy sửa lỗi này
+===================================================================
+4. Tàu rà khi tôi kích hoạt đòn đánh sau khi thức tỉnh lõi rà thì tàu nhận sát thương trong 1 giây. Hãy sửa lỗi
+===================================================================
+5. Thêm hạm đội 4 tàu thay đổi skill của 4 tàu và các chiến hạm sẽ tự di chuyển theo hướng của người chơi, giữ nguyên hạm đội 2 tàu hiện tại. Khi thức tỉnh hạm đội tăng cho 2 tàu cơ bản thêm giáp và sát thương cơ bản.
+===================================================================
+6. Tàu chiến có thêm kho vũ khí có thể trang bị thêm súng phụ ngoài súng cơ bản, nếu đi với lõi tăng khả năng trang bị súng phụ thì được trang bị nhiều hơn 1 súng phụ. Nếu đi với lõi thức tỉnh súng phụ thì có thể nâng cấp súng phụ. Nếu đi với lõi thức tỉnh súng phụ và súng cơ bản thì súng cơ bản và súng phụ được thức tỉnh. Nếu đi với lõi thức tỉnh và tàu thì tàu được thức tỉnh. Ví dụ tàu chiến thức tỉnh cùng với lõi thức tỉnh súng phụ thì súng cơ bản và súng phụ được thức tỉnh.
+===================================================================
+7. Thêm 10 mục mới để nâng cấp cho từng tàu: tốc độ bắn, sát thương, lượng máu, giáp, hút máu, hút năng lượng, hút mảnh năng lượng, tăng số lượng khiên, giảm thời gian hồi chiêu, tăng tốc độ bay của đạn, tăng vùng nổ. 15 cấp cho mỗi mục tăng dần. Khi có tàu chiến thì có thêm các mục này: trang bị súng phụ, tăng số lượng súng phụ, nâng cấp vũ khí, tăng sát thương súng phụ, tăng số lượng súng phụ tối đa, súng cơ bản thức tỉnh, súng phụ thức tỉnh, tăng khả năng thức tỉnh, tàu chiến thức tỉnh, tăng số lượng drone tối đa, tăng số lượng tàu tối đa. Có thể nâng cấp riêng cho từng súng phụ.
+===================================================================
+8. Súng laser di chuyển chậm hơn 30%.
+===================================================================
+9. Tàu chiến có thể mang theo 2 drone, nếu có lõi thức tỉnh súng phụ thì súng phụ và drone thức tỉnh cùng lúc với tàu(nâng cấp này chỉ có hiệu lực với tàu drone)
+===================================================================
+10. Hệ thống Cường Hóa Bùng Nổ theo thời gian (Thay thế cơ chế giảm chỉ số):
+- Về phía Phi Thuyền: Càng sống sót lâu và tiêu diệt nhiều quái, tàu càng mạnh dần (Tăng tốc độ bay của đạn, tăng vùng nổ diện rộng, giảm thời gian hồi chiêu, tăng tỉ lệ bạo kích và khả năng thức tỉnh sớm). Tuyệt đối không giảm sát thương hay giảm tốc đánh của người chơi để giữ trọn cảm giác hưng phấn (Dopamine Rush).
+- Về phía Quái Vật (Độ khó tăng tiến): Để cân bằng lại sức mạnh của người chơi, theo từng mốc thời gian (ví dụ mỗi 2-3 phút hoặc qua từng Sector), quái vật sẽ tự động tăng lượng máu (HP Scaling), tăng tốc độ di chuyển, tăng mật độ quái tràn vào và bổ sung quái tinh anh có giáp/kỹ năng nguy hiểm hơn.
+
+===================================================================
+11. Cơ chế Quá Tải Động Cơ (Overdrive / Frenzy): Khi đạt chuỗi Combo cao hoặc sống sót qua phút thứ 5, kích hoạt trạng thái Quá Tải giúp toàn bộ súng phụ và drone bùng nổ hỏa lực, bù lại quái vật sẽ hung hãn và đông gấp đôi.
+===================================================================
+12. Trong xưởng phi thuyền thêm tab kho vũ khí và tab kho drone, trong kho vũ khí có thể trang bị tối đa 2 vũ khí, vũ khí và drone cũng giống như skill nếu thức tỉnh có thể tăng chỉ số hoặc có thể đổi sang hình thái thức tỉnh. 
+===================================================================
+13. Thêm tàu và vũ khí mới. Tàu di chuyển theo hướng người chơi và có thể xoay 360 độ. Tàu có thể mang theo 2 drone, có thêm kho vũ khí để trang bị vũ khí phụ. Cân bằng lại trò chơi.
+===================================================================
+14. Tàu chiến: tốc độ bắn: 100 -> 150 -> 200
+Sát thương: 100 -> 150 -> 200
+Lượng máu: 100 -> 150 -> 200
+Giáp: 100 -> 150 -> 200
+Lũy tiến theo cấp độ
+===================================================================
+15. Thêm hạm đội 2 tàu với các vũ khí khác nhau và thêm hạm đội 4 tàu với các vũ khí khác nhau
+===================================================================
+16. Các mục sẽ có cấp tối đa ít nhất là 10 lv hoặc hơn. lượng tiền dùng để nâng cấp tăng theo cấp số nhân. ước tính cần phải chơi ít nhất 40h chơi để có thể kiếm đủ tiền nâng cấp tất cả mọi thứ. tăng thêm các màn chơi hoặc các map mới có độ khó cao hơn  để có thể tận dụng và phô trương sức mạnh của những nâng cấp của người chơi. tính toán cân bằng các mốc sức mạnh phù hợp với màn chơi. ví dụ cần nâng cấp tất cả các mục lên lv4 để có thể đủ sức mạnh qua màn 1. tất cả lên lv7 để có đủ sức qua màn 2. và tương ứng  như thế tăng số lượng sức mạnh cần thiết cho các màn chơi sau tối đa có thể lên tới cấp 20 cho các nâng cấp sức mạnh
