@@ -274,6 +274,10 @@ export class Game {
     if (this.player.hasBloodGodFrenzy && this.player.hp < this.player.maxHp) {
       this.player.hp = Math.min(this.player.maxHp, this.player.hp + 1);
     }
+    // Vampiric Lifesteal from Hangar upgrades
+    if (this.player.lifesteal && Math.random() < this.player.lifesteal && this.player.hp < this.player.maxHp) {
+      this.player.hp = Math.min(this.player.maxHp, this.player.hp + 1);
+    }
 
     this.kills++;
     this.combo++;

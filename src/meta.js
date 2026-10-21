@@ -23,7 +23,11 @@ export class MetaManager {
       luck: 0,       // Luck Bonus (+3%/rank -> +45% Luck)
       cooldown: 0,   // Cooldown Reduction (-2.5%/rank -> -37.5% CD)
       greed: 0,      // Gold Multiplier (+10%/rank -> +150% Gold)
-      revive: 0      // Extra Lives (+1 revive per 5 ranks -> max 3)
+      revive: 0,     // Extra Lives (+1 revive per 5 ranks -> max 3)
+      corepower: 0,  // Core Overcharge (+6%/rank -> +90% Core Skill Power)
+      coredrop: 0,   // High-Tier Core Resonance (+4%/rank -> +60% Rare/Epic/Mythic/Awakening Rate)
+      area: 0,       // Blast Wave Expander (+4%/rank -> +60% AoE Radius)
+      lifesteal: 0   // Vampiric Siphon (+0.4%/rank -> +6% Lifesteal on Kill)
     };
 
     if (saved) {
@@ -64,7 +68,11 @@ export class MetaManager {
       luck: standardCosts,
       cooldown: premiumCosts,
       greed: standardCosts,
-      revive: premiumCosts
+      revive: premiumCosts,
+      corepower: premiumCosts,
+      coredrop: premiumCosts,
+      area: standardCosts,
+      lifesteal: premiumCosts
     };
 
     const costs = baseCosts[type] || standardCosts;
@@ -135,6 +143,20 @@ export class MetaManager {
 
     // 11. Revives (1 revive per 5 ranks: at rank 5, 10, 15 -> max 3)
     player.revivesLeft = (player.revivesLeft || 0) + Math.floor((r.revive || 0) / 5);
+
+    // 12. Core Overcharge (+6% Core Power & Skill damage per rank)
+    player.corePowerBonus = (r.corepower || 0) * 0.06;
+    player.stats.damageMult += player.corePowerBonus;
+
+    // 13. High-Tier Core Resonance (+4% High Tier Luck per rank)
+    player.highTierLuck = (r.coredrop || 0) * 0.04;
+
+    // 14. Blast Area (+4% AoE Explosion & Shockwave Radius per rank)
+    player.stats.blastRadiusMult = (player.stats.blastRadiusMult || 1.0) + (r.area || 0) * 0.04;
+    player.stats.shieldRadiusMult = (player.stats.shieldRadiusMult || 1.0) + (r.area || 0) * 0.04;
+
+    // 15. Vampiric Lifesteal (+0.4% chance to heal on kill per rank)
+    player.lifesteal = (player.lifesteal || 0) + (r.lifesteal || 0) * 0.004;
   }
 }
 

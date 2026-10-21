@@ -3050,6 +3050,53 @@ body.theme-light .meter-progress-track {
   border-color: rgba(148, 163, 184, 0.3) !important;
 }
 
+/* Light Theme Start Screen Footer & Action Buttons (Loại bỏ ô chữ nhật đen) */
+body.theme-light .start-footer-section {
+  background: linear-gradient(to top, rgba(241, 245, 249, 0.98) 75%, rgba(241, 245, 249, 0.88) 90%, transparent 100%) !important;
+  border-top: 1px solid rgba(14, 165, 233, 0.25) !important;
+  box-shadow: 0 -8px 24px rgba(148, 163, 184, 0.25) !important;
+}
+
+body.theme-light .control-tips {
+  color: #475569 !important;
+}
+
+body.theme-light .btn-secondary {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #0284c7 !important;
+  border: 1.5px solid rgba(14, 165, 233, 0.45) !important;
+  box-shadow: 0 4px 16px rgba(148, 163, 184, 0.25) !important;
+}
+
+body.theme-light .btn-secondary:hover,
+body.theme-light .btn-secondary:active {
+  background: #f0f9ff !important;
+  border-color: #0284c7 !important;
+  color: #0369a1 !important;
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.35) !important;
+}
+
+body.theme-light .lang-selector-bar {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(14, 165, 233, 0.35) !important;
+  box-shadow: 0 4px 16px rgba(148, 163, 184, 0.25) !important;
+}
+
+body.theme-light .lang-pill {
+  color: #475569 !important;
+}
+
+body.theme-light .lang-pill:hover {
+  color: #0284c7 !important;
+  background: rgba(14, 165, 233, 0.1) !important;
+}
+
+body.theme-light .gameover-btn-group .btn-secondary {
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #0284c7 !important;
+  border-color: rgba(14, 165, 233, 0.45) !important;
+}
+
 /* 10-Minute Victory Screen */
 .victory-card-box {
   background: radial-gradient(circle at 50% 20%, rgba(30, 27, 75, 0.98), rgba(15, 23, 42, 0.98)) !important;

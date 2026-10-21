@@ -1174,7 +1174,11 @@ window.addEventListener('DOMContentLoaded', () => {
       { id: 'luck', titleKey: 'upgradeLuck', descKey: 'upgradeLuckDesc', icon: 'luck' },
       { id: 'cooldown', titleKey: 'upgradeCooldown', descKey: 'upgradeCooldownDesc', icon: 'cooldown' },
       { id: 'greed', titleKey: 'upgradeGreed', descKey: 'upgradeGreedDesc', icon: 'greed' },
-      { id: 'revive', titleKey: 'upgradeRevive', descKey: 'upgradeReviveDesc', icon: 'revive' }
+      { id: 'revive', titleKey: 'upgradeRevive', descKey: 'upgradeReviveDesc', icon: 'revive' },
+      { id: 'corepower', titleKey: 'upgradeCorePower', descKey: 'upgradeCorePowerDesc', icon: 'energycore' },
+      { id: 'coredrop', titleKey: 'upgradeCoreDrop', descKey: 'upgradeCoreDropDesc', icon: 'awaken_blaster' },
+      { id: 'area', titleKey: 'upgradeArea', descKey: 'upgradeAreaDesc', icon: 'crashnova' },
+      { id: 'lifesteal', titleKey: 'upgradeLifesteal', descKey: 'upgradeLifestealDesc', icon: 'nanorepair' }
     ];
 
     upgrades.forEach(u => {

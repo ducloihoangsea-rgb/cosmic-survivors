@@ -17,11 +17,13 @@ export class UpgradeSystem {
   // White Common: 42%
   rollRarity() {
     const luck = (this.game?.player?.luckBonus || 0) * 0.01; // e.g. 3% -> 0.03
+    const highTierLuck = (this.game?.player?.highTierLuck || 0); // from Hangar coredrop upgrade (up to +0.60)
+    const totalLuck = luck + highTierLuck;
     const r = Math.random();
-    if (r < 0.015 + luck * 0.15) return 'Mythic';
-    if (r < 0.07 + luck * 0.45) return 'Legendary';
-    if (r < 0.23 + luck * 0.75) return 'Epic';
-    if (r < 0.58 + luck * 1.0) return 'Rare';
+    if (r < 0.015 + totalLuck * 0.20) return 'Mythic';
+    if (r < 0.07 + totalLuck * 0.50) return 'Legendary';
+    if (r < 0.23 + totalLuck * 0.80) return 'Epic';
+    if (r < 0.58 + totalLuck * 1.0) return 'Rare';
     return 'Common';
   }
 
@@ -1062,7 +1064,8 @@ export class UpgradeSystem {
     // Slot 1: ĐẢM BẢO luôn ưu tiên rút 1 thẻ hợp hệ (Phòng thủ cho Tank, Đốt cho Rắn, Khiên cho Nova)
     if (selected.length < 3) {
       const synergyCards = pool.filter(c => preferredSynergies.has(c.id) && !usedIds.has(c.id));
-      if (synergyCards.length > 0 && Math.random() < 0.90) {
+      const synergyChance = Math.min(0.99, 0.90 + (player.highTierLuck || 0) * 0.15);
+      if (synergyCards.length > 0 && Math.random() < synergyChance) {
         const pickedSynergy = synergyCards[Math.floor(Math.random() * synergyCards.length)];
         if (pickedSynergy) {
           usedIds.add(pickedSynergy.id);
