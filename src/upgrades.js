@@ -968,11 +968,33 @@ export class UpgradeSystem {
         icon: '🌟',
         apply: () => {
           player.isShieldAwakened = true;
-          player.maxShieldEnergy = (player.maxShieldEnergy || 100) + 100;
-          player.shieldEnergy = player.maxShieldEnergy;
-          player.shieldMaxHp = (player.shieldMaxHp || 0) + 100;
+          // Tăng 50% khiên tối đa & thêm 10% giáp
+          player.shieldMaxHp = Math.round((player.shieldMaxHp || 160) * 1.5);
           player.shieldHp = player.shieldMaxHp;
-          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 AEGIS OF ETERNITY! 🌟', '#facc15', 24, true));
+          player.stats.armor = (player.stats.armor || 0) + 0.10;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 AEGIS OF ETERNITY (+50% SHIELD, +10% ARMOR)! 🌟', '#00f2fe', 22, true));
+          sound.playCrit();
+        }
+      });
+    }
+
+    // 5.5. Radar Thần Nhãn (core_range)
+    if (getBuffLvl('core_range') >= 1 && !player.isRadarAwakened) {
+      awakeningPool.push({
+        id: 'awaken_radar',
+        categoryKey: 'awakening',
+        category: i18n.t('categoryAwakening'),
+        title: i18n.t('awakenRadarTitle'),
+        desc: i18n.t('awakenRadarDesc'),
+        rarityKey: rAwakening.key,
+        rarity: rAwakening.label,
+        icon: '👁️',
+        apply: () => {
+          player.isRadarAwakened = true;
+          player.stats.critChance = (player.stats.critChance || 0.15) + 0.40;
+          player.stats.critMult = (player.stats.critMult || 2.0) + 1.0;
+          player.stats.rangeMult = (player.stats.rangeMult || 1.0) + 0.40;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 RADAR THẦN NHÃN (+40% CRIT, +100% CRIT DMG)! 🌟', '#a855f7', 22, true));
           sound.playCrit();
         }
       });
@@ -994,7 +1016,8 @@ export class UpgradeSystem {
           player.stats.mass = (player.stats.mass || 1.0) * 2.5;
           player.radius = Math.round(player.radius * 1.3);
           player.stats.speedMult += 0.35;
-          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 DREADNOUGHT LEVIATHAN! 🌟', '#facc15', 24, true));
+          player.stats.armor = (player.stats.armor || 0) + 0.15;
+          this.game.floatingTexts.push(new FloatingText(player.x, player.y - 70, '🌟 DREADNOUGHT LEVIATHAN (BẤT TỬ ĐÂM HÚC)! 🌟', '#facc15', 22, true));
           sound.playCrit();
         }
       });

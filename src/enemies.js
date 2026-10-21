@@ -245,9 +245,13 @@ export class Enemy {
           player.game.floatingTexts.push(new FloatingText(player.x, player.y - 30, '+2 HP', '#22c55e', 16, false));
         }
 
-        // Player takes reduced collision damage
-        const dmgReduct = player.hasDrill ? 0.15 : 0.30;
-        player.takeDamage(this.damage * dt * dmgReduct);
+        // Sửa lỗi: Thức tỉnh tàu rà miễn nhiễm sát thương va chạm khi đâm húc
+        if (player.isRammerAwakened) {
+          player.invulnerableTimer = Math.max(player.invulnerableTimer, 0.4);
+        } else if (!this.isDead) {
+          const dmgReduct = player.hasDrill ? 0.15 : 0.30;
+          player.takeDamage(this.damage * dt * dmgReduct);
+        }
       } else {
         player.takeDamage(this.damage * dt);
       }

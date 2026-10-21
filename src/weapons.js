@@ -429,8 +429,8 @@ export class WeaponManager {
     sound.playShoot('blaster');
 
     if (ls.isAwakened) {
-      // 🌟 THỨC TỈNH: Orbital Death Ray - 2 chùm tia laser quỹ đạo xoay 360 độ xé toạc màn hình
-      this.laserAngle = (this.laserAngle || 0) + 0.75;
+      // 🌟 THỨC TỈNH: Orbital Death Ray - Chùm tia laser di chuyển quét chậm hơn 30% (từ 0.75 xuống 0.525)
+      this.laserAngle = (this.laserAngle || 0) + 0.525;
       const angles = [this.laserAngle, this.laserAngle + Math.PI];
 
       for (const a of angles) {

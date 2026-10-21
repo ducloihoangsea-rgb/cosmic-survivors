@@ -1160,6 +1160,10 @@ class Player {
   takeDamage(amount) {
     if (this.invulnerableTimer > 0) return;
 
+    // Giáp (Armor) giảm sát thương nhận vào (tối đa giảm 75%)
+    const armorPct = Math.min(0.75, (this.stats?.armor || 0));
+    amount = Math.max(1, Math.round(amount * (1 - armorPct)));
+
     // Nova Shield barrier or Absolute Immortality absorbs damage first
     if (this.hasImmortality || (this.isNovaShield && this.shieldHp > 0) || (this.shieldMaxHp > 0 && this.shieldHp > 0)) {
       this.shieldHp -= amount;
@@ -1171,8 +1175,14 @@ class Player {
       if (this.shieldHp <= 0) {
         this.shieldHp = 0;
         this.shieldRechargeTimer = (this.baseStats?.shieldRechargeTime || 3.5);
-        this.triggerNovaBlast(this.hasImmortality);
-        if (this.hasImmortality) {
+        this.triggerNovaBlast(this.hasImmortality || this.isShieldAwakened);
+        if (this.isShieldAwakened) {
+          // Thức Tỉnh Khiên: Tự động kích hoạt khiên hồi 50% ngay khi bị đánh vỡ!
+          this.shieldHp = Math.round(this.shieldMaxHp * 0.5);
+          this.invulnerableTimer = 0.5;
+          sound.playShield();
+          this.game.floatingTexts.push(new FloatingText(this.x, this.y - 30, '⚡ SHIELD REBOOT! ⚡', '#00f2fe', 16, true));
+        } else if (this.hasImmortality) {
           this.invulnerableTimer = 2.0; // Grace period to retreat while shield recharges!
         }
       }
